@@ -1,0 +1,12 @@
+collaborative: >-
+  You and the other agent are on the same team. Your score is the team total.
+mixed: >-
+  You are scored only on your own escape. The other agent is scored on its own
+  escape.
+competitive: >-
+  You are competing with the other agent. Your score is your points minus
+  theirs.
+work_alone: >-
+  You are evaluated individually on your own room. Work alone.
+single: >-
+  You are alone in this room.

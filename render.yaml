@@ -1,0 +1,12 @@
+# Deploy: connect this repo at https://render.com → New → Blueprint
+services:
+  - type: web
+    name: escape-rooms
+    runtime: python
+    plan: free
+    buildCommand: pip install -e .
+    startCommand: python scripts/play_web.py --no-browser
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12"

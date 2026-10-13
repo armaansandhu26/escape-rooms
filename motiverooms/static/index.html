@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Escape Rooms — cooperative agent demo." />
+    <title>Escape Rooms</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="game-hud">
+      <div class="game-hud-left">
+        <h1 class="game-title">Escape Rooms</h1>
+      </div>
+      <div class="game-hud-right">
+        <div class="speed-toggle" role="group" aria-label="Playback speed">
+          <button type="button" class="speed-btn" data-speed="0.5">Slow</button>
+          <button type="button" class="speed-btn is-active" data-speed="1">Normal</button>
+          <button type="button" class="speed-btn" data-speed="2">Fast</button>
+        </div>
+        <button id="start-button" class="button button-primary" type="button">
+          Start episode
+        </button>
+        <button id="reset-button" class="button button-ghost" type="button">Reset</button>
+      </div>
+    </header>
+
+    <main class="game-stage">
+      <div id="round-banner" class="round-banner hidden" role="status"></div>
+
+      <div id="game-caption" class="game-caption" aria-live="polite">
+        <span id="caption-primary">Press Start to watch two agents cooperate and escape.</span>
+        <span id="caption-secondary"></span>
+      </div>
+
+      <div class="play-area">
+      <div id="maps-container" class="maps-container">
+        <section class="wing-map wing-a" id="wing-panel-a" data-agent="A">
+          <div id="wing-a-stage" class="spatial-stage">
+            <div class="floor-grid" aria-hidden="true"></div>
+            <span class="room-tag agent-a-tag">A · <span id="wing-a-title">office</span></span>
+            <div id="wing-a-nodes" class="spatial-nodes"></div>
+            <div id="wing-a-avatar" class="agent-avatar avatar-a" aria-label="Agent A">
+              <span>A</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="wing-map wing-b multiplayer-only" id="wing-panel-b" data-agent="B">
+          <div id="wing-b-stage" class="spatial-stage">
+            <div class="floor-grid" aria-hidden="true"></div>
+            <span class="room-tag agent-b-tag">B · <span id="wing-b-title">storage</span></span>
+            <div id="wing-b-nodes" class="spatial-nodes"></div>
+            <div id="wing-b-avatar" class="agent-avatar avatar-b" aria-label="Agent B">
+              <span>B</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="trajectory-panel" aria-label="Episode trajectory">
+        <h2 class="trajectory-title">Trajectory</h2>
+        <p class="trajectory-hint">Each line is one turn, in order.</p>
+        <ol id="trajectory-log" class="trajectory-log"></ol>
+      </aside>
+      </div>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="/app.js" defer></script>
+  </body>
+</html>

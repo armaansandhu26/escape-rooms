@@ -1,0 +1,65 @@
+# Single-agent room: wing A only. Escape via the spare-key solo route (8 turns).
+id: office_solo_example
+wings:
+  A: office
+
+codes:
+  tool_1: "3906"
+  tool_2: "5172"
+  tool_3: "6648"
+
+items:
+  spare_key:
+    name: spare key
+
+nodes:
+  - id: exit_a
+    wing: A
+    kind: door
+    requires:
+      item: [spare_key]
+    desc: The office exit. It has a keyhole.
+
+  - id: toolbox_tag
+    wing: A
+    kind: clue
+    code: tool_1
+    desc: A tag hanging from a toolbox.
+
+  - id: toolbox
+    wing: A
+    kind: container
+    requires:
+      code: tool_1
+    contents: [tray_card]
+    desc: A toolbox with a combination lock.
+
+  - id: tray_card
+    wing: A
+    kind: clue
+    hidden: true
+    code: tool_2
+    desc: A card inside the toolbox.
+
+  - id: tray
+    wing: A
+    kind: container
+    requires:
+      code: tool_2
+    contents: [lockbox_card]
+    desc: A locked tray under the desk.
+
+  - id: lockbox_card
+    wing: A
+    kind: clue
+    hidden: true
+    code: tool_3
+    desc: A card in the tray.
+
+  - id: lockbox
+    wing: A
+    kind: container
+    requires:
+      code: tool_3
+    contents: [spare_key]
+    desc: A small lockbox.
