@@ -1,10 +1,40 @@
-# EscapeRooms
+# Escape Rooms
 
-Text escape rooms for training and testing LLM agents under **collaborative, competitive and mixed-motive** incentives.
+**Browser demo** — watch two scripted agents cooperate and escape a split office + storage floor plan. Aimed at **people viewing the run** (teammates, demos, design reviews), not at configuring LLM agents in the UI.
 
-Every room can be solved by one agent alone. A partner can make it faster by sharing a code or handing over an item. Whether agents help each other, and whether they tell the truth, is what we measure. The room never changes between incentive modes; only the reward does.
+## Try it online
 
-> **Status:** design spec, no code yet. This README is the build plan for the repo. Build it milestone by milestone (see [Build order](#build-order)); each milestone ends with tests that must pass.
+**[https://escape-rooms-marl.vercel.app](https://escape-rooms-marl.vercel.app)**
+
+1. Click **Start episode** (honest agents, fixed scenario).
+2. Follow the caption bar; **Trajectory** on the right lists each turn (`Agent A: …`, `Agent B: …`).
+3. **Slow / Normal / Fast**, **Reset** as needed.
+
+First visit after idle may be slow on Vercel’s free tier.
+
+## Run locally
+
+```bash
+git clone https://github.com/armaansandhu26/escape-rooms.git
+cd escape-rooms
+python -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
+python scripts/play_web.py
+```
+
+Open [http://127.0.0.1:8765](http://127.0.0.1:8765).
+
+## Deploy (Vercel)
+
+Import the GitHub repo at [vercel.com/new](https://vercel.com/new) and deploy (see [DEPLOY.md](DEPLOY.md)). Share the `*.vercel.app` link.
+
+---
+
+## Research spec (developers)
+
+Text escape rooms for training and testing LLM agents under **collaborative, competitive and mixed-motive** incentives. Every room can be solved solo; partners can speed it up. The room stays fixed across incentive modes; only rewards change.
+
+> **Status:** Engine + web demo + Vercel deploy are in place. Later milestones (rewards, generator, full partner policies, AdAlign) are below.
 
 ---
 
@@ -48,56 +78,33 @@ MotiveRooms holds the room fixed and varies only the incentive, so the incentive
 
 ---
 
-## Setup
+## Setup (full dev environment)
 
 ### 1. Clone
 
 ```bash
-git clone <this-repo-url> motiverooms
-cd motiverooms
+git clone https://github.com/armaansandhu26/escape-rooms.git
+cd escape-rooms
 
 mkdir -p third_party
 git clone https://github.com/qiancheng0/EscapeBench.git  third_party/EscapeBench
 git clone https://github.com/dereckpiche/AdAlignLLM.git  third_party/AdAlignLLM
 ```
 
-Add `third_party/` to `.gitignore`.
+`third_party/` is gitignored.
 
-### 2. The environment package (CPU only)
+### 2. Environment package (CPU)
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 pytest
-```
-
-Launch the interactive browser UI:
-
-```bash
 python scripts/play_web.py
 ```
 
-In the browser UI, use the left **Simulation setup** panel to pick a room, incentive
-mode, and controller for each agent (`human`, `honest`, `silent`). Choose the
-**Ideal cooperation — honest × honest** preset and click **Run episode** to watch
-both wings in parallel with a full **Episode log**.
+Terminal play: `python scripts/play.py rooms/examples/office_storage.yaml`
 
-Single-agent mode (one wing, no partner chat or handoffs):
-
-```bash
-python scripts/play_web.py --solo
-# or
-python scripts/play_web.py rooms/examples/office_solo.yaml
-python scripts/play.py rooms/examples/office_solo.yaml --agent A
-```
-
-The UI opens at `http://127.0.0.1:8765`. It provides guided controls for
-inspecting clues, taking and giving items, entering codes, messaging the other
-agent and resetting the room. Use `python scripts/play.py` for the terminal
-version.
-
-Any room YAML with only wing `A` is a single-agent room; the engine disables
-`give`, `say`, and notes actions automatically.
+Solo room: `python scripts/play_web.py --solo`
 
 ### 3. The training stack (GPU)
 

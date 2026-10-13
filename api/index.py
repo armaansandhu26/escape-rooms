@@ -1,11 +1,16 @@
-"""Vercel ASGI entry — routes every /api/* call."""
+"""Vercel ASGI entry — static UI plus /api/* routes."""
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from motiverooms.http_api import handle_get, handle_post
+
+PUBLIC_DIR = Path(__file__).resolve().parent.parent / "public"
 
 app = FastAPI()
 
@@ -71,3 +76,7 @@ async def post_run_episode(request: Request) -> dict:
     if not isinstance(body, dict):
         body = {}
     return handle_post("/api/run-episode", body)
+
+
+if PUBLIC_DIR.is_dir():
+    app.mount("/", StaticFiles(directory=str(PUBLIC_DIR), html=True), name="site")
