@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cp -r motiverooms/static/* public/",
+  "installCommand": "pip install -r requirements.txt && pip install .",
+  "functions": {
+    "api/**/*.py": {
+      "includeFiles": "rooms/examples/**"
+    }
+  }
+}

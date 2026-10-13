@@ -1,21 +1,17 @@
-# Deploy for teammates
+# Deploy on Vercel (free, no card for hobby)
 
-This app is a **Python web server** (not static-only), so **Render** is the simplest free host. Vercel is built for static sites and serverless functions; this project would need a rewrite to run there.
+1. Push the latest code to GitHub: [escape-rooms](https://github.com/armaansandhu26/escape-rooms).
+2. Go to [vercel.com](https://vercel.com) → **Add New → Project**.
+3. Import the **escape-rooms** repo.
+4. Leave defaults; Vercel reads `vercel.json` (`buildCommand` copies the UI into `public/`, installs Python deps).
+5. Click **Deploy**. Share the `*.vercel.app` URL with teammates.
 
-## Render (recommended)
+The demo uses **serverless API routes** under `api/` and keeps game state in a **session token** returned on each API call (required on Vercel).
 
-1. Push this repo to GitHub (see below).
-2. Go to [render.com](https://render.com) and sign in with GitHub.
-3. **New → Blueprint** and select this repository (Render reads `render.yaml`).
-4. Deploy. Share the URL Render gives you (e.g. `https://escape-rooms-xxxx.onrender.com`).
-
-Free tier may sleep after inactivity; the first visit can take ~30s to wake up.
-
-## Run locally
+## Local dev (unchanged)
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 python scripts/play_web.py
 ```

@@ -33,6 +33,7 @@ let busy = false;
 let cinematicPeekAvailable = true;
 let warnedAboutServerRestart = false;
 let speedMultiplier = 1;
+let sessionToken = null;
 
 const BASE_SIM_TIMING = {
   moveMs: 1400,
@@ -59,10 +60,18 @@ function delay(ms) {
 }
 
 async function request(path, options = {}) {
-  const response = await fetch(path, {
-    headers: { "Content-Type": "application/json" },
-    ...options,
-  });
+  const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
+  let body = options.body;
+  if (
+    path.startsWith("/api/") &&
+    path !== "/api/catalog" &&
+    (options.method || "GET") === "POST"
+  ) {
+    const bodyObj = body ? JSON.parse(body) : {};
+    if (sessionToken) bodyObj.session = sessionToken;
+    body = JSON.stringify(bodyObj);
+  }
+  const response = await fetch(path, { ...options, headers, body });
   const raw = await response.text();
   let payload = null;
   try {
@@ -78,6 +87,7 @@ async function request(path, options = {}) {
   if (!response.ok) {
     throw new Error(payload.error || `Request failed (${response.status})`);
   }
+  if (payload.session) sessionToken = payload.session;
   return payload;
 }
 
