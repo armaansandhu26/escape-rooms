@@ -29,3 +29,6 @@ motiverooms = ["static/*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"
+
+[tool.vercel]
+entrypoint = "api.index:app"
