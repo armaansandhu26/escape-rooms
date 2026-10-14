@@ -62,14 +62,28 @@ def handle_post(path: str, body: dict[str, Any]) -> dict[str, Any]:
         return _with_session(session, {"turn": session.peek_scripted_turn()})
 
     if path == "/api/auto-step":
-        outcome = session.submit_auto()
-        last_turn = (
-            asdict(session.episode_log[-1]) if session.episode_log else None
-        )
+        outcomes = session.submit_auto()
+        env_step = session.game.env_step
+        step_records = [
+            asdict(record)
+            for record in session.episode_log
+            if record.env_step == env_step
+        ]
+        last_turn = step_records[-1] if step_records else None
         return _with_session(
             session,
             {
-                "outcome": {"valid": outcome.valid, "result": outcome.result},
+                "env_step": env_step,
+                "step": {"env_step": env_step, "agents": step_records},
+                "outcomes": {
+                    agent: {"valid": o.valid, "result": o.result}
+                    for agent, o in outcomes.items()
+                },
+                "outcome": (
+                    {"valid": last_turn["valid"], "result": last_turn["result"]}
+                    if last_turn
+                    else None
+                ),
                 "turn": last_turn,
                 "state": session.state_payload(),
             },

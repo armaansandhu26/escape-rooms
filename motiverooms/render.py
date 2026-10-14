@@ -67,7 +67,11 @@ def render_observation(
             f"Turns left: {state.turns_left} | Partner: {partner_status}"
         ),
         "",
-        f"YOUR WING ({engine.room.wings[agent]})",
+        (
+            f"THE ROOM ({engine.room.space})"
+            if engine.room.is_shared
+            else f"YOUR WING ({engine.room.wings[agent]})"
+        ),
     ]
     lines.extend(
         f"- {node.id}: {node.desc} [{_node_status(engine, agent, node)}]"

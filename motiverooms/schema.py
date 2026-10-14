@@ -15,7 +15,11 @@ import yaml
 
 AgentId = Literal["A", "B"]
 NodeKind = Literal["clue", "spot", "container", "door"]
+RoomLayout = Literal["split", "shared"]
+NodeZone = Literal["A", "B", "shared"]
 NODE_KINDS = {"clue", "spot", "container", "door"}
+ROOM_LAYOUTS = {"split", "shared"}
+NODE_ZONES = {"A", "B", "shared"}
 
 
 class RoomValidationError(ValueError):
@@ -58,7 +62,7 @@ class Requirement:
 @dataclass(frozen=True)
 class Node:
     id: str
-    wing: AgentId
+    wing: NodeZone
     kind: NodeKind
     desc: str
     hidden: bool = False
@@ -127,6 +131,8 @@ class Room:
     codes: dict[str, str]
     items: dict[str, Item]
     nodes: tuple[Node, ...]
+    layout: RoomLayout = "split"
+    space: str | None = None
     _nodes_by_id: dict[str, Node] = field(init=False, repr=False, compare=False)
 
     def __post_init__(self) -> None:
@@ -136,12 +142,13 @@ class Room:
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> "Room":
         required = {"id", "wings", "codes", "items", "nodes"}
+        optional = {"layout", "space"}
         missing = required - set(data)
         if missing:
             raise RoomValidationError(
                 f"Room is missing field(s): {', '.join(sorted(missing))}"
             )
-        unknown = set(data) - required
+        unknown = set(data) - required - optional
         if unknown:
             raise RoomValidationError(
                 f"Room has unknown field(s): {', '.join(sorted(unknown))}"
@@ -154,12 +161,22 @@ class Room:
             str(item_id): Item(id=str(item_id), name=str(item_data["name"]))
             for item_id, item_data in raw_items.items()
         }
+        layout = str(data.get("layout", "split"))
+        if layout not in ROOM_LAYOUTS:
+            raise RoomValidationError(
+                f"layout must be one of {', '.join(sorted(ROOM_LAYOUTS))}"
+            )
+        space = data.get("space")
+        if space is not None:
+            space = str(space)
         return cls(
             id=str(data["id"]),
             wings=dict(data["wings"]),
             codes={str(name): str(value) for name, value in data["codes"].items()},
             items=items,
             nodes=tuple(Node.from_dict(node) for node in data["nodes"]),
+            layout=layout,  # type: ignore[arg-type]
+            space=space,
         )
 
     def node(self, node_id: str) -> Node:
@@ -171,6 +188,15 @@ class Room:
     def nodes_in_wing(self, agent: AgentId) -> tuple[Node, ...]:
         return tuple(node for node in self.nodes if node.wing == agent)
 
+    def nodes_for_agent(self, agent: AgentId) -> tuple[Node, ...]:
+        if self.layout == "shared":
+            return self.nodes
+        return self.nodes_in_wing(agent)
+
+    @property
+    def is_shared(self) -> bool:
+        return self.layout == "shared"
+
     def validate(self) -> None:
         errors: list[str] = []
         if not self.id:
@@ -179,6 +205,13 @@ class Room:
             errors.append("Wings must contain A, and may optionally contain B")
         if any(not name for name in self.wings.values()):
             errors.append("Wing names must not be empty")
+        if self.layout == "shared":
+            if not self.space:
+                errors.append("Shared layout requires a non-empty 'space' name")
+            elif any(name != self.space for name in self.wings.values()):
+                errors.append(
+                    "In shared layout every agent entry in 'wings' must match 'space'"
+                )
 
         code_values = list(self.codes.values())
         if any(len(value) != 4 or not value.isdigit() for value in code_values):
@@ -226,14 +259,19 @@ class Room:
                     f"Item {item_id!r} must have exactly one location"
                 )
 
-        for agent in self.wings:
-            doors = [
-                node
-                for node in self.nodes
-                if node.wing == agent and node.kind == "door"
-            ]
+        if self.layout == "shared":
+            doors = [node for node in self.nodes if node.kind == "door"]
             if len(doors) != 1:
-                errors.append(f"Wing {agent} must contain exactly one door")
+                errors.append("Shared layout must contain exactly one exit door")
+        else:
+            for agent in self.wings:
+                doors = [
+                    node
+                    for node in self.nodes
+                    if node.wing == agent and node.kind == "door"
+                ]
+                if len(doors) != 1:
+                    errors.append(f"Wing {agent} must contain exactly one door")
 
         if errors:
             raise RoomValidationError("; ".join(errors))
@@ -243,7 +281,10 @@ class Room:
         label = f"Node {node.id!r}"
         if not node.id or not node.desc:
             errors.append(f"{label} must have a non-empty id and description")
-        if node.wing not in self.wings:
+        if self.layout == "shared":
+            if node.wing != "shared":
+                errors.append(f"{label} must use wing: shared in a shared room")
+        elif node.wing not in self.wings:
             errors.append(f"{label} uses undefined wing {node.wing!r}")
         if node.kind not in NODE_KINDS:
             errors.append(f"{label} has unsupported kind {node.kind!r}")
@@ -300,7 +341,7 @@ class Room:
         return []
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        data: dict[str, Any] = {
             "id": self.id,
             "wings": dict(self.wings),
             "codes": dict(self.codes),
@@ -309,6 +350,11 @@ class Room:
             },
             "nodes": [node.to_dict() for node in self.nodes],
         }
+        if self.layout != "split":
+            data["layout"] = self.layout
+        if self.space is not None:
+            data["space"] = self.space
+        return data
 
 
 def load_room(path: str | Path) -> Room:

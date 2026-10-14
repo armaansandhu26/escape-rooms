@@ -387,7 +387,9 @@ Helping costs turns too: B needs `take(brass_key)` and `give(brass_key)` (2 turn
 
 ## Actions
 
-One action per turn. **Every action costs one turn, including invalid ones.** The parser reads the **last non-empty line** of the model's output, which must match:
+One **environment step** (tick): every agent that can still act submits one action; the engine applies them together via `RoomEngine.step_joint` (verb phases, A-before-B tie-break on conflicts such as two `take`s on the same item). Each acting agent spends **one turn from their budget per tick**, including invalid actions. Solo or sequential callers can still use `step(agent, action)` for one agent at a time.
+
+The parser reads the **last non-empty line** of the model's output, which must match:
 
 ```
 inspect(<node_id>)          read a node in your wing; clues reveal their code
@@ -415,8 +417,9 @@ Rules:
 
 ## Turn order and rounds
 
-- Agents alternate A, B, A, B. An agent that has escaped is skipped.
-- A round ends when both agents have escaped or both are out of turns.
+- **Default (multi-agent):** simultaneous step — all active agents act each tick (see `step_joint`).
+- **Legacy / split-wing tooling:** alternating `step` (A, B, A, B …); escaped agents are skipped.
+- A round ends when every agent has escaped or no agent can act (out of turns).
 - An episode is `rounds` rooms (default 5) with the same partner.
 - If `reveal_after_round: true`, the first observation of the next round starts with a reveal block: every handoff code and item, what each agent sent about them, who escaped, both payoffs.
 

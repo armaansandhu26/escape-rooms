@@ -41,8 +41,14 @@ class PresetEntry:
 
 ROOMS: tuple[RoomEntry, ...] = (
     RoomEntry(
+        key="shared_mat",
+        label="Shared room (2 agents)",
+        path=ROOT / "shared_mat.yaml",
+        single_agent=False,
+    ),
+    RoomEntry(
         key="office_storage",
-        label="Office × Storage (2 agents)",
+        label="Office × Storage (2 agents, split)",
         path=ROOT / "office_storage.yaml",
         single_agent=False,
     ),
@@ -66,7 +72,7 @@ PRESETS: tuple[PresetEntry, ...] = (
     PresetEntry(
         key="ideal_cooperation",
         label="Ideal cooperation — honest × honest",
-        room_key="office_storage",
+        room_key="shared_mat",
         partner_a="honest",
         partner_b="honest",
         mode="collaborative",

@@ -8,7 +8,26 @@ from motiverooms.engine import RoomEngine
 from motiverooms.schema import AgentId, Room
 from motiverooms.solver import solve_agent
 
-# Turn order must match alternating A/B play in these rooms.
+# One dict per environment step (simultaneous actions).
+JOINT_SCRIPTS: dict[str, list[dict[AgentId, str]]] = {
+    "shared_mat_example": [
+        {"A": "inspect(sticky_note)", "B": "inspect(mat)"},
+        {"A": "inspect(wall_poster)", "B": "inspect(toolbox)"},
+        {
+            "A": "say(The desk drawer code is 3906)",
+            "B": "enter(3906, desk_drawer)",
+        },
+        {"A": "inspect(drawer_note)", "B": "inspect(filing_cabinet)"},
+        {
+            "A": "say(The filing cabinet code is 4721)",
+            "B": "enter(4721, filing_cabinet)",
+        },
+        {"A": "take(brass_key)", "B": "inspect(exit)"},
+        {"A": "use(brass_key, exit)", "B": "inspect(coat_rack)"},
+    ],
+}
+
+# Legacy alternating-turn scripts (split-wing rooms).
 COOPERATIVE_SCRIPTS: dict[str, list[tuple[AgentId, str]]] = {
     # Actions follow strict A/B alternation (escaped agents are skipped).
     "office_storage_example": [
@@ -37,6 +56,28 @@ SOLO_SCRIPTS: dict[str, list[tuple[AgentId, str]]] = {
         ("A", "use(spare_key, exit_a)"),
     ],
 }
+
+
+@dataclass
+class JointScriptRunner:
+    """Plays one simultaneous action dict per environment step."""
+
+    steps: list[dict[AgentId, str]]
+    cursor: int = 0
+
+    def reset(self) -> None:
+        self.cursor = 0
+
+    def peek_step(self) -> dict[AgentId, str] | None:
+        if self.cursor >= len(self.steps):
+            return None
+        return dict(self.steps[self.cursor])
+
+    def next_step(self) -> dict[AgentId, str] | None:
+        step = self.peek_step()
+        if step is not None:
+            self.cursor += 1
+        return step
 
 
 @dataclass
@@ -107,21 +148,39 @@ class PartnerBrain:
     """Chooses actions for non-human controllers."""
 
     room: Room
+    joint_runner: JointScriptRunner | None = None
     honest_runner: ScriptRunner | None = None
     solo_runner: SoloRunner | None = None
 
     def __post_init__(self) -> None:
         self.solo_runner = SoloRunner(self.room)
+        joint = JOINT_SCRIPTS.get(self.room.id)
+        if joint is not None:
+            self.joint_runner = JointScriptRunner(list(joint))
+            self.honest_runner = None
+            return
         script = COOPERATIVE_SCRIPTS.get(self.room.id)
         if script is None:
             script = SOLO_SCRIPTS.get(self.room.id)
         self.honest_runner = ScriptRunner(list(script)) if script else None
 
     def reset(self) -> None:
+        if self.joint_runner is not None:
+            self.joint_runner.reset()
         if self.honest_runner is not None:
             self.honest_runner.reset()
         assert self.solo_runner is not None
         self.solo_runner.reset()
+
+    def peek_joint_step(self) -> dict[AgentId, str] | None:
+        if self.joint_runner is not None:
+            return self.joint_runner.peek_step()
+        return None
+
+    def next_joint_step(self) -> dict[AgentId, str] | None:
+        if self.joint_runner is not None:
+            return self.joint_runner.next_step()
+        return None
 
     def peek(self, controller: str, agent: AgentId) -> str:
         if controller == "human":

@@ -95,8 +95,16 @@ function isSingleAgent() {
   return Boolean(gameState?.room?.single_agent);
 }
 
+function isSharedRoom() {
+  return gameState?.room?.layout === "shared";
+}
+
 function activeWingAgents() {
   return isSingleAgent() ? ["A"] : ["A", "B"];
+}
+
+function uiForAgent(agent) {
+  return isSharedRoom() ? WING_UI.A : WING_UI[agent];
 }
 
 async function loadCatalogFlags() {
@@ -185,53 +193,88 @@ function resetTrajectoryLog() {
   elements.trajectoryLog.replaceChildren();
 }
 
-function buildTrajectoryItem(entry) {
-  const item = createElement("li", `trajectory-item agent-${entry.agent.toLowerCase()}`);
-  if (!entry.valid) item.classList.add("is-invalid");
-  const actionText = humanizeAction(entry.action);
-  item.append(
-    createElement(
-      "span",
-      "trajectory-line",
-      "",
-    ),
-  );
-  const line = item.querySelector(".trajectory-line");
-  line.append(
-    createElement("span", "trajectory-agent", `Agent ${entry.agent}: `),
-    createElement("span", "trajectory-action", actionText),
-  );
-  if (entry.result) {
-    item.append(createElement("span", "trajectory-result", entry.result));
+const TRAJECTORY_TAG_LABELS = {
+  explore: "Explore",
+  unlock: "Unlock",
+  collect: "Collect",
+  share: "Share",
+  idle: "Idle",
+  fail: "Failed",
+};
+
+function groupEpisodeLogByStep(log) {
+  const order = [];
+  const groups = new Map();
+  for (const entry of log) {
+    const step = entry.env_step ?? 0;
+    if (!groups.has(step)) {
+      groups.set(step, []);
+      order.push(step);
+    }
+    groups.get(step).push(entry);
   }
+  return order.map((env_step) => ({ env_step, entries: groups.get(env_step) }));
+}
+
+function buildTrajectoryAgentLine(entry) {
+  const line = createElement("div", `trajectory-agent-line agent-${entry.agent.toLowerCase()}`);
+  if (!entry.valid) line.classList.add("is-invalid");
+  if (entry.tag) line.dataset.tag = entry.tag;
+
+  const header = createElement("div", "trajectory-header");
+  header.append(createElement("span", "trajectory-agent", `Agent ${entry.agent}`));
+  if (entry.tag && TRAJECTORY_TAG_LABELS[entry.tag]) {
+    header.append(
+      createElement("span", `trajectory-tag tag-${entry.tag}`, TRAJECTORY_TAG_LABELS[entry.tag]),
+    );
+  }
+  line.append(header);
+
+  const narrative =
+    entry.narrative ||
+    `${humanizeAction(entry.action)}${entry.result ? ` → ${entry.result}` : ""}`;
+  line.append(createElement("p", "trajectory-narrative", narrative));
+
+  if (entry.action && entry.narrative) {
+    line.append(createElement("span", "trajectory-action-raw", entry.action));
+  } else if (!entry.narrative && entry.result) {
+    line.append(createElement("span", "trajectory-result", entry.result));
+  }
+  return line;
+}
+
+function buildTrajectoryStepGroup({ env_step, entries }) {
+  const item = createElement("li", "trajectory-step-group");
+  item.append(createElement("div", "trajectory-step-title", `Step ${env_step}:`));
+  const body = createElement("div", "trajectory-step-body");
+  for (const entry of entries) {
+    body.append(buildTrajectoryAgentLine(entry));
+  }
+  item.append(body);
   return item;
 }
 
-function appendTrajectoryEntries(entries) {
-  for (const entry of entries) {
-    elements.trajectoryLog.append(buildTrajectoryItem(entry));
+function renderTrajectoryLog(log) {
+  resetTrajectoryLog();
+  const groups = groupEpisodeLogByStep(log);
+  for (const group of groups) {
+    elements.trajectoryLog.append(buildTrajectoryStepGroup(group));
   }
-  const items = elements.trajectoryLog.querySelectorAll(".trajectory-item");
-  items.forEach((node, index) => {
-    node.classList.toggle("is-latest", index === items.length - 1);
+  const stepGroups = elements.trajectoryLog.querySelectorAll(".trajectory-step-group");
+  stepGroups.forEach((node, index) => {
+    node.classList.toggle("is-latest", index === stepGroups.length - 1);
   });
-  const latest = items[items.length - 1];
+  const latest = stepGroups[stepGroups.length - 1];
   if (latest) {
     latest.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }
+  trajectorySyncedLength = log.length;
 }
 
-function syncTrajectoryLog(fullRebuild = false) {
+function syncTrajectoryLog() {
   const log = gameState?.episode_log || [];
-  if (fullRebuild || log.length < trajectorySyncedLength) {
-    resetTrajectoryLog();
-    appendTrajectoryEntries(log);
-    trajectorySyncedLength = log.length;
-    return;
-  }
   if (log.length === trajectorySyncedLength) return;
-  appendTrajectoryEntries(log.slice(trajectorySyncedLength));
-  trajectorySyncedLength = log.length;
+  renderTrajectoryLog(log);
 }
 
 function parseActionParts(action) {
@@ -257,17 +300,9 @@ function findNodeForItem(agent, itemId) {
   );
 }
 
-function clearWingBubbles() {
-  for (const agent of ["A", "B"]) {
-    WING_UI[agent].stage
-      ?.querySelectorAll(".wing-action-bubble")
-      .forEach((node) => node.remove());
-  }
-}
-
 async function animateAgentForAction(agent, action) {
   const timing = getSimTiming();
-  const ui = WING_UI[agent];
+  const ui = uiForAgent(agent);
   const parts = parseActionParts(action);
   let nodeId = null;
 
@@ -280,9 +315,8 @@ async function animateAgentForAction(agent, action) {
     const mat = gameState.wings[agent]?.nodes.find((node) => node.id === "mat");
     nodeId = mat?.id ?? null;
   } else if (parts.kind === "say") {
-    showWingBubble(agent, parts.text);
-    moveAvatar(ui.avatar, 50, 72, true);
-    await delay(timing.moveMs);
+    moveAvatar(WING_UI[agent].avatar, agent === "A" ? 42 : 58, 72, true);
+    await delay(Math.round(timing.moveMs * 0.4));
     return;
   } else if (parts.kind === "wait") {
     moveAvatar(ui.avatar, 50, 82, true);
@@ -298,10 +332,10 @@ async function animateAgentForAction(agent, action) {
   await delay(timing.moveMs * 0.5);
 }
 
-function showWingBubble(agent, text) {
-  const ui = WING_UI[agent];
-  ui.stage.querySelectorAll(".wing-action-bubble").forEach((node) => node.remove());
-  ui.stage.append(createElement("div", "wing-action-bubble", text));
+function clearActionTargets() {
+  document.querySelectorAll(".spatial-object.action-target").forEach((object) => {
+    object.classList.remove("action-target");
+  });
 }
 
 async function animateAgentToNode(agent, nodeId, durationMs) {
@@ -318,17 +352,17 @@ async function animateAgentToNode(agent, nodeId, durationMs) {
   agentPositions[agent] = target;
   syncWingMap(agent, view, { skipAvatarMove: true });
 
-  const ui = WING_UI[agent];
-  ui.avatar.classList.add("acting");
-  moveAvatar(ui.avatar, target.x, target.y, true);
+  const avatar = WING_UI[agent].avatar;
+  avatar.classList.add("acting");
+  moveAvatar(avatar, target.x, target.y, true);
   highlightActionTarget(agent, nodeId);
   await delay(durationMs);
-  ui.avatar.classList.remove("acting");
-  highlightActionTarget(agent, null);
+  avatar.classList.remove("acting");
 }
 
 function highlightActionTarget(agent, nodeId) {
-  WING_UI[agent].nodes.querySelectorAll(".spatial-object").forEach((object) => {
+  const nodesRoot = isSharedRoom() ? WING_UI.A.nodes : WING_UI[agent].nodes;
+  nodesRoot.querySelectorAll(".spatial-object").forEach((object) => {
     object.classList.toggle("action-target", Boolean(nodeId && object.dataset.nodeId === nodeId));
   });
 }
@@ -340,7 +374,7 @@ async function peekUpcomingTurn() {
       method: "POST",
       body: "{}",
     });
-    return payload.turn;
+    return payload;
   } catch {
     cinematicPeekAvailable = false;
     if (!warnedAboutServerRestart) {
@@ -363,43 +397,74 @@ function capitalize(text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
+function stepActionsFromPeek(peekPayload) {
+  if (peekPayload?.actions) return peekPayload.actions;
+  if (peekPayload?.agent && peekPayload?.action) {
+    return { [peekPayload.agent]: peekPayload.action };
+  }
+  return null;
+}
+
+function jointStepPreviewLines(actions) {
+  return Object.entries(actions)
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(
+      ([agent, action]) =>
+        `${capitalize(agentLabel(agent))} ${humanizeAction(action)}`,
+    )
+    .join(" · ");
+}
+
+async function animateJointActions(actions) {
+  const timing = getSimTiming();
+  const agents = Object.keys(actions).sort();
+  highlightActiveAgents(agents);
+  clearActionTargets();
+  await Promise.all(
+    agents.map((agent) => animateAgentForAction(agent, actions[agent])),
+  );
+  clearActionTargets();
+  highlightActiveAgents(agents);
+  await delay(Math.round(timing.betweenMs * 0.35));
+}
+
 async function playCinematicStep() {
   applyPlaybackSpeed();
   const timing = getSimTiming();
   const upcoming = await peekUpcomingTurn();
+  const upcomingActions = stepActionsFromPeek(upcoming);
 
-  if (upcoming) {
-    const { agent, action } = upcoming;
-    highlightActiveWing(agent);
+  if (upcomingActions) {
+    const stepNum = upcoming?.env_step ?? (gameState?.env_step ?? 0) + 1;
     setCaption(
-      `${capitalize(agentLabel(agent))} ${humanizeAction(action)}…`,
-      turnsLeftLabel(),
+      `Step ${stepNum} — both agents act together`,
+      jointStepPreviewLines(upcomingActions),
     );
-    await animateAgentForAction(agent, action);
-    await delay(timing.beforeMs);
+    await animateJointActions(upcomingActions);
   } else {
     await delay(timing.beforeMs);
   }
 
   const payload = await executeAutoStep();
   gameState = payload.state;
-  const turn = payload.turn || gameState.episode_log?.[gameState.episode_log.length - 1];
-  if (turn && !upcoming) {
-    highlightActiveWing(turn.agent);
-    setCaption(
-      `${capitalize(agentLabel(turn.agent))} ${humanizeAction(turn.action)}…`,
-      turnsLeftLabel(),
+  const stepAgents = payload.step?.agents || [];
+  if (!upcomingActions && stepAgents.length) {
+    const preview = Object.fromEntries(
+      stepAgents.map((record) => [record.agent, record.action]),
     );
-    await animateAgentForAction(turn.agent, turn.action);
+    await animateJointActions(preview);
   }
 
-  renderAfterSimStep(turn, payload.outcome);
-  if (turn) {
-    const ok = turn.valid !== false && payload.outcome.valid !== false;
-    const resultText = turn.result || payload.outcome.result;
+  renderAfterSimStep();
+  highlightActiveAgents(gameState?.active_agents);
+  if (stepAgents.length) {
+    const lines = stepAgents.map(
+      (record) =>
+        `${capitalize(agentLabel(record.agent))}: ${record.narrative || humanizeAction(record.action)}`,
+    );
     setCaption(
-      `${capitalize(agentLabel(turn.agent))} ${humanizeAction(turn.action)}`,
-      ok ? resultText : `Failed — ${resultText}`,
+      `Step ${payload.env_step || gameState.env_step} complete`,
+      lines.join(" · "),
     );
   }
   await delay(timing.afterMs);
@@ -414,10 +479,15 @@ function turnsLeftLabel() {
 function renderAfterSimStep() {
   if (!gameState) return;
   document.body.classList.toggle("solo-mode", isSingleAgent());
+  document.body.classList.toggle("shared-mode", isSharedRoom());
 
-  for (const agent of activeWingAgents()) {
-    const wing = gameState.wings[agent];
-    if (wing) syncWingMap(agent, wing);
+  if (isSharedRoom()) {
+    syncSharedMap();
+  } else {
+    for (const agent of activeWingAgents()) {
+      const wing = gameState.wings[agent];
+      if (wing) syncWingMap(agent, wing);
+    }
   }
 
   syncTrajectoryLog();
@@ -436,7 +506,8 @@ async function runEpisodeAnimated() {
     await configureDefaultEpisode();
     resetTrajectoryLog();
     await resetGame(false);
-    setCaption("Episode started — two honest agents take turns.", turnsLeftLabel());
+    highlightActiveAgents(gameState?.active_agents);
+    setCaption("Episode started — one step, both agents move together.", turnsLeftLabel());
     const timing = getSimTiming();
     while (!gameState.round_over && gameState.scripted_turn) {
       await playCinematicStep();
@@ -451,7 +522,7 @@ async function runEpisodeAnimated() {
     showToast(error.message, true);
   } finally {
     document.body.classList.remove("simulation-running");
-    clearWingBubbles();
+    clearActionTargets();
     busy = false;
     setControlsDisabled(false);
   }
@@ -486,10 +557,15 @@ async function resetGame(showMessage = true) {
 function render() {
   if (!gameState) return;
   document.body.classList.toggle("solo-mode", isSingleAgent());
+  document.body.classList.toggle("shared-mode", isSharedRoom());
 
-  for (const agent of activeWingAgents()) {
-    const wing = gameState.wings[agent];
-    if (wing) syncWingMap(agent, wing);
+  if (isSharedRoom()) {
+    syncSharedMap();
+  } else {
+    for (const agent of activeWingAgents()) {
+      const wing = gameState.wings[agent];
+      if (wing) syncWingMap(agent, wing);
+    }
   }
 
   if (gameState.round_over) {
@@ -497,30 +573,72 @@ function render() {
     return;
   }
 
-  const view = gameState.view;
-  if (view) {
-    highlightActiveWing(view.agent);
-  }
+  highlightActiveAgents(gameState.active_agents);
 
-  syncTrajectoryLog(true);
+  syncTrajectoryLog();
 
   if (!document.body.classList.contains("simulation-running")) {
     setCaption(
-      "Press Start to watch two agents cooperate and escape.",
-      gameState.scripted_turn ? turnsLeftLabel() : "",
+      "Press Start — each step, both agents act at the same time.",
+      gameState.scripted_step || gameState.scripted_turn ? turnsLeftLabel() : "",
     );
   }
   setControlsDisabled(false);
 }
 
-function highlightActiveWing(agent) {
+function highlightActiveAgents(agents) {
+  const list = Array.isArray(agents)
+    ? agents
+    : gameState?.active_agents?.length
+      ? gameState.active_agents
+      : gameState?.active_agent
+        ? [gameState.active_agent]
+        : [];
+
+  if (isSharedRoom()) {
+    WING_UI.A.panel?.classList.add("active-wing");
+    WING_UI.A.avatar?.classList.toggle("active-agent", list.includes("A"));
+    WING_UI.B.avatar?.classList.toggle("active-agent", list.includes("B"));
+    return;
+  }
+
   for (const wingAgent of ["A", "B"]) {
-    WING_UI[wingAgent].panel?.classList.toggle("active-wing", wingAgent === agent);
+    const on = list.includes(wingAgent);
+    WING_UI[wingAgent].panel?.classList.toggle("active-wing", on);
+    WING_UI[wingAgent].avatar?.classList.toggle("active-agent", on);
   }
 }
 
+function syncSharedMap() {
+  const view = gameState.wings.A || gameState.wings.B;
+  if (!view) return;
+  const ui = WING_UI.A;
+  ui.title.textContent = gameState.room?.space || view.wing;
+  const roomTag = ui.panel?.querySelector(".room-tag");
+  if (roomTag) roomTag.textContent = gameState.room?.space || view.wing;
+
+  const stage = ui.stage;
+  if (stage && WING_UI.B.avatar.parentElement !== stage) {
+    stage.appendChild(WING_UI.B.avatar);
+  }
+
+  syncWingMap("A", view, {
+    skipAvatarMove: true,
+    forceActive: gameState.active_agent === "A",
+  });
+
+  if (!agentPositions.A) agentPositions.A = { x: 38, y: 88 };
+  if (!agentPositions.B) agentPositions.B = { x: 62, y: 88 };
+  const animateMove = document.body.classList.contains("simulation-running");
+  moveAvatar(WING_UI.A.avatar, agentPositions.A.x, agentPositions.A.y, animateMove);
+  moveAvatar(WING_UI.B.avatar, agentPositions.B.x, agentPositions.B.y, animateMove);
+  WING_UI.A.avatar.classList.remove("hidden");
+  WING_UI.B.avatar.classList.remove("hidden");
+  highlightActiveAgents(gameState.active_agents);
+}
+
 function ensureSpatialObject(agent, node, isActive) {
-  const ui = WING_UI[agent];
+  const ui = uiForAgent(agent);
   let object = ui.nodes.querySelector(`[data-node-id="${CSS.escape(node.id)}"]`);
   if (!object) {
     object = createElement("button", "spatial-object");
@@ -544,18 +662,25 @@ function ensureSpatialObject(agent, node, isActive) {
 }
 
 function syncWingMap(agent, view, options = {}) {
-  const { skipAvatarMove = false } = options;
-  const ui = WING_UI[agent];
-  ui.title.textContent = view.wing;
-  ui.avatar.classList.remove("hidden");
+  const { skipAvatarMove = false, forceActive } = options;
+  if (isSharedRoom() && agent !== "A") {
+    return;
+  }
+  const ui = isSharedRoom() ? WING_UI.A : WING_UI[agent];
+  const avatar = WING_UI[agent].avatar;
+  if (!isSharedRoom()) {
+    ui.title.textContent = view.wing;
+  }
+  avatar.classList.remove("hidden");
 
   if (!skipAvatarMove) {
     const position = agentPositions[agent] || { x: 50, y: 88 };
     const animateMove = document.body.classList.contains("simulation-running");
-    moveAvatar(ui.avatar, position.x, position.y, animateMove);
+    moveAvatar(avatar, position.x, position.y, animateMove);
   }
 
-  const isActive = agent === gameState.active_agent;
+  const isActive =
+    forceActive !== undefined ? forceActive : agent === gameState.active_agent;
   const seen = new Set();
   for (const node of view.nodes) {
     seen.add(node.id);

@@ -1,0 +1,77 @@
+id: shared_mat_example
+layout: shared
+space: room
+
+wings:
+  A: room
+  B: room
+
+codes:
+  drawer: "3906"
+  cabinet: "4721"
+
+items:
+  brass_key:
+    name: brass key
+
+nodes:
+  - id: mat
+    wing: shared
+    kind: spot
+    desc: A worn doormat by the exit.
+
+  - id: coat_rack
+    wing: shared
+    kind: spot
+    desc: A coat rack with empty hooks.
+
+  - id: desk
+    wing: shared
+    kind: spot
+    desc: A cluttered desk with a locked drawer.
+
+  - id: wall_poster
+    wing: shared
+    kind: clue
+    code: drawer
+    desc: A safety poster above the desk.
+
+  - id: desk_drawer
+    wing: shared
+    kind: container
+    requires:
+      code: drawer
+    contents: [drawer_note]
+    desc: A locked drawer in the desk.
+
+  - id: drawer_note
+    wing: shared
+    kind: clue
+    hidden: true
+    code: cabinet
+    desc: A folded note inside the drawer.
+
+  - id: filing_cabinet
+    wing: shared
+    kind: container
+    requires:
+      code: cabinet
+    contents: [brass_key]
+    desc: A tall filing cabinet with a keypad lock.
+
+  - id: toolbox
+    wing: shared
+    kind: spot
+    desc: A red toolbox bolted to the floor. It will not open.
+
+  - id: sticky_note
+    wing: shared
+    kind: spot
+    desc: A sticky note on the monitor — start with the safety poster on the wall.
+
+  - id: exit
+    wing: shared
+    kind: door
+    requires:
+      item: [brass_key]
+    desc: The only exit — a door with a keyhole.

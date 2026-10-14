@@ -12,32 +12,43 @@ def make_game(turn_budget: int = 12) -> WebGame:
     return WebGame(load_room(EXAMPLE_ROOM), turn_budget=turn_budget)
 
 
-def test_web_game_alternates_agents_after_every_action() -> None:
+def test_web_game_joint_step_decrements_both_agents() -> None:
     game = make_game()
 
-    first = game.submit("inspect(sticky_note)")
-    second = game.submit("take(brass_key)")
+    outcomes = game.submit_joint(
+        {
+            "A": "inspect(sticky_note)",
+            "B": "inspect(filing_tag)",
+        }
+    )
 
-    assert first.valid
-    assert second.valid
-    assert game.active_agent == "A"
+    assert outcomes["A"].valid
+    assert outcomes["B"].valid
+    assert game.active_agents == ("A", "B")
     assert game.engine.agents["A"].turns_left == 11
     assert game.engine.agents["B"].turns_left == 11
 
 
-def test_invalid_action_still_advances_the_turn() -> None:
+def test_invalid_joint_action_still_spends_the_tick() -> None:
     game = make_game()
 
-    outcome = game.submit("not an action")
+    outcomes = game.submit_joint(
+        {
+            "A": "not an action",
+            "B": "inspect(filing_tag)",
+        }
+    )
 
-    assert not outcome.valid
-    assert game.active_agent == "B"
+    assert not outcomes["A"].valid
+    assert outcomes["B"].valid
     assert game.engine.agents["A"].turns_left == 11
+    assert game.engine.agents["B"].turns_left == 11
 
 
 def test_state_payload_contains_guided_action_data() -> None:
     payload = make_game().state_payload()
 
+    assert payload["active_agents"] == ["A", "B"]
     assert payload["active_agent"] == "A"
     assert payload["agents"]["A"]["wing"] == "office"
     sticky_note = next(
@@ -56,8 +67,10 @@ def test_spatial_positions_are_unique_and_stable() -> None:
         node["id"]: node["position"] for node in first_payload["view"]["nodes"]
     }
 
-    game.submit("inspect(sticky_note)")
-    game.submit("wait()")
+    game.submit_joint(
+        {"A": "inspect(sticky_note)", "B": "inspect(filing_tag)"}
+    )
+    game.submit_joint({"A": "say(test)", "B": "inspect(filing_tag)"})
     second_payload = game.state_payload()
     second_positions = {
         node["id"]: node["position"] for node in second_payload["view"]["nodes"]
@@ -71,8 +84,10 @@ def test_spatial_positions_are_unique_and_stable() -> None:
 
 def test_reset_restores_initial_state() -> None:
     game = make_game()
-    game.submit("inspect(sticky_note)")
-    game.submit("take(brass_key)")
+    game.submit_joint(
+        {"A": "inspect(sticky_note)", "B": "inspect(filing_tag)"}
+    )
+    game.submit_joint({"A": "say(test)", "B": "take(brass_key)"})
 
     game.reset()
 

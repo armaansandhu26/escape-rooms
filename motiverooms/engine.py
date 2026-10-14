@@ -4,7 +4,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from collections.abc import Mapping
+
 from motiverooms.actions import Action, ActionParseError, parse_action
+from motiverooms.joint_step import TAKE_CONFLICT_MESSAGE, VERB_PHASES
 from motiverooms.schema import AgentId, Node, Room
 
 
@@ -31,11 +34,12 @@ class ActionOutcome:
 
 
 class RoomEngine:
-    """Owns mutable room state and applies one action at a time.
+    """Deterministic room state.
 
-    Parsing failures and illegal actions consume a turn, just like successful
-    actions.  Callers may decide turn order; the engine only guarantees that an
-    escaped or exhausted agent cannot act again.
+    ``step`` applies one agent action (sequential API, tests and split-wing play).
+    ``step_joint`` is one environment tick: every still-active agent submits an
+    action; all are applied in verb phases with deterministic tie-break order
+    (A before B). Each acting agent spends one turn from their budget per tick.
     """
 
     def __init__(
@@ -56,6 +60,7 @@ class RoomEngine:
         self.taken_items: set[str] = set()
         self.messages: list[Message] = []
         self.notes: list[str] = []
+        self.inspected_nodes: set[str] = set()
 
     def is_visible(self, node: Node) -> bool:
         if not node.hidden:
@@ -69,7 +74,7 @@ class RoomEngine:
     def visible_nodes(self, agent: AgentId) -> tuple[Node, ...]:
         return tuple(
             node
-            for node in self.room.nodes_in_wing(agent)
+            for node in self.room.nodes_for_agent(agent)
             if self.is_visible(node)
         )
 
@@ -86,6 +91,83 @@ class RoomEngine:
         except ActionParseError as error:
             return self._finish(agent, None, False, f"Invalid action: {error}")
 
+        return self._apply_parsed_action(agent, action)
+
+    def step_joint(
+        self, actions: Mapping[AgentId, str | Action]
+    ) -> dict[AgentId, ActionOutcome]:
+        order = tuple(self.room.wings)
+        active = [agent for agent in order if self._can_act(agent)]
+        if not active:
+            raise ValueError("The round is over; no agent can act.")
+
+        missing = [agent for agent in active if agent not in actions]
+        if missing:
+            agents = ", ".join(missing)
+            raise ValueError(f"Missing action(s) for active agent(s): {agents}")
+
+        for agent in active:
+            self.agents[agent].turns_left -= 1
+
+        parsed: dict[AgentId, Action | None] = {}
+        outcomes: dict[AgentId, ActionOutcome] = {}
+
+        for agent in active:
+            raw = actions[agent]
+            try:
+                parsed[agent] = (
+                    parse_action(raw) if isinstance(raw, str) else raw
+                )
+            except ActionParseError as error:
+                parsed[agent] = None
+                outcomes[agent] = self._finish(
+                    agent, None, False, f"Invalid action: {error}"
+                )
+
+        take_winners: dict[str, AgentId] = {}
+
+        for phase in VERB_PHASES:
+            for agent in order:
+                if agent not in active or agent in outcomes:
+                    continue
+                action = parsed[agent]
+                assert action is not None
+                if action.verb not in phase:
+                    continue
+                if action.verb == "take":
+                    item_id = action.args[0]
+                    holder = take_winners.get(item_id)
+                    if holder is not None and holder != agent:
+                        outcomes[agent] = self._finish(
+                            agent,
+                            action,
+                            False,
+                            TAKE_CONFLICT_MESSAGE,
+                        )
+                        continue
+                    outcome = self._apply_parsed_action(agent, action)
+                    if outcome.valid:
+                        take_winners[item_id] = agent
+                    outcomes[agent] = outcome
+                else:
+                    outcomes[agent] = self._apply_parsed_action(agent, action)
+
+        for agent in active:
+            if agent not in outcomes:
+                action = parsed[agent]
+                outcomes[agent] = self._finish(
+                    agent, action, False, "Unhandled action."
+                )
+
+        return outcomes
+
+    def _can_act(self, agent: AgentId) -> bool:
+        state = self.agents[agent]
+        return not state.escaped and state.turns_left > 0
+
+    def _apply_parsed_action(
+        self, agent: AgentId, action: Action
+    ) -> ActionOutcome:
         handler = getattr(self, f"_act_{action.verb}")
         valid, result = handler(agent, *action.args)
         return self._finish(agent, action, valid, result)
@@ -113,7 +195,7 @@ class RoomEngine:
             node = self.room.node(node_id)
         except KeyError:
             return None, f"Unknown node: {node_id}."
-        if node.wing != agent:
+        if not self.room.is_shared and node.wing != agent:
             return None, "That node is not in your wing."
         if not self.is_visible(node):
             return None, "That node is hidden."
@@ -128,7 +210,9 @@ class RoomEngine:
             assert node.code is not None
             value = self.room.codes[node.code]
             self.agents[agent].read_codes[node.id] = value
+            self.inspected_nodes.add(node_id)
             return True, f"{node.desc} It reads {value}."
+        self.inspected_nodes.add(node_id)
         return True, node.desc
 
     def _act_take(self, agent: AgentId, item_id: str) -> tuple[bool, str]:
@@ -200,6 +284,10 @@ class RoomEngine:
     def _open(self, agent: AgentId, node: Node) -> tuple[bool, str]:
         self.opened_nodes.add(node.id)
         if node.kind == "door":
+            if self.room.is_shared:
+                for state in self.agents.values():
+                    state.escaped = True
+                return True, "The door opens. Everyone escapes!"
             self.agents[agent].escaped = True
             return True, "The door opens. You escape!"
         return True, f"You open {node.id}."
