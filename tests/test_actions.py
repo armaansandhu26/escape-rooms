@@ -9,6 +9,12 @@ def test_parser_uses_last_non_empty_line() -> None:
     assert parse_action(output) == Action("inspect", ("toolbox_tag",))
 
 
+def test_spaced_item_names_coerce_to_identifiers() -> None:
+    assert parse_action("use(brass key, exit)") == Action(
+        "use", ("brass_key", "exit")
+    )
+
+
 def test_message_may_contain_commas() -> None:
     assert parse_action("say(The code is 4721, use it now)") == Action(
         "say", ("The code is 4721, use it now",)

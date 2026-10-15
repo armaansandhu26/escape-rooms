@@ -49,6 +49,7 @@ def render_observation(
     round_number: int = 1,
     total_rounds: int = 1,
     message_limit: int = 6,
+    partner_action_steps: int = 3,
 ) -> str:
     state = engine.agents[agent]
     partner = next((other for other in engine.agents if other != agent), None)
@@ -66,13 +67,25 @@ def render_observation(
             f"ROUND {round_number}/{total_rounds} | You are agent {agent} | "
             f"Turns left: {state.turns_left} | Partner: {partner_status}"
         ),
-        "",
-        (
-            f"THE ROOM ({engine.room.space})"
-            if engine.room.is_shared
-            else f"YOUR WING ({engine.room.wings[agent]})"
-        ),
     ]
+    if partner is not None:
+        lines.extend(
+            [
+                "",
+                "HINT: Codes you read from clues are private until you say(...) them.",
+                "If a container is [open; contains: ...], use take(<item_id>) on that item.",
+            ]
+        )
+    lines.extend(
+        [
+            "",
+            (
+                f"THE ROOM ({engine.room.space})"
+                if engine.room.is_shared
+                else f"YOUR WING ({engine.room.wings[agent]})"
+            ),
+        ]
+    )
     lines.extend(
         f"- {node.id}: {node.desc} [{_node_status(engine, agent, node)}]"
         for node in engine.visible_nodes(agent)
@@ -82,6 +95,20 @@ def render_observation(
     lines.extend(["", f"YOUR BAG: {', '.join(bag_names) if bag_names else '(empty)'}"])
 
     if partner is not None:
+        lines.extend(["", "PARTNER LAST STEP"])
+        partner_last = engine.last_joint_actions.get(partner)
+        lines.append(f"- {partner_last}" if partner_last else "- (none yet)")
+
+        if partner_action_steps > 0:
+            recent_partner = _partner_action_history(
+                engine, partner, partner_action_steps
+            )
+            lines.extend(["", f"PARTNER RECENT (last {partner_action_steps})"])
+            if recent_partner:
+                lines.extend(f"- {action}" for action in recent_partner)
+            else:
+                lines.append("- (none yet)")
+
         lines.extend(["", f"MESSAGES (last {message_limit})"])
         recent_messages = engine.messages[-message_limit:]
         if recent_messages:
@@ -115,6 +142,10 @@ def _node_status(engine: RoomEngine, agent: AgentId, node: Node) -> str:
         ]
         return "contains: " + ", ".join(available) if available else "empty"
     if node.id in engine.opened_nodes:
+        if node.kind == "container":
+            available = _open_container_labels(engine, agent, node)
+            if available:
+                return "open; contains: " + ", ".join(available)
         return "open"
 
     assert node.requires is not None
@@ -124,3 +155,52 @@ def _node_status(engine: RoomEngine, agent: AgentId, node: Node) -> str:
         engine.room.items[item_id].name for item_id in node.requires.items
     ]
     return "locked: needs " + " or ".join(item_names)
+
+
+def _open_container_labels(
+    engine: RoomEngine, agent: AgentId, container: Node
+) -> list[str]:
+    """Container contents may be item ids or inner node ids (e.g. clues)."""
+    labels: list[str] = []
+    for content_id in container.contents:
+        label = _format_content_id(engine, agent, content_id)
+        if label is not None:
+            labels.append(label)
+    return labels
+
+
+def _format_content_id(
+    engine: RoomEngine, agent: AgentId, content_id: str
+) -> str | None:
+    if content_id in engine.room.items:
+        if content_id in engine.taken_items:
+            return None
+        item = engine.room.items[content_id]
+        return f"{item.name} ({content_id})"
+
+    try:
+        inner = engine.room.node(content_id)
+    except KeyError:
+        return None
+    if not engine.is_visible(inner):
+        return None
+    if inner.kind == "clue":
+        if content_id in engine.agents[agent].read_codes:
+            return None
+        return f"{content_id} (inspect clue)"
+    return content_id
+
+
+def _partner_action_history(
+    engine: RoomEngine, partner: AgentId, limit: int
+) -> list[str]:
+    collected: list[str] = []
+    for step_actions in reversed(engine.joint_action_history):
+        action = step_actions.get(partner)
+        if action is None:
+            continue
+        collected.append(action)
+        if len(collected) >= limit:
+            break
+    collected.reverse()
+    return collected

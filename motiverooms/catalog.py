@@ -71,11 +71,19 @@ PRESETS: tuple[PresetEntry, ...] = (
     ),
     PresetEntry(
         key="ideal_cooperation",
-        label="Ideal cooperation — honest × honest",
+        label="Shared room — cooperative replay",
         room_key="shared_mat",
         partner_a="honest",
         partner_b="honest",
         mode="collaborative",
+    ),
+    PresetEntry(
+        key="shared_competitive",
+        label="Shared room — competitive replay",
+        room_key="shared_mat",
+        partner_a="honest",
+        partner_b="honest",
+        mode="competitive",
     ),
     PresetEntry(
         key="solo_human",

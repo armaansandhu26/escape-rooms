@@ -66,10 +66,26 @@ def parse_action(output: str) -> Action:
 
     if verb not in {"say", "write_note", "read_notes", "wait"}:
         identifier_arguments = arguments[1:] if verb == "enter" else arguments
-        if any(IDENTIFIER_RE.fullmatch(arg) is None for arg in identifier_arguments):
-            raise ActionParseError("Node and item ids must be identifiers")
+        try:
+            coerced = tuple(_coerce_identifier(arg) for arg in identifier_arguments)
+        except ActionParseError:
+            raise ActionParseError("Node and item ids must be identifiers") from None
+        if verb == "enter":
+            arguments = (arguments[0], coerced[0])
+        else:
+            arguments = coerced
 
     if verb == "enter" and not arguments[0].isdigit():
         raise ActionParseError("enter expects a numeric code")
 
     return Action(verb=verb, args=arguments)
+
+
+def _coerce_identifier(raw: str) -> str:
+    text = raw.strip()
+    if IDENTIFIER_RE.fullmatch(text):
+        return text
+    collapsed = re.sub(r"[\s-]+", "_", text)
+    if IDENTIFIER_RE.fullmatch(collapsed):
+        return collapsed
+    raise ActionParseError("Node and item ids must be identifiers")

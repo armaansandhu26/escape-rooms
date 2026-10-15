@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Literal
 
 from collections.abc import Mapping
 
 from motiverooms.actions import Action, ActionParseError, parse_action
 from motiverooms.joint_step import TAKE_CONFLICT_MESSAGE, VERB_PHASES
 from motiverooms.schema import AgentId, Node, Room
+
+SharedEscapeMode = Literal["together", "race"]
 
 
 @dataclass
@@ -48,11 +51,13 @@ class RoomEngine:
         turn_budget: int,
         *,
         max_message_words: int = 40,
+        shared_escape: SharedEscapeMode = "together",
     ) -> None:
         if turn_budget <= 0:
             raise ValueError("turn_budget must be positive")
         self.room = room
         self.max_message_words = max_message_words
+        self.shared_escape = shared_escape
         self.agents = {
             agent: AgentState(turns_left=turn_budget) for agent in room.wings
         }
@@ -61,6 +66,9 @@ class RoomEngine:
         self.messages: list[Message] = []
         self.notes: list[str] = []
         self.inspected_nodes: set[str] = set()
+        self.last_joint_actions: dict[AgentId, str] = {}
+        self.joint_action_history: list[dict[AgentId, str]] = []
+        self._joint_history_limit = 16
 
     def is_visible(self, node: Node) -> bool:
         if not node.hidden:
@@ -86,12 +94,17 @@ class RoomEngine:
             return ActionOutcome(None, False, "You have no turns left.")
 
         state.turns_left -= 1
+        raw_line = output if isinstance(output, str) else str(output)
         try:
             action = parse_action(output) if isinstance(output, str) else output
         except ActionParseError as error:
-            return self._finish(agent, None, False, f"Invalid action: {error}")
+            outcome = self._finish(agent, None, False, f"Invalid action: {error}")
+            self._record_joint_step({agent: raw_line})
+            return outcome
 
-        return self._apply_parsed_action(agent, action)
+        outcome = self._apply_parsed_action(agent, action)
+        self._record_joint_step({agent: raw_line})
+        return outcome
 
     def step_joint(
         self, actions: Mapping[AgentId, str | Action]
@@ -159,7 +172,76 @@ class RoomEngine:
                     agent, action, False, "Unhandled action."
                 )
 
+        action_lines = {
+            agent: (
+                actions[agent]
+                if isinstance(actions[agent], str)
+                else str(actions[agent])
+            )
+            for agent in active
+        }
+        self._record_joint_step(action_lines)
         return outcomes
+
+    def _record_joint_step(self, action_lines: dict[AgentId, str]) -> None:
+        if not action_lines:
+            return
+        self.last_joint_actions.update(action_lines)
+        self.joint_action_history.append(dict(action_lines))
+        overflow = len(self.joint_action_history) - self._joint_history_limit
+        if overflow > 0:
+            del self.joint_action_history[:overflow]
+
+    def action_rejection_reason(
+        self,
+        agent: AgentId,
+        action: Action,
+        *,
+        committed: Mapping[AgentId, Action] | None = None,
+    ) -> str | None:
+        """Return why an action would fail now (read-only); ``None`` if it may succeed."""
+        if action.verb == "take":
+            item_id = action.args[0]
+            if item_id not in self.room.items:
+                return (
+                    f"Unknown item: {item_id}. "
+                    "Clues and notes use inspect(node_id), not take(...)."
+                )
+            if committed:
+                for other, other_action in committed.items():
+                    if (
+                        other != agent
+                        and other_action.verb == "take"
+                        and other_action.args[0] == item_id
+                    ):
+                        return TAKE_CONFLICT_MESSAGE
+            if item_id in self.taken_items:
+                return "That item is no longer there."
+            if self._available_item_source(agent, item_id) is None:
+                return "That item is not available."
+
+        if action.verb in {"enter", "use"}:
+            node_id = action.args[-1]
+            node, error = self._lockable_node(agent, node_id)
+            if error is not None:
+                return error
+            assert node is not None
+            if action.verb == "use":
+                item_id = action.args[0]
+                if item_id not in self.agents[agent].bag:
+                    return "You are not carrying that item."
+
+        if action.verb == "inspect":
+            _node, error = self._usable_node(agent, action.args[0])
+            if error is not None:
+                return error
+
+        if action.verb == "give":
+            item_id = action.args[0]
+            if item_id not in self.agents[agent].bag:
+                return "You are not carrying that item."
+
+        return None
 
     def _can_act(self, agent: AgentId) -> bool:
         state = self.agents[agent]
@@ -284,11 +366,13 @@ class RoomEngine:
     def _open(self, agent: AgentId, node: Node) -> tuple[bool, str]:
         self.opened_nodes.add(node.id)
         if node.kind == "door":
-            if self.room.is_shared:
+            if self.room.is_shared and self.shared_escape == "together":
                 for state in self.agents.values():
                     state.escaped = True
                 return True, "The door opens. Everyone escapes!"
             self.agents[agent].escaped = True
+            if self.room.is_shared and self.shared_escape == "race":
+                return True, "The door opens. You escape! The other agent is still inside."
             return True, "The door opens. You escape!"
         return True, f"You open {node.id}."
 

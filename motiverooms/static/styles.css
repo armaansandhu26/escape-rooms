@@ -101,6 +101,33 @@ p {
   gap: 10px;
 }
 
+.mode-toggle {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.mode-toggle.hidden {
+  display: none;
+}
+
+.mode-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 999px;
+  color: var(--muted);
+  background: transparent;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mode-btn.is-active {
+  color: #0c1208;
+  background: var(--blue);
+}
+
 .speed-toggle {
   display: inline-flex;
   padding: 3px;

@@ -4,18 +4,32 @@ from __future__ import annotations
 
 from typing import Any
 
-from motiverooms.engine import ActionOutcome, RoomEngine
+from motiverooms.engine import ActionOutcome, RoomEngine, SharedEscapeMode
 from motiverooms.schema import AgentId, Node, Room
 
 
 class WebGame:
     """One environment tick = all active agents act together via ``step_joint``."""
 
-    def __init__(self, room: Room, turn_budget: int = 12) -> None:
+    def __init__(
+        self,
+        room: Room,
+        turn_budget: int = 12,
+        *,
+        mode: str = "collaborative",
+    ) -> None:
         self.room = room
         self.turn_budget = turn_budget
+        self.mode = mode
         self.agent_order = tuple(room.wings)
-        self.engine = RoomEngine(room, turn_budget=turn_budget)
+        self.shared_escape: SharedEscapeMode = (
+            "race" if room.is_shared and mode == "competitive" else "together"
+        )
+        self.engine = RoomEngine(
+            room,
+            turn_budget=turn_budget,
+            shared_escape=self.shared_escape,
+        )
         self.env_step: int = 0
 
     @property
@@ -30,10 +44,25 @@ class WebGame:
 
     @property
     def round_over(self) -> bool:
+        if self.shared_escape == "race" and any(
+            state.escaped for state in self.engine.agents.values()
+        ):
+            return True
         return not self.active_agents
 
+    @property
+    def race_winner(self) -> AgentId | None:
+        if self.shared_escape != "race":
+            return None
+        escaped = [a for a in self.agent_order if self.engine.agents[a].escaped]
+        return escaped[0] if len(escaped) == 1 else None
+
     def reset(self) -> None:
-        self.engine = RoomEngine(self.room, self.turn_budget)
+        self.engine = RoomEngine(
+            self.room,
+            self.turn_budget,
+            shared_escape=self.shared_escape,
+        )
         self.env_step = 0
 
     def submit_joint(
@@ -83,6 +112,8 @@ class WebGame:
             "active_agents": list(active),
             "active_agent": lead,
             "round_over": self.round_over,
+            "race_winner": self.race_winner,
+            "shared_escape": self.shared_escape,
             "agents": {
                 agent: {
                     "wing": self._agent_space_label(agent),

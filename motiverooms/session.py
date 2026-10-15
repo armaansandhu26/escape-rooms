@@ -40,8 +40,8 @@ class AppSession:
 
     def reload_game(self) -> None:
         room = load_room(self.room_entry.path)
-        self.game = WebGame(room, turn_budget=self.turn_budget)
-        self.brain = PartnerBrain(room)
+        self.game = WebGame(room, turn_budget=self.turn_budget, mode=self.mode)
+        self.brain = PartnerBrain(room, mode=self.mode)
         if not self.controllers:
             self.controllers = {
                 agent: "human" for agent in room.wings  # type: ignore[misc]

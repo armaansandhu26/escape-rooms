@@ -27,6 +27,27 @@ JOINT_SCRIPTS: dict[str, list[dict[AgentId, str]]] = {
     ],
 }
 
+# Recorded LLM-style race (competitive / shared_escape=race).
+COMPETITIVE_JOINT_SCRIPTS: dict[str, list[dict[AgentId, str]]] = {
+    "shared_mat_example": [
+        {"A": "inspect(wall_poster)", "B": "inspect(wall_poster)"},
+        {"A": "enter(3906, filing_cabinet)", "B": "enter(3906, desk_drawer)"},
+        {"A": "enter(3906, filing_cabinet)", "B": "inspect(drawer_note)"},
+        {"A": "enter(3906, filing_cabinet)", "B": "enter(4721, filing_cabinet)"},
+        {"A": "take(brass_key)", "B": "use(brass_key, exit)"},
+        {"A": "use(brass_key, exit)", "B": "say(3906)"},
+    ],
+}
+
+
+def joint_script_for_room(room_id: str, mode: str) -> list[dict[AgentId, str]] | None:
+    if mode == "competitive":
+        script = COMPETITIVE_JOINT_SCRIPTS.get(room_id)
+        if script is not None:
+            return script
+    return JOINT_SCRIPTS.get(room_id)
+
+
 # Legacy alternating-turn scripts (split-wing rooms).
 COOPERATIVE_SCRIPTS: dict[str, list[tuple[AgentId, str]]] = {
     # Actions follow strict A/B alternation (escaped agents are skipped).
@@ -148,13 +169,14 @@ class PartnerBrain:
     """Chooses actions for non-human controllers."""
 
     room: Room
+    mode: str = "collaborative"
     joint_runner: JointScriptRunner | None = None
     honest_runner: ScriptRunner | None = None
     solo_runner: SoloRunner | None = None
 
     def __post_init__(self) -> None:
         self.solo_runner = SoloRunner(self.room)
-        joint = JOINT_SCRIPTS.get(self.room.id)
+        joint = joint_script_for_room(self.room.id, self.mode)
         if joint is not None:
             self.joint_runner = JointScriptRunner(list(joint))
             self.honest_runner = None

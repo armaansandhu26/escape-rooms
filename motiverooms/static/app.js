@@ -1,4 +1,8 @@
 const DEFAULT_PRESET = "ideal_cooperation";
+const PRESET_BY_MODE = {
+  collaborative: "ideal_cooperation",
+  competitive: "shared_competitive",
+};
 
 const WING_UI = {
   A: {
@@ -25,6 +29,8 @@ const elements = {
   startButton: document.querySelector("#start-button"),
   toast: document.querySelector("#toast"),
   speedButtons: document.querySelectorAll(".speed-btn"),
+  modeToggle: document.querySelector("#mode-toggle"),
+  modeButtons: document.querySelectorAll(".mode-btn"),
   trajectoryLog: document.querySelector("#trajectory-log"),
 };
 
@@ -112,16 +118,57 @@ async function loadCatalogFlags() {
   cinematicPeekAvailable = catalog.features?.peek_auto_step !== false;
 }
 
-async function configureDefaultEpisode() {
+function currentMode() {
+  return gameState?.simulation?.mode || "collaborative";
+}
+
+function syncModeToggleUi() {
+  const mode = currentMode();
+  const show = isSharedRoom() && !isSingleAgent();
+  elements.modeToggle?.classList.toggle("hidden", !show);
+  elements.modeButtons.forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.mode === mode);
+  });
+}
+
+async function configurePreset(presetKey) {
   const payload = await request("/api/configure", {
     method: "POST",
-    body: JSON.stringify({ preset: DEFAULT_PRESET }),
+    body: JSON.stringify({ preset: presetKey }),
   });
   gameState = payload.state;
   selectedNodeId.A = null;
   selectedNodeId.B = null;
   agentPositions.A = null;
   agentPositions.B = null;
+  syncModeToggleUi();
+}
+
+async function configureDefaultEpisode() {
+  await configurePreset(DEFAULT_PRESET);
+}
+
+async function setIncentiveMode(mode) {
+  if (busy || mode === currentMode()) return;
+  const preset = PRESET_BY_MODE[mode];
+  if (!preset) return;
+  try {
+    busy = true;
+    await configurePreset(preset);
+    resetTrajectoryLog();
+    elements.roundBanner.classList.add("hidden");
+    setCaption(
+      mode === "competitive"
+        ? "Competitive replay — first agent through the exit wins."
+        : "Cooperative replay — both agents escape together.",
+      "Press Start to watch the scripted trajectory.",
+    );
+    render();
+  } catch (error) {
+    showToast(error.message, true);
+  } finally {
+    busy = false;
+  }
 }
 
 async function loadState() {
@@ -503,7 +550,6 @@ async function runEpisodeAnimated() {
   document.body.classList.add("simulation-running");
   setControlsDisabled(true);
   try {
-    await configureDefaultEpisode();
     resetTrajectoryLog();
     await resetGame(false);
     highlightActiveAgents(gameState?.active_agents);
@@ -558,6 +604,7 @@ function render() {
   if (!gameState) return;
   document.body.classList.toggle("solo-mode", isSingleAgent());
   document.body.classList.toggle("shared-mode", isSharedRoom());
+  syncModeToggleUi();
 
   if (isSharedRoom()) {
     syncSharedMap();
@@ -703,16 +750,22 @@ function moveAvatar(avatar, x, y, animate = true) {
 }
 
 function renderRoundOver() {
+  const winner = gameState.race_winner;
   const escaped = Object.entries(gameState.agents)
     .filter(([, agent]) => agent.escaped)
     .map(([agentId]) => agentId);
-  const summary = escaped.length
-    ? `Agents ${escaped.join(" & ")} escaped!`
-    : "Time ran out — nobody escaped.";
+  let summary;
+  if (winner) {
+    summary = `Agent ${winner} wins — first through the exit.`;
+  } else if (escaped.length) {
+    summary = `Agents ${escaped.join(" & ")} escaped!`;
+  } else {
+    summary = "Time ran out — nobody escaped.";
+  }
 
   elements.roundBanner.textContent = summary;
   elements.roundBanner.classList.remove("hidden");
-  setCaption(summary, "Reset or Start again.");
+  setCaption(summary, "Toggle mode or press Start again.");
   setControlsDisabled(true);
 }
 
@@ -737,6 +790,11 @@ function showToast(message, isError = false) {
 elements.speedButtons.forEach((button) => {
   button.addEventListener("click", () => {
     setSpeed(Number.parseFloat(button.dataset.speed));
+  });
+});
+elements.modeButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    setIncentiveMode(button.dataset.mode);
   });
 });
 elements.startButton.addEventListener("click", runEpisodeAnimated);

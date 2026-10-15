@@ -234,7 +234,6 @@ def _narrate_use(
     outcome: ActionOutcome,
     engine: RoomEngine | None,
 ) -> tuple[TurnTag, str]:
-    del agent, engine
     item_id, node_id = action.args
     item_name = (
         room.items[item_id].name if item_id in room.items else label_id(item_id)
@@ -243,6 +242,12 @@ def _narrate_use(
     if outcome.result == "wrong":
         return "unlock", f"tries the {item_name} on the {label} → does not fit"
     if "escape" in outcome.result.lower():
+        if engine is not None and getattr(engine, "shared_escape", "together") == "race":
+            if "still inside" in outcome.result.lower():
+                return (
+                    "unlock",
+                    f"uses the {item_name} on the {label} → door opens; Agent {agent} escapes alone",
+                )
         return "unlock", f"uses the {item_name} on the {label} → door opens, everyone escapes"
     if "open" in outcome.result.lower():
         return "unlock", f"uses the {item_name} on the {label} → opens"
