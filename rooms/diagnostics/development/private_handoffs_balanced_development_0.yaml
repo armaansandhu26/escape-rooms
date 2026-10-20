@@ -1,0 +1,103 @@
+id: private_handoffs_balanced_development_0
+wings:
+  A: west office
+  B: east office
+codes:
+  code_9343: '6537'
+  code_1348: '3214'
+  code_2952: '7582'
+  code_5195: '1867'
+  code_2891: '2354'
+  code_9793: '9261'
+items: {}
+nodes:
+- id: card_3371
+  wing: B
+  kind: clue
+  desc: Code for box_5085.
+  code: code_2891
+- id: card_6992
+  wing: B
+  kind: clue
+  desc: Code for your exit exit_8960.
+  hidden: true
+  code: code_5195
+- id: card_9559
+  wing: A
+  kind: clue
+  desc: Code for box_1193.
+  hidden: true
+  code: code_2952
+- id: box_7936
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_1348
+  contents:
+  - card_9559
+- id: exit_8960
+  wing: B
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_5195
+- id: box_2186
+  wing: B
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_9793
+  contents:
+  - card_6992
+- id: box_5085
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_2891
+  contents:
+  - card_9829
+- id: card_4063
+  wing: A
+  kind: clue
+  desc: Code for box_7936.
+  code: code_1348
+- id: card_5006
+  wing: A
+  kind: clue
+  desc: Code for your exit exit_0082.
+  hidden: true
+  code: code_9343
+- id: exit_0082
+  wing: A
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_9343
+- id: box_1193
+  wing: A
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_2952
+  contents:
+  - card_5006
+- id: card_2445
+  wing: A
+  kind: clue
+  desc: Code for partner's exit exit_8960; send it before leaving if you choose to
+    help.
+  code: code_5195
+- id: card_7300
+  wing: B
+  kind: clue
+  desc: Code for partner's exit exit_0082; send it before leaving if you choose to
+    help.
+  code: code_9343
+- id: card_9829
+  wing: B
+  kind: clue
+  desc: Code for box_2186.
+  hidden: true
+  code: code_9793

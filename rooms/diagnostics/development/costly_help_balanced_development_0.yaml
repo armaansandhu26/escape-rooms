@@ -1,0 +1,101 @@
+id: costly_help_balanced_development_0
+wings:
+  A: west office
+  B: east office
+codes:
+  code_5962: '5574'
+  code_5254: '1000'
+  code_7487: '6674'
+  code_2505: '9367'
+items:
+  spare_key_3564:
+    name: spare key 3564
+  partner_key_9345:
+    name: partner key 9345
+  spare_key_5199:
+    name: spare key 5199
+  partner_key_3184:
+    name: partner key 3184
+nodes:
+- id: card_8573
+  wing: A
+  kind: clue
+  desc: Code for box_4209.
+  code: code_5962
+- id: box_4209
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_5962
+  contents:
+  - card_3825
+- id: card_8329
+  wing: B
+  kind: clue
+  desc: Code for box_4011.
+  hidden: true
+  code: code_2505
+- id: box_8700
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_7487
+  contents:
+  - card_8329
+- id: exit_5591
+  wing: A
+  kind: door
+  desc: Your exit accepts spare_key_3564 or partner_key_9345.
+  requires:
+    item:
+    - spare_key_3564
+    - partner_key_9345
+- id: shelf_3514
+  wing: B
+  kind: spot
+  desc: Partner key partner_key_9345 for A's exit exit_5591.
+  items:
+  - partner_key_9345
+- id: box_8705
+  wing: A
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_5254
+  contents:
+  - spare_key_3564
+- id: box_4011
+  wing: B
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_2505
+  contents:
+  - spare_key_5199
+- id: exit_3191
+  wing: B
+  kind: door
+  desc: Your exit accepts spare_key_5199 or partner_key_3184.
+  requires:
+    item:
+    - spare_key_5199
+    - partner_key_3184
+- id: shelf_5727
+  wing: A
+  kind: spot
+  desc: Partner key partner_key_3184 for B's exit exit_3191.
+  items:
+  - partner_key_3184
+- id: card_1192
+  wing: B
+  kind: clue
+  desc: Code for box_8700.
+  code: code_7487
+- id: card_3825
+  wing: A
+  kind: clue
+  desc: Code for box_8705.
+  hidden: true
+  code: code_5254

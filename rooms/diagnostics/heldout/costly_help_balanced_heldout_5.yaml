@@ -1,0 +1,147 @@
+id: costly_help_balanced_heldout_5
+wings:
+  A: west office
+  B: east office
+codes:
+  code_4371: '6436'
+  code_4138: '5043'
+  code_6742: '7966'
+  code_8724: '4678'
+  code_2555: '3576'
+  code_9884: 0933
+  code_0314: '7106'
+  code_1921: 0128
+items:
+  spare_key_9695:
+    name: spare key 9695
+  partner_key_2798:
+    name: partner key 2798
+  spare_key_0709:
+    name: spare key 0709
+  partner_key_7584:
+    name: partner key 7584
+nodes:
+- id: box_5662
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_4371
+  contents:
+  - card_9836
+- id: box_2378
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_1921
+  contents:
+  - partner_key_7584
+- id: box_1080
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_8724
+  contents:
+  - partner_key_2798
+- id: card_9836
+  wing: A
+  kind: clue
+  desc: Code for box_1210.
+  hidden: true
+  code: code_4138
+- id: card_2998
+  wing: A
+  kind: clue
+  desc: Code for box_2378.
+  code: code_1921
+- id: card_9610
+  wing: A
+  kind: clue
+  desc: Code for box_1403.
+  hidden: true
+  code: code_6742
+- id: box_1210
+  wing: A
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_4138
+  contents:
+  - card_9610
+- id: exit_7566
+  wing: B
+  kind: door
+  desc: Your exit accepts spare_key_0709 or partner_key_7584.
+  requires:
+    item:
+    - spare_key_0709
+    - partner_key_7584
+- id: card_8784
+  wing: A
+  kind: clue
+  desc: Code for box_5662.
+  code: code_4371
+- id: exit_8239
+  wing: A
+  kind: door
+  desc: Your exit accepts spare_key_9695 or partner_key_2798.
+  requires:
+    item:
+    - spare_key_9695
+    - partner_key_2798
+- id: card_5395
+  wing: B
+  kind: clue
+  desc: Code for box_9004.
+  hidden: true
+  code: code_9884
+- id: card_7743
+  wing: B
+  kind: clue
+  desc: Code for box_1080.
+  code: code_8724
+- id: card_8794
+  wing: B
+  kind: clue
+  desc: Code for box_8276.
+  code: code_2555
+- id: box_9712
+  wing: B
+  kind: container
+  desc: Supply lock 3. Its code is on a matching card.
+  requires:
+    code: code_0314
+  contents:
+  - spare_key_0709
+- id: box_1403
+  wing: A
+  kind: container
+  desc: Supply lock 3. Its code is on a matching card.
+  requires:
+    code: code_6742
+  contents:
+  - spare_key_9695
+- id: box_8276
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_2555
+  contents:
+  - card_5395
+- id: box_9004
+  wing: B
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_9884
+  contents:
+  - card_6039
+- id: card_6039
+  wing: B
+  kind: clue
+  desc: Code for box_9712.
+  hidden: true
+  code: code_0314

@@ -1,0 +1,31 @@
+id: private_handoffs_zero_development_4
+wings:
+  A: west office
+  B: east office
+codes:
+  code_3100: '6686'
+  code_0872: '9919'
+items: {}
+nodes:
+- id: exit_2550
+  wing: A
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_3100
+- id: exit_2630
+  wing: B
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_0872
+- id: card_8844
+  wing: A
+  kind: clue
+  desc: Code for your exit exit_2550.
+  code: code_3100
+- id: card_5323
+  wing: B
+  kind: clue
+  desc: Code for your exit exit_2630.
+  code: code_0872

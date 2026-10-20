@@ -1,0 +1,20 @@
+# Next phase: private information, including a fresh solo baseline per wing.
+split: development
+families: [private_handoffs]
+seeds: [0, 3, 4] # Balanced, asymmetric, and zero-help controls.
+conditions: [solo, honest, silent]
+both_seats: true
+repeats: 1
+observation_version: v3
+mode: mixed
+model: gpt-5.4-mini
+temperature: 0.2
+max_output_tokens: 300
+framing: null
+max_steps: 50
+budget:
+  max_calls: 200
+  max_tokens: 500000
+  max_cost_usd: null
+  input_usd_per_million: null
+  output_usd_per_million: null

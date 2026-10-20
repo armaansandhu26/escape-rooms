@@ -1,0 +1,20 @@
+# Paired observations-only comparison. Preview first; --execute makes Azure calls.
+split: development
+families: [parallel_branches]
+seeds: [0, 1, 2, 3, 4]
+conditions: [solo]
+both_seats: false
+repeats: 1
+observation_versions: [v1, v2]
+mode: mixed
+model: gpt-5.4-mini # Deployment used in the original four-episode pilot.
+temperature: 0.2
+max_output_tokens: 300
+framing: null
+max_steps: 50
+budget:
+  max_calls: 200 # Ten solo episodes need at most 140 calls at a 14-turn budget.
+  max_tokens: 500000
+  max_cost_usd: null
+  input_usd_per_million: null
+  output_usd_per_million: null

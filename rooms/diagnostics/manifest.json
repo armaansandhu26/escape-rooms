@@ -1,0 +1,6014 @@
+{
+  "schema_version": 1,
+  "generator_version": 1,
+  "cases": [
+    {
+      "room_file": "development/parallel_branches_balanced_development_0.yaml",
+      "room_sha256": "e7e375b25b61cba8cd27818c75e44ab13c16d8a7f54f87ce1e290bbb8ca94e7b",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 0,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_4080)",
+          "enter(3237, box_1498)",
+          "take(left_token_7600)",
+          "use(left_token_7600, box_9476)",
+          "wait()",
+          "take(exit_key_2334)",
+          "use(exit_key_2334, exit_0838)"
+        ],
+        "B": [
+          "inspect(card_4781)",
+          "enter(6718, box_4364)",
+          "take(right_token_3301)",
+          "wait()",
+          "use(right_token_3301, box_2650)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_4080)",
+          "B": "inspect(card_4781)"
+        },
+        {
+          "A": "enter(3237, box_1498)",
+          "B": "enter(6718, box_4364)"
+        },
+        {
+          "A": "take(left_token_7600)",
+          "B": "take(right_token_3301)"
+        },
+        {
+          "A": "use(left_token_7600, box_9476)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_3301, box_2650)"
+        },
+        {
+          "A": "take(exit_key_2334)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_2334, exit_0838)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_4781)",
+          "enter(6718, box_4364)",
+          "take(right_token_3301)",
+          "inspect(card_4080)",
+          "enter(3237, box_1498)",
+          "take(left_token_7600)",
+          "use(left_token_7600, box_9476)",
+          "use(right_token_3301, box_2650)",
+          "take(exit_key_2334)",
+          "use(exit_key_2334, exit_0838)"
+        ],
+        "B": [
+          "inspect(card_4781)",
+          "enter(6718, box_4364)",
+          "take(right_token_3301)",
+          "inspect(card_4080)",
+          "enter(3237, box_1498)",
+          "take(left_token_7600)",
+          "use(left_token_7600, box_9476)",
+          "use(right_token_3301, box_2650)",
+          "take(exit_key_2334)",
+          "use(exit_key_2334, exit_0838)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 14,
+      "reference_joint_steps": 7
+    },
+    {
+      "room_file": "development/parallel_branches_balanced_development_1.yaml",
+      "room_sha256": "7b9f3a9dc721b9ed7f0fe5db3ac86aa6202c4480efa1df0b0a3eae7b7a8ba19a",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 1,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_9692)",
+          "enter(9314, box_4095)",
+          "take(left_token_5600)",
+          "use(left_token_5600, box_7787)",
+          "wait()",
+          "take(exit_key_5272)",
+          "use(exit_key_5272, exit_3184)"
+        ],
+        "B": [
+          "inspect(card_7092)",
+          "enter(4768, box_4022)",
+          "take(right_token_6779)",
+          "wait()",
+          "use(right_token_6779, box_0031)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_9692)",
+          "B": "inspect(card_7092)"
+        },
+        {
+          "A": "enter(9314, box_4095)",
+          "B": "enter(4768, box_4022)"
+        },
+        {
+          "A": "take(left_token_5600)",
+          "B": "take(right_token_6779)"
+        },
+        {
+          "A": "use(left_token_5600, box_7787)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_6779, box_0031)"
+        },
+        {
+          "A": "take(exit_key_5272)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_5272, exit_3184)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_9692)",
+          "enter(9314, box_4095)",
+          "take(left_token_5600)",
+          "use(left_token_5600, box_7787)",
+          "inspect(card_7092)",
+          "enter(4768, box_4022)",
+          "take(right_token_6779)",
+          "use(right_token_6779, box_0031)",
+          "take(exit_key_5272)",
+          "use(exit_key_5272, exit_3184)"
+        ],
+        "B": [
+          "inspect(card_9692)",
+          "enter(9314, box_4095)",
+          "take(left_token_5600)",
+          "use(left_token_5600, box_7787)",
+          "inspect(card_7092)",
+          "enter(4768, box_4022)",
+          "take(right_token_6779)",
+          "use(right_token_6779, box_0031)",
+          "take(exit_key_5272)",
+          "use(exit_key_5272, exit_3184)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 14,
+      "reference_joint_steps": 7
+    },
+    {
+      "room_file": "development/parallel_branches_balanced_development_2.yaml",
+      "room_sha256": "40ec97c11ce4d90fdf179d36f47fa7515eff95463982ed887dc3f3c20438416e",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 2,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_0649)",
+          "enter(9920, box_3807)",
+          "take(left_token_2539)",
+          "use(left_token_2539, box_1689)",
+          "wait()",
+          "take(exit_key_2309)",
+          "use(exit_key_2309, exit_9410)"
+        ],
+        "B": [
+          "inspect(card_1702)",
+          "enter(0211, box_2159)",
+          "take(right_token_6801)",
+          "wait()",
+          "use(right_token_6801, box_5644)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_0649)",
+          "B": "inspect(card_1702)"
+        },
+        {
+          "A": "enter(9920, box_3807)",
+          "B": "enter(0211, box_2159)"
+        },
+        {
+          "A": "take(left_token_2539)",
+          "B": "take(right_token_6801)"
+        },
+        {
+          "A": "use(left_token_2539, box_1689)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_6801, box_5644)"
+        },
+        {
+          "A": "take(exit_key_2309)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_2309, exit_9410)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_1702)",
+          "enter(0211, box_2159)",
+          "take(right_token_6801)",
+          "inspect(card_0649)",
+          "enter(9920, box_3807)",
+          "take(left_token_2539)",
+          "use(left_token_2539, box_1689)",
+          "use(right_token_6801, box_5644)",
+          "take(exit_key_2309)",
+          "use(exit_key_2309, exit_9410)"
+        ],
+        "B": [
+          "inspect(card_1702)",
+          "enter(0211, box_2159)",
+          "take(right_token_6801)",
+          "inspect(card_0649)",
+          "enter(9920, box_3807)",
+          "take(left_token_2539)",
+          "use(left_token_2539, box_1689)",
+          "use(right_token_6801, box_5644)",
+          "take(exit_key_2309)",
+          "use(exit_key_2309, exit_9410)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 14,
+      "reference_joint_steps": 7
+    },
+    {
+      "room_file": "development/parallel_branches_balanced_development_3.yaml",
+      "room_sha256": "d6b88d025a0872cd7cd88999bd0b3d08b3dc2cf8f97b6b8f718833478db0a33a",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 3,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_0644)",
+          "enter(7143, box_6553)",
+          "take(left_token_9254)",
+          "use(left_token_9254, box_5806)",
+          "wait()",
+          "take(exit_key_6064)",
+          "use(exit_key_6064, exit_0750)"
+        ],
+        "B": [
+          "inspect(card_2898)",
+          "enter(6106, box_7209)",
+          "take(right_token_7677)",
+          "wait()",
+          "use(right_token_7677, box_1245)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_0644)",
+          "B": "inspect(card_2898)"
+        },
+        {
+          "A": "enter(7143, box_6553)",
+          "B": "enter(6106, box_7209)"
+        },
+        {
+          "A": "take(left_token_9254)",
+          "B": "take(right_token_7677)"
+        },
+        {
+          "A": "use(left_token_9254, box_5806)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_7677, box_1245)"
+        },
+        {
+          "A": "take(exit_key_6064)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_6064, exit_0750)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_0644)",
+          "enter(7143, box_6553)",
+          "take(left_token_9254)",
+          "use(left_token_9254, box_5806)",
+          "inspect(card_2898)",
+          "enter(6106, box_7209)",
+          "take(right_token_7677)",
+          "use(right_token_7677, box_1245)",
+          "take(exit_key_6064)",
+          "use(exit_key_6064, exit_0750)"
+        ],
+        "B": [
+          "inspect(card_0644)",
+          "enter(7143, box_6553)",
+          "take(left_token_9254)",
+          "use(left_token_9254, box_5806)",
+          "inspect(card_2898)",
+          "enter(6106, box_7209)",
+          "take(right_token_7677)",
+          "use(right_token_7677, box_1245)",
+          "take(exit_key_6064)",
+          "use(exit_key_6064, exit_0750)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 14,
+      "reference_joint_steps": 7
+    },
+    {
+      "room_file": "development/parallel_branches_balanced_development_4.yaml",
+      "room_sha256": "fd89ed7a0f4d659dc1c6e6ad1a5b0e77fd2915395f32af60fdfc02d3222ef25e",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 4,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_5843)",
+          "enter(4242, box_0965)",
+          "take(left_token_9992)",
+          "use(left_token_9992, box_4432)",
+          "wait()",
+          "take(exit_key_2241)",
+          "use(exit_key_2241, exit_9258)"
+        ],
+        "B": [
+          "inspect(card_2425)",
+          "enter(7329, box_8570)",
+          "take(right_token_8282)",
+          "wait()",
+          "use(right_token_8282, box_4254)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_5843)",
+          "B": "inspect(card_2425)"
+        },
+        {
+          "A": "enter(4242, box_0965)",
+          "B": "enter(7329, box_8570)"
+        },
+        {
+          "A": "take(left_token_9992)",
+          "B": "take(right_token_8282)"
+        },
+        {
+          "A": "use(left_token_9992, box_4432)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_8282, box_4254)"
+        },
+        {
+          "A": "take(exit_key_2241)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_2241, exit_9258)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_2425)",
+          "inspect(card_5843)",
+          "enter(7329, box_8570)",
+          "take(right_token_8282)",
+          "enter(4242, box_0965)",
+          "take(left_token_9992)",
+          "use(left_token_9992, box_4432)",
+          "use(right_token_8282, box_4254)",
+          "take(exit_key_2241)",
+          "use(exit_key_2241, exit_9258)"
+        ],
+        "B": [
+          "inspect(card_2425)",
+          "inspect(card_5843)",
+          "enter(7329, box_8570)",
+          "take(right_token_8282)",
+          "enter(4242, box_0965)",
+          "take(left_token_9992)",
+          "use(left_token_9992, box_4432)",
+          "use(right_token_8282, box_4254)",
+          "take(exit_key_2241)",
+          "use(exit_key_2241, exit_9258)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 14,
+      "reference_joint_steps": 7
+    },
+    {
+      "room_file": "development/parallel_branches_balanced_development_5.yaml",
+      "room_sha256": "83d4c13f8cf4171e4ce7042bc1dd2872b16bd4ea451e589e4815511347a99598",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 5,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_3061)",
+          "enter(6949, box_9237)",
+          "take(left_token_0118)",
+          "use(left_token_0118, box_4120)",
+          "wait()",
+          "take(exit_key_1348)",
+          "use(exit_key_1348, exit_5745)"
+        ],
+        "B": [
+          "inspect(card_5671)",
+          "enter(0082, box_4000)",
+          "take(right_token_0521)",
+          "wait()",
+          "use(right_token_0521, box_4194)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_3061)",
+          "B": "inspect(card_5671)"
+        },
+        {
+          "A": "enter(6949, box_9237)",
+          "B": "enter(0082, box_4000)"
+        },
+        {
+          "A": "take(left_token_0118)",
+          "B": "take(right_token_0521)"
+        },
+        {
+          "A": "use(left_token_0118, box_4120)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_0521, box_4194)"
+        },
+        {
+          "A": "take(exit_key_1348)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_1348, exit_5745)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_3061)",
+          "enter(6949, box_9237)",
+          "take(left_token_0118)",
+          "inspect(card_5671)",
+          "use(left_token_0118, box_4120)",
+          "enter(0082, box_4000)",
+          "take(right_token_0521)",
+          "use(right_token_0521, box_4194)",
+          "take(exit_key_1348)",
+          "use(exit_key_1348, exit_5745)"
+        ],
+        "B": [
+          "inspect(card_3061)",
+          "enter(6949, box_9237)",
+          "take(left_token_0118)",
+          "inspect(card_5671)",
+          "use(left_token_0118, box_4120)",
+          "enter(0082, box_4000)",
+          "take(right_token_0521)",
+          "use(right_token_0521, box_4194)",
+          "take(exit_key_1348)",
+          "use(exit_key_1348, exit_5745)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 14,
+      "reference_joint_steps": 7
+    },
+    {
+      "room_file": "development/parallel_branches_balanced_development_6.yaml",
+      "room_sha256": "22c8656eff10e6c4f973ae884e5bf30d1b25e77b59ecbaad1ca53b9976175846",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 6,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_4315)",
+          "enter(1364, box_7504)",
+          "take(left_token_2237)",
+          "use(left_token_2237, box_3745)",
+          "wait()",
+          "take(exit_key_6750)",
+          "use(exit_key_6750, exit_1362)"
+        ],
+        "B": [
+          "inspect(card_7086)",
+          "enter(8300, box_1830)",
+          "take(right_token_0656)",
+          "wait()",
+          "use(right_token_0656, box_5312)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_4315)",
+          "B": "inspect(card_7086)"
+        },
+        {
+          "A": "enter(1364, box_7504)",
+          "B": "enter(8300, box_1830)"
+        },
+        {
+          "A": "take(left_token_2237)",
+          "B": "take(right_token_0656)"
+        },
+        {
+          "A": "use(left_token_2237, box_3745)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_0656, box_5312)"
+        },
+        {
+          "A": "take(exit_key_6750)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_6750, exit_1362)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_4315)",
+          "enter(1364, box_7504)",
+          "take(left_token_2237)",
+          "inspect(card_7086)",
+          "enter(8300, box_1830)",
+          "take(right_token_0656)",
+          "use(left_token_2237, box_3745)",
+          "use(right_token_0656, box_5312)",
+          "take(exit_key_6750)",
+          "use(exit_key_6750, exit_1362)"
+        ],
+        "B": [
+          "inspect(card_4315)",
+          "enter(1364, box_7504)",
+          "take(left_token_2237)",
+          "inspect(card_7086)",
+          "enter(8300, box_1830)",
+          "take(right_token_0656)",
+          "use(left_token_2237, box_3745)",
+          "use(right_token_0656, box_5312)",
+          "take(exit_key_6750)",
+          "use(exit_key_6750, exit_1362)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 14,
+      "reference_joint_steps": 7
+    },
+    {
+      "room_file": "development/parallel_branches_balanced_development_7.yaml",
+      "room_sha256": "b965d9182e1f50424ae8f2e2c9cd5608249e39da86815d8dcb1ff8de8b03ca08",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 7,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_2004)",
+          "enter(4897, box_0122)",
+          "take(left_token_2299)",
+          "use(left_token_2299, box_7621)",
+          "wait()",
+          "take(exit_key_9254)",
+          "use(exit_key_9254, exit_9819)"
+        ],
+        "B": [
+          "inspect(card_1852)",
+          "enter(7521, box_0605)",
+          "take(right_token_5993)",
+          "wait()",
+          "use(right_token_5993, box_6545)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_2004)",
+          "B": "inspect(card_1852)"
+        },
+        {
+          "A": "enter(4897, box_0122)",
+          "B": "enter(7521, box_0605)"
+        },
+        {
+          "A": "take(left_token_2299)",
+          "B": "take(right_token_5993)"
+        },
+        {
+          "A": "use(left_token_2299, box_7621)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_5993, box_6545)"
+        },
+        {
+          "A": "take(exit_key_9254)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_9254, exit_9819)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_1852)",
+          "inspect(card_2004)",
+          "enter(4897, box_0122)",
+          "take(left_token_2299)",
+          "use(left_token_2299, box_7621)",
+          "enter(7521, box_0605)",
+          "take(right_token_5993)",
+          "use(right_token_5993, box_6545)",
+          "take(exit_key_9254)",
+          "use(exit_key_9254, exit_9819)"
+        ],
+        "B": [
+          "inspect(card_1852)",
+          "inspect(card_2004)",
+          "enter(4897, box_0122)",
+          "take(left_token_2299)",
+          "use(left_token_2299, box_7621)",
+          "enter(7521, box_0605)",
+          "take(right_token_5993)",
+          "use(right_token_5993, box_6545)",
+          "take(exit_key_9254)",
+          "use(exit_key_9254, exit_9819)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 14,
+      "reference_joint_steps": 7
+    },
+    {
+      "room_file": "development/parallel_branches_balanced_development_8.yaml",
+      "room_sha256": "eb5397d980a0a25522d8d5a0904458e7a2e09ffaccebb81ad1e23a8bbd22c27a",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 8,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_2098)",
+          "enter(3615, box_9314)",
+          "take(left_token_9469)",
+          "use(left_token_9469, box_7583)",
+          "wait()",
+          "take(exit_key_8118)",
+          "use(exit_key_8118, exit_3689)"
+        ],
+        "B": [
+          "inspect(card_6355)",
+          "enter(9457, box_1345)",
+          "take(right_token_4753)",
+          "wait()",
+          "use(right_token_4753, box_2263)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_2098)",
+          "B": "inspect(card_6355)"
+        },
+        {
+          "A": "enter(3615, box_9314)",
+          "B": "enter(9457, box_1345)"
+        },
+        {
+          "A": "take(left_token_9469)",
+          "B": "take(right_token_4753)"
+        },
+        {
+          "A": "use(left_token_9469, box_7583)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_4753, box_2263)"
+        },
+        {
+          "A": "take(exit_key_8118)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_8118, exit_3689)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_2098)",
+          "enter(3615, box_9314)",
+          "take(left_token_9469)",
+          "use(left_token_9469, box_7583)",
+          "inspect(card_6355)",
+          "enter(9457, box_1345)",
+          "take(right_token_4753)",
+          "use(right_token_4753, box_2263)",
+          "take(exit_key_8118)",
+          "use(exit_key_8118, exit_3689)"
+        ],
+        "B": [
+          "inspect(card_2098)",
+          "enter(3615, box_9314)",
+          "take(left_token_9469)",
+          "use(left_token_9469, box_7583)",
+          "inspect(card_6355)",
+          "enter(9457, box_1345)",
+          "take(right_token_4753)",
+          "use(right_token_4753, box_2263)",
+          "take(exit_key_8118)",
+          "use(exit_key_8118, exit_3689)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 14,
+      "reference_joint_steps": 7
+    },
+    {
+      "room_file": "development/parallel_branches_balanced_development_9.yaml",
+      "room_sha256": "a7785c8d3dc3bd83996a5436b835fbc94ccd2d08b53df974d5c26004dad7f017",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 9,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_0801)",
+          "enter(7544, box_4148)",
+          "take(left_token_5705)",
+          "use(left_token_5705, box_4406)",
+          "wait()",
+          "take(exit_key_2490)",
+          "use(exit_key_2490, exit_5330)"
+        ],
+        "B": [
+          "inspect(card_0383)",
+          "enter(4923, box_3582)",
+          "take(right_token_1846)",
+          "wait()",
+          "use(right_token_1846, box_5164)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_0801)",
+          "B": "inspect(card_0383)"
+        },
+        {
+          "A": "enter(7544, box_4148)",
+          "B": "enter(4923, box_3582)"
+        },
+        {
+          "A": "take(left_token_5705)",
+          "B": "take(right_token_1846)"
+        },
+        {
+          "A": "use(left_token_5705, box_4406)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_1846, box_5164)"
+        },
+        {
+          "A": "take(exit_key_2490)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_2490, exit_5330)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_0383)",
+          "enter(4923, box_3582)",
+          "take(right_token_1846)",
+          "inspect(card_0801)",
+          "enter(7544, box_4148)",
+          "take(left_token_5705)",
+          "use(left_token_5705, box_4406)",
+          "use(right_token_1846, box_5164)",
+          "take(exit_key_2490)",
+          "use(exit_key_2490, exit_5330)"
+        ],
+        "B": [
+          "inspect(card_0383)",
+          "enter(4923, box_3582)",
+          "take(right_token_1846)",
+          "inspect(card_0801)",
+          "enter(7544, box_4148)",
+          "take(left_token_5705)",
+          "use(left_token_5705, box_4406)",
+          "use(right_token_1846, box_5164)",
+          "take(exit_key_2490)",
+          "use(exit_key_2490, exit_5330)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 10,
+          "free_help_turns": 10,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 14,
+      "reference_joint_steps": 7
+    },
+    {
+      "room_file": "development/private_handoffs_balanced_development_0.yaml",
+      "room_sha256": "773e455cdc72df1f92caf93ddd83cc6c5a53b92fb4b30dd44fa36182e9f4d3e2",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 0,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "code",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "code_9343",
+          "target": "exit_0082",
+          "acquire": [
+            "inspect(card_7300)"
+          ],
+          "help_actions": [
+            "inspect(card_7300)",
+            "say(Code for exit_0082 is 6537)"
+          ]
+        },
+        {
+          "kind": "code",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "code_5195",
+          "target": "exit_8960",
+          "acquire": [
+            "inspect(card_2445)"
+          ],
+          "help_actions": [
+            "inspect(card_2445)",
+            "say(Code for exit_8960 is 1867)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_2445)",
+          "say(Code for exit_8960 is 1867)"
+        ],
+        "B": [
+          "inspect(card_7300)",
+          "say(Code for exit_0082 is 6537)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_2445)",
+          "B": "inspect(card_7300)"
+        },
+        {
+          "A": "say(Code for exit_8960 is 1867)",
+          "B": "say(Code for exit_0082 is 6537)"
+        },
+        {
+          "A": "enter(6537, exit_0082)",
+          "B": "enter(1867, exit_8960)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_4063)",
+          "enter(3214, box_7936)",
+          "inspect(card_9559)",
+          "enter(7582, box_1193)",
+          "inspect(card_5006)",
+          "enter(6537, exit_0082)"
+        ],
+        "B": [
+          "inspect(card_3371)",
+          "enter(2354, box_5085)",
+          "inspect(card_9829)",
+          "enter(9261, box_2186)",
+          "inspect(card_6992)",
+          "enter(1867, exit_8960)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        },
+        "B": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        }
+      },
+      "recommended_turn_budget": 10,
+      "reference_joint_steps": 3
+    },
+    {
+      "room_file": "development/private_handoffs_balanced_development_1.yaml",
+      "room_sha256": "1e18b348b999c6c0ca345702d430a9d4c4907d85d67dc908a2886177834d4892",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 1,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "code",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "code_1665",
+          "target": "exit_5777",
+          "acquire": [
+            "inspect(card_4315)"
+          ],
+          "help_actions": [
+            "inspect(card_4315)",
+            "say(Code for exit_5777 is 4471)"
+          ]
+        },
+        {
+          "kind": "code",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "code_5019",
+          "target": "exit_2439",
+          "acquire": [
+            "inspect(card_1446)"
+          ],
+          "help_actions": [
+            "inspect(card_1446)",
+            "say(Code for exit_2439 is 8662)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_1446)",
+          "say(Code for exit_2439 is 8662)"
+        ],
+        "B": [
+          "inspect(card_4315)",
+          "say(Code for exit_5777 is 4471)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_1446)",
+          "B": "inspect(card_4315)"
+        },
+        {
+          "A": "say(Code for exit_2439 is 8662)",
+          "B": "say(Code for exit_5777 is 4471)"
+        },
+        {
+          "A": "enter(4471, exit_5777)",
+          "B": "enter(8662, exit_2439)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_9097)",
+          "enter(7458, box_0249)",
+          "inspect(card_4666)",
+          "enter(4067, box_6789)",
+          "inspect(card_7657)",
+          "enter(4471, exit_5777)"
+        ],
+        "B": [
+          "inspect(card_6503)",
+          "enter(0870, box_5372)",
+          "inspect(card_6788)",
+          "enter(2891, box_3374)",
+          "inspect(card_3133)",
+          "enter(8662, exit_2439)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        },
+        "B": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        }
+      },
+      "recommended_turn_budget": 10,
+      "reference_joint_steps": 3
+    },
+    {
+      "room_file": "development/private_handoffs_balanced_development_2.yaml",
+      "room_sha256": "a39abe3e3928432a34a233110c30dafbcbe1f43eed6b5feec864a98a23617305",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 2,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "code",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "code_0318",
+          "target": "exit_3797",
+          "acquire": [
+            "inspect(card_1163)"
+          ],
+          "help_actions": [
+            "inspect(card_1163)",
+            "say(Code for exit_3797 is 2876)"
+          ]
+        },
+        {
+          "kind": "code",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "code_7804",
+          "target": "exit_4189",
+          "acquire": [
+            "inspect(card_7696)"
+          ],
+          "help_actions": [
+            "inspect(card_7696)",
+            "say(Code for exit_4189 is 7484)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_7696)",
+          "say(Code for exit_4189 is 7484)"
+        ],
+        "B": [
+          "inspect(card_1163)",
+          "say(Code for exit_3797 is 2876)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_7696)",
+          "B": "inspect(card_1163)"
+        },
+        {
+          "A": "say(Code for exit_4189 is 7484)",
+          "B": "say(Code for exit_3797 is 2876)"
+        },
+        {
+          "A": "enter(2876, exit_3797)",
+          "B": "enter(7484, exit_4189)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_6459)",
+          "enter(5242, box_6418)",
+          "inspect(card_6725)",
+          "enter(2682, box_7850)",
+          "inspect(card_2186)",
+          "enter(2876, exit_3797)"
+        ],
+        "B": [
+          "inspect(card_0289)",
+          "enter(9512, box_8370)",
+          "inspect(card_5488)",
+          "enter(7399, box_3785)",
+          "inspect(card_4154)",
+          "enter(7484, exit_4189)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        },
+        "B": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        }
+      },
+      "recommended_turn_budget": 10,
+      "reference_joint_steps": 3
+    },
+    {
+      "room_file": "development/private_handoffs_asymmetric_development_3.yaml",
+      "room_sha256": "dc98112b95ba40091217c81f6ac0fcb753b5b0315740a9635a6bcb8022c0e4b1",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 3,
+      "split": "development",
+      "profile": "asymmetric",
+      "handoffs": [
+        {
+          "kind": "code",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "code_5632",
+          "target": "exit_2907",
+          "acquire": [
+            "inspect(card_1620)"
+          ],
+          "help_actions": [
+            "inspect(card_1620)",
+            "say(Code for exit_2907 is 7206)"
+          ]
+        },
+        {
+          "kind": "code",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "code_7657",
+          "target": "exit_6316",
+          "acquire": [
+            "inspect(card_0485)"
+          ],
+          "help_actions": [
+            "inspect(card_0485)",
+            "say(Code for exit_6316 is 8238)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_0485)",
+          "say(Code for exit_6316 is 8238)"
+        ],
+        "B": [
+          "inspect(card_1620)",
+          "say(Code for exit_2907 is 7206)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_0485)",
+          "B": "inspect(card_1620)"
+        },
+        {
+          "A": "say(Code for exit_6316 is 8238)",
+          "B": "say(Code for exit_2907 is 7206)"
+        },
+        {
+          "A": "enter(7206, exit_2907)",
+          "B": "enter(8238, exit_6316)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_7554)",
+          "enter(1684, box_3980)",
+          "inspect(card_7163)",
+          "enter(1493, box_4415)",
+          "inspect(card_6815)",
+          "enter(3595, box_6208)",
+          "inspect(card_9391)",
+          "enter(7206, exit_2907)"
+        ],
+        "B": [
+          "inspect(card_7774)",
+          "enter(4054, box_8898)",
+          "inspect(card_2234)",
+          "enter(8238, exit_6316)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        },
+        "B": {
+          "solo_turns": 4,
+          "free_help_turns": 1,
+          "help_value": 3
+        }
+      },
+      "recommended_turn_budget": 12,
+      "reference_joint_steps": 3
+    },
+    {
+      "room_file": "development/private_handoffs_zero_development_4.yaml",
+      "room_sha256": "1fb74645bb1194cad2766bf6a6fd79e42b71f082b67373712fa6dde20f58c737",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 4,
+      "split": "development",
+      "profile": "zero",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [],
+        "B": []
+      },
+      "reference": [
+        {
+          "A": "inspect(card_8844)",
+          "B": "inspect(card_5323)"
+        },
+        {
+          "A": "enter(6686, exit_2550)",
+          "B": "enter(9919, exit_2630)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_8844)",
+          "enter(6686, exit_2550)"
+        ],
+        "B": [
+          "inspect(card_5323)",
+          "enter(9919, exit_2630)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 2,
+          "free_help_turns": 2,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 2,
+          "free_help_turns": 2,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 6,
+      "reference_joint_steps": 2
+    },
+    {
+      "room_file": "development/private_handoffs_balanced_development_5.yaml",
+      "room_sha256": "9766fdffa8184e5412ebd5abd85cea4f5a024a9f8c15ab2716bf7c31c8097eb5",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 5,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "code",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "code_1824",
+          "target": "exit_8125",
+          "acquire": [
+            "inspect(card_1982)"
+          ],
+          "help_actions": [
+            "inspect(card_1982)",
+            "say(Code for exit_8125 is 7844)"
+          ]
+        },
+        {
+          "kind": "code",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "code_7397",
+          "target": "exit_4603",
+          "acquire": [
+            "inspect(card_1761)"
+          ],
+          "help_actions": [
+            "inspect(card_1761)",
+            "say(Code for exit_4603 is 9547)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_1761)",
+          "say(Code for exit_4603 is 9547)"
+        ],
+        "B": [
+          "inspect(card_1982)",
+          "say(Code for exit_8125 is 7844)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_1761)",
+          "B": "inspect(card_1982)"
+        },
+        {
+          "A": "say(Code for exit_4603 is 9547)",
+          "B": "say(Code for exit_8125 is 7844)"
+        },
+        {
+          "A": "enter(7844, exit_8125)",
+          "B": "enter(9547, exit_4603)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_2884)",
+          "enter(0731, box_9575)",
+          "inspect(card_3340)",
+          "enter(4558, box_6617)",
+          "inspect(card_7421)",
+          "enter(7844, exit_8125)"
+        ],
+        "B": [
+          "inspect(card_6307)",
+          "enter(5817, box_3340)",
+          "inspect(card_3031)",
+          "enter(6122, box_1526)",
+          "inspect(card_8782)",
+          "enter(9547, exit_4603)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        },
+        "B": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        }
+      },
+      "recommended_turn_budget": 10,
+      "reference_joint_steps": 3
+    },
+    {
+      "room_file": "development/private_handoffs_balanced_development_6.yaml",
+      "room_sha256": "ea3105f125e7ccdf58c19b8f852a1fe50c0182b6e9476d4a2e824432a1992739",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 6,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "code",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "code_3725",
+          "target": "exit_3388",
+          "acquire": [
+            "inspect(card_5336)"
+          ],
+          "help_actions": [
+            "inspect(card_5336)",
+            "say(Code for exit_3388 is 0953)"
+          ]
+        },
+        {
+          "kind": "code",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "code_1477",
+          "target": "exit_1165",
+          "acquire": [
+            "inspect(card_5011)"
+          ],
+          "help_actions": [
+            "inspect(card_5011)",
+            "say(Code for exit_1165 is 1864)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_5011)",
+          "say(Code for exit_1165 is 1864)"
+        ],
+        "B": [
+          "inspect(card_5336)",
+          "say(Code for exit_3388 is 0953)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_5011)",
+          "B": "inspect(card_5336)"
+        },
+        {
+          "A": "say(Code for exit_1165 is 1864)",
+          "B": "say(Code for exit_3388 is 0953)"
+        },
+        {
+          "A": "enter(0953, exit_3388)",
+          "B": "enter(1864, exit_1165)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_6860)",
+          "enter(3798, box_0345)",
+          "inspect(card_2432)",
+          "enter(4118, box_9668)",
+          "inspect(card_3682)",
+          "enter(0953, exit_3388)"
+        ],
+        "B": [
+          "inspect(card_9426)",
+          "enter(9906, box_9508)",
+          "inspect(card_8438)",
+          "enter(6354, box_7523)",
+          "inspect(card_8475)",
+          "enter(1864, exit_1165)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        },
+        "B": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        }
+      },
+      "recommended_turn_budget": 10,
+      "reference_joint_steps": 3
+    },
+    {
+      "room_file": "development/private_handoffs_balanced_development_7.yaml",
+      "room_sha256": "55796173ad42394db22bb711e122c40b96b152637c5933c2050c2bc7fcebe95d",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 7,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "code",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "code_0138",
+          "target": "exit_1210",
+          "acquire": [
+            "inspect(card_5537)"
+          ],
+          "help_actions": [
+            "inspect(card_5537)",
+            "say(Code for exit_1210 is 2248)"
+          ]
+        },
+        {
+          "kind": "code",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "code_5934",
+          "target": "exit_5022",
+          "acquire": [
+            "inspect(card_8040)"
+          ],
+          "help_actions": [
+            "inspect(card_8040)",
+            "say(Code for exit_5022 is 3995)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_8040)",
+          "say(Code for exit_5022 is 3995)"
+        ],
+        "B": [
+          "inspect(card_5537)",
+          "say(Code for exit_1210 is 2248)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_8040)",
+          "B": "inspect(card_5537)"
+        },
+        {
+          "A": "say(Code for exit_5022 is 3995)",
+          "B": "say(Code for exit_1210 is 2248)"
+        },
+        {
+          "A": "enter(2248, exit_1210)",
+          "B": "enter(3995, exit_5022)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_2157)",
+          "enter(2396, box_7735)",
+          "inspect(card_4841)",
+          "enter(6018, box_9623)",
+          "inspect(card_0164)",
+          "enter(2248, exit_1210)"
+        ],
+        "B": [
+          "inspect(card_9052)",
+          "enter(6334, box_1183)",
+          "inspect(card_6717)",
+          "enter(7295, box_3084)",
+          "inspect(card_3538)",
+          "enter(3995, exit_5022)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        },
+        "B": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        }
+      },
+      "recommended_turn_budget": 10,
+      "reference_joint_steps": 3
+    },
+    {
+      "room_file": "development/private_handoffs_asymmetric_development_8.yaml",
+      "room_sha256": "7896696f8c63947ad094f1be75c962550ef0423fd92139c087d7ed2cb8fbe5ef",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 8,
+      "split": "development",
+      "profile": "asymmetric",
+      "handoffs": [
+        {
+          "kind": "code",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "code_3777",
+          "target": "exit_7657",
+          "acquire": [
+            "inspect(card_9902)"
+          ],
+          "help_actions": [
+            "inspect(card_9902)",
+            "say(Code for exit_7657 is 9987)"
+          ]
+        },
+        {
+          "kind": "code",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "code_8832",
+          "target": "exit_9734",
+          "acquire": [
+            "inspect(card_0169)"
+          ],
+          "help_actions": [
+            "inspect(card_0169)",
+            "say(Code for exit_9734 is 7769)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_0169)",
+          "say(Code for exit_9734 is 7769)"
+        ],
+        "B": [
+          "inspect(card_9902)",
+          "say(Code for exit_7657 is 9987)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_0169)",
+          "B": "inspect(card_9902)"
+        },
+        {
+          "A": "say(Code for exit_9734 is 7769)",
+          "B": "say(Code for exit_7657 is 9987)"
+        },
+        {
+          "A": "enter(9987, exit_7657)",
+          "B": "enter(7769, exit_9734)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_6869)",
+          "enter(8206, box_5716)",
+          "inspect(card_2879)",
+          "enter(2475, box_1993)",
+          "inspect(card_5660)",
+          "enter(1428, box_0542)",
+          "inspect(card_7710)",
+          "enter(9987, exit_7657)"
+        ],
+        "B": [
+          "inspect(card_3858)",
+          "enter(5779, box_5932)",
+          "inspect(card_8873)",
+          "enter(7769, exit_9734)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        },
+        "B": {
+          "solo_turns": 4,
+          "free_help_turns": 1,
+          "help_value": 3
+        }
+      },
+      "recommended_turn_budget": 12,
+      "reference_joint_steps": 3
+    },
+    {
+      "room_file": "development/private_handoffs_zero_development_9.yaml",
+      "room_sha256": "3b25be59fce52f77546907a1604d2a70687b86fdecaac6360318f6a2197e1236",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 9,
+      "split": "development",
+      "profile": "zero",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [],
+        "B": []
+      },
+      "reference": [
+        {
+          "A": "inspect(card_9986)",
+          "B": "inspect(card_7720)"
+        },
+        {
+          "A": "enter(4452, exit_5731)",
+          "B": "enter(2668, exit_0734)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_9986)",
+          "enter(4452, exit_5731)"
+        ],
+        "B": [
+          "inspect(card_7720)",
+          "enter(2668, exit_0734)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 2,
+          "free_help_turns": 2,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 2,
+          "free_help_turns": 2,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 6,
+      "reference_joint_steps": 2
+    },
+    {
+      "room_file": "development/costly_help_balanced_development_0.yaml",
+      "room_sha256": "8e572a08b72ef4293121603883debad66b1a7160d09dab900572a1b0507a2d04",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 0,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "item",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "partner_key_9345",
+          "target": "exit_5591",
+          "acquire": [
+            "take(partner_key_9345)"
+          ],
+          "help_actions": [
+            "take(partner_key_9345)",
+            "give(partner_key_9345)"
+          ]
+        },
+        {
+          "kind": "item",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "partner_key_3184",
+          "target": "exit_3191",
+          "acquire": [
+            "take(partner_key_3184)"
+          ],
+          "help_actions": [
+            "take(partner_key_3184)",
+            "give(partner_key_3184)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "take(partner_key_3184)",
+          "give(partner_key_3184)"
+        ],
+        "B": [
+          "take(partner_key_9345)",
+          "give(partner_key_9345)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "take(partner_key_3184)",
+          "B": "take(partner_key_9345)"
+        },
+        {
+          "A": "give(partner_key_3184)",
+          "B": "give(partner_key_9345)"
+        },
+        {
+          "A": "use(partner_key_9345, exit_5591)",
+          "B": "use(partner_key_3184, exit_3191)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_8573)",
+          "enter(5574, box_4209)",
+          "inspect(card_3825)",
+          "enter(1000, box_8705)",
+          "take(spare_key_3564)",
+          "use(spare_key_3564, exit_5591)"
+        ],
+        "B": [
+          "inspect(card_1192)",
+          "enter(6674, box_8700)",
+          "inspect(card_8329)",
+          "enter(9367, box_4011)",
+          "take(spare_key_5199)",
+          "use(spare_key_5199, exit_3191)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        },
+        "B": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        }
+      },
+      "recommended_turn_budget": 10,
+      "reference_joint_steps": 3
+    },
+    {
+      "room_file": "development/costly_help_balanced_development_1.yaml",
+      "room_sha256": "2eb23bc1987840865719a591130a144e90565e6aabe853f081012b758535bb1a",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 1,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "item",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "partner_key_4711",
+          "target": "exit_7318",
+          "acquire": [
+            "take(partner_key_4711)"
+          ],
+          "help_actions": [
+            "take(partner_key_4711)",
+            "give(partner_key_4711)"
+          ]
+        },
+        {
+          "kind": "item",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "partner_key_5342",
+          "target": "exit_5933",
+          "acquire": [
+            "take(partner_key_5342)"
+          ],
+          "help_actions": [
+            "take(partner_key_5342)",
+            "give(partner_key_5342)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "take(partner_key_5342)",
+          "give(partner_key_5342)"
+        ],
+        "B": [
+          "take(partner_key_4711)",
+          "give(partner_key_4711)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "take(partner_key_5342)",
+          "B": "take(partner_key_4711)"
+        },
+        {
+          "A": "give(partner_key_5342)",
+          "B": "give(partner_key_4711)"
+        },
+        {
+          "A": "use(partner_key_4711, exit_7318)",
+          "B": "use(partner_key_5342, exit_5933)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_6765)",
+          "enter(3783, box_9182)",
+          "inspect(card_3599)",
+          "enter(5127, box_9005)",
+          "take(spare_key_9988)",
+          "use(spare_key_9988, exit_7318)"
+        ],
+        "B": [
+          "inspect(card_8900)",
+          "enter(4196, box_8383)",
+          "inspect(card_5945)",
+          "enter(6166, box_5692)",
+          "take(spare_key_1881)",
+          "use(spare_key_1881, exit_5933)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        },
+        "B": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        }
+      },
+      "recommended_turn_budget": 10,
+      "reference_joint_steps": 3
+    },
+    {
+      "room_file": "development/costly_help_balanced_development_2.yaml",
+      "room_sha256": "61fcc7a16f09db42f580cc4cff0ada1cae4351548ce1b3de1a38b5e915ea032c",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 2,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "item",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "partner_key_1951",
+          "target": "exit_3268",
+          "acquire": [
+            "take(partner_key_1951)"
+          ],
+          "help_actions": [
+            "take(partner_key_1951)",
+            "give(partner_key_1951)"
+          ]
+        },
+        {
+          "kind": "item",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "partner_key_0928",
+          "target": "exit_2004",
+          "acquire": [
+            "take(partner_key_0928)"
+          ],
+          "help_actions": [
+            "take(partner_key_0928)",
+            "give(partner_key_0928)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "take(partner_key_0928)",
+          "give(partner_key_0928)"
+        ],
+        "B": [
+          "take(partner_key_1951)",
+          "give(partner_key_1951)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "take(partner_key_0928)",
+          "B": "take(partner_key_1951)"
+        },
+        {
+          "A": "give(partner_key_0928)",
+          "B": "give(partner_key_1951)"
+        },
+        {
+          "A": "use(partner_key_1951, exit_3268)",
+          "B": "use(partner_key_0928, exit_2004)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_1653)",
+          "enter(1498, box_6990)",
+          "inspect(card_7516)",
+          "enter(6123, box_2006)",
+          "take(spare_key_5754)",
+          "use(spare_key_5754, exit_3268)"
+        ],
+        "B": [
+          "inspect(card_8709)",
+          "enter(9447, box_5615)",
+          "inspect(card_3123)",
+          "enter(1823, box_3794)",
+          "take(spare_key_9904)",
+          "use(spare_key_9904, exit_2004)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        },
+        "B": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        }
+      },
+      "recommended_turn_budget": 10,
+      "reference_joint_steps": 3
+    },
+    {
+      "room_file": "development/costly_help_asymmetric_development_3.yaml",
+      "room_sha256": "40437a8246c3b9e20480644ed6956f603d6e9081e8e9a06bd85eceed0ef978e3",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 3,
+      "split": "development",
+      "profile": "asymmetric",
+      "handoffs": [
+        {
+          "kind": "item",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "partner_key_9542",
+          "target": "exit_3981",
+          "acquire": [
+            "take(partner_key_9542)"
+          ],
+          "help_actions": [
+            "take(partner_key_9542)",
+            "give(partner_key_9542)"
+          ]
+        },
+        {
+          "kind": "item",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "partner_key_7996",
+          "target": "exit_1044",
+          "acquire": [
+            "take(partner_key_7996)"
+          ],
+          "help_actions": [
+            "take(partner_key_7996)",
+            "give(partner_key_7996)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "take(partner_key_7996)",
+          "give(partner_key_7996)"
+        ],
+        "B": [
+          "take(partner_key_9542)",
+          "give(partner_key_9542)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "take(partner_key_7996)",
+          "B": "take(partner_key_9542)"
+        },
+        {
+          "A": "give(partner_key_7996)",
+          "B": "give(partner_key_9542)"
+        },
+        {
+          "A": "use(partner_key_9542, exit_3981)",
+          "B": "use(partner_key_7996, exit_1044)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_4829)",
+          "enter(0002, box_7984)",
+          "inspect(card_6371)",
+          "enter(6133, box_2735)",
+          "inspect(card_9375)",
+          "enter(8984, box_6950)",
+          "take(spare_key_3096)",
+          "use(spare_key_3096, exit_3981)"
+        ],
+        "B": [
+          "inspect(card_2342)",
+          "enter(5507, box_8128)",
+          "take(spare_key_4280)",
+          "use(spare_key_4280, exit_1044)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        },
+        "B": {
+          "solo_turns": 4,
+          "free_help_turns": 1,
+          "help_value": 3
+        }
+      },
+      "recommended_turn_budget": 12,
+      "reference_joint_steps": 3
+    },
+    {
+      "room_file": "development/costly_help_zero_development_4.yaml",
+      "room_sha256": "bd19bee851910961ad72979e0c7d450aa1e3eccdb8926584fce9dd33de291f9c",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 4,
+      "split": "development",
+      "profile": "zero",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [],
+        "B": []
+      },
+      "reference": [
+        {
+          "A": "take(spare_key_8203)",
+          "B": "take(spare_key_6540)"
+        },
+        {
+          "A": "use(spare_key_8203, exit_9827)",
+          "B": "use(spare_key_6540, exit_2717)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "take(spare_key_8203)",
+          "use(spare_key_8203, exit_9827)"
+        ],
+        "B": [
+          "take(spare_key_6540)",
+          "use(spare_key_6540, exit_2717)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 2,
+          "free_help_turns": 2,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 2,
+          "free_help_turns": 2,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 6,
+      "reference_joint_steps": 2
+    },
+    {
+      "room_file": "development/costly_help_balanced_development_5.yaml",
+      "room_sha256": "918a13ba59e44ad78bf00499f3899ed90dc787dae11dac615b5ce57fdfcf779c",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 5,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "item",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "partner_key_6671",
+          "target": "exit_6396",
+          "acquire": [
+            "take(partner_key_6671)"
+          ],
+          "help_actions": [
+            "take(partner_key_6671)",
+            "give(partner_key_6671)"
+          ]
+        },
+        {
+          "kind": "item",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "partner_key_2307",
+          "target": "exit_2258",
+          "acquire": [
+            "take(partner_key_2307)"
+          ],
+          "help_actions": [
+            "take(partner_key_2307)",
+            "give(partner_key_2307)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "take(partner_key_2307)",
+          "give(partner_key_2307)"
+        ],
+        "B": [
+          "take(partner_key_6671)",
+          "give(partner_key_6671)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "take(partner_key_2307)",
+          "B": "take(partner_key_6671)"
+        },
+        {
+          "A": "give(partner_key_2307)",
+          "B": "give(partner_key_6671)"
+        },
+        {
+          "A": "use(partner_key_6671, exit_6396)",
+          "B": "use(partner_key_2307, exit_2258)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_8068)",
+          "enter(3937, box_7595)",
+          "inspect(card_7589)",
+          "enter(3689, box_1161)",
+          "take(spare_key_8842)",
+          "use(spare_key_8842, exit_6396)"
+        ],
+        "B": [
+          "inspect(card_5588)",
+          "enter(0948, box_9431)",
+          "inspect(card_5439)",
+          "enter(8461, box_4228)",
+          "take(spare_key_5061)",
+          "use(spare_key_5061, exit_2258)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        },
+        "B": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        }
+      },
+      "recommended_turn_budget": 10,
+      "reference_joint_steps": 3
+    },
+    {
+      "room_file": "development/costly_help_balanced_development_6.yaml",
+      "room_sha256": "7bd61639a7473d2dbbc152afd45daeff4d629e533e657f67135db92222821d49",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 6,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "item",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "partner_key_5385",
+          "target": "exit_1969",
+          "acquire": [
+            "take(partner_key_5385)"
+          ],
+          "help_actions": [
+            "take(partner_key_5385)",
+            "give(partner_key_5385)"
+          ]
+        },
+        {
+          "kind": "item",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "partner_key_7835",
+          "target": "exit_5747",
+          "acquire": [
+            "take(partner_key_7835)"
+          ],
+          "help_actions": [
+            "take(partner_key_7835)",
+            "give(partner_key_7835)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "take(partner_key_7835)",
+          "give(partner_key_7835)"
+        ],
+        "B": [
+          "take(partner_key_5385)",
+          "give(partner_key_5385)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "take(partner_key_7835)",
+          "B": "take(partner_key_5385)"
+        },
+        {
+          "A": "give(partner_key_7835)",
+          "B": "give(partner_key_5385)"
+        },
+        {
+          "A": "use(partner_key_5385, exit_1969)",
+          "B": "use(partner_key_7835, exit_5747)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_5133)",
+          "enter(7755, box_5865)",
+          "inspect(card_8916)",
+          "enter(4611, box_1094)",
+          "take(spare_key_6746)",
+          "use(spare_key_6746, exit_1969)"
+        ],
+        "B": [
+          "inspect(card_6875)",
+          "enter(6030, box_7913)",
+          "inspect(card_6918)",
+          "enter(3325, box_1071)",
+          "take(spare_key_8248)",
+          "use(spare_key_8248, exit_5747)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        },
+        "B": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        }
+      },
+      "recommended_turn_budget": 10,
+      "reference_joint_steps": 3
+    },
+    {
+      "room_file": "development/costly_help_balanced_development_7.yaml",
+      "room_sha256": "5eb1ced930361f44f80831aec9998774250c430ba13f284bb0a111ee590657ce",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 7,
+      "split": "development",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "item",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "partner_key_4346",
+          "target": "exit_6914",
+          "acquire": [
+            "take(partner_key_4346)"
+          ],
+          "help_actions": [
+            "take(partner_key_4346)",
+            "give(partner_key_4346)"
+          ]
+        },
+        {
+          "kind": "item",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "partner_key_5404",
+          "target": "exit_9675",
+          "acquire": [
+            "take(partner_key_5404)"
+          ],
+          "help_actions": [
+            "take(partner_key_5404)",
+            "give(partner_key_5404)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "take(partner_key_5404)",
+          "give(partner_key_5404)"
+        ],
+        "B": [
+          "take(partner_key_4346)",
+          "give(partner_key_4346)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "take(partner_key_5404)",
+          "B": "take(partner_key_4346)"
+        },
+        {
+          "A": "give(partner_key_5404)",
+          "B": "give(partner_key_4346)"
+        },
+        {
+          "A": "use(partner_key_4346, exit_6914)",
+          "B": "use(partner_key_5404, exit_9675)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_3645)",
+          "enter(7601, box_4973)",
+          "inspect(card_0159)",
+          "enter(3362, box_0470)",
+          "take(spare_key_8299)",
+          "use(spare_key_8299, exit_6914)"
+        ],
+        "B": [
+          "inspect(card_3324)",
+          "enter(8194, box_3781)",
+          "inspect(card_8452)",
+          "enter(7452, box_6089)",
+          "take(spare_key_4783)",
+          "use(spare_key_4783, exit_9675)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        },
+        "B": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        }
+      },
+      "recommended_turn_budget": 10,
+      "reference_joint_steps": 3
+    },
+    {
+      "room_file": "development/costly_help_asymmetric_development_8.yaml",
+      "room_sha256": "9c5fff35b2ba56010628a50cdafeb48bcc98d4f72872afabe9997dd29ad50a87",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 8,
+      "split": "development",
+      "profile": "asymmetric",
+      "handoffs": [
+        {
+          "kind": "item",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "partner_key_6452",
+          "target": "exit_4822",
+          "acquire": [
+            "take(partner_key_6452)"
+          ],
+          "help_actions": [
+            "take(partner_key_6452)",
+            "give(partner_key_6452)"
+          ]
+        },
+        {
+          "kind": "item",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "partner_key_7506",
+          "target": "exit_7946",
+          "acquire": [
+            "take(partner_key_7506)"
+          ],
+          "help_actions": [
+            "take(partner_key_7506)",
+            "give(partner_key_7506)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "take(partner_key_7506)",
+          "give(partner_key_7506)"
+        ],
+        "B": [
+          "take(partner_key_6452)",
+          "give(partner_key_6452)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "take(partner_key_7506)",
+          "B": "take(partner_key_6452)"
+        },
+        {
+          "A": "give(partner_key_7506)",
+          "B": "give(partner_key_6452)"
+        },
+        {
+          "A": "use(partner_key_6452, exit_4822)",
+          "B": "use(partner_key_7506, exit_7946)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_1933)",
+          "enter(2996, box_7972)",
+          "inspect(card_1357)",
+          "enter(2682, box_3704)",
+          "inspect(card_2648)",
+          "enter(9708, box_9861)",
+          "take(spare_key_0115)",
+          "use(spare_key_0115, exit_4822)"
+        ],
+        "B": [
+          "inspect(card_9046)",
+          "enter(9121, box_8308)",
+          "take(spare_key_9264)",
+          "use(spare_key_9264, exit_7946)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        },
+        "B": {
+          "solo_turns": 4,
+          "free_help_turns": 1,
+          "help_value": 3
+        }
+      },
+      "recommended_turn_budget": 12,
+      "reference_joint_steps": 3
+    },
+    {
+      "room_file": "development/costly_help_zero_development_9.yaml",
+      "room_sha256": "6da0761aa44010cea26aa10811e4d277d65e19fa839de76308ad854d164d0475",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 9,
+      "split": "development",
+      "profile": "zero",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [],
+        "B": []
+      },
+      "reference": [
+        {
+          "A": "take(spare_key_2161)",
+          "B": "take(spare_key_8753)"
+        },
+        {
+          "A": "use(spare_key_2161, exit_3501)",
+          "B": "use(spare_key_8753, exit_0517)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "take(spare_key_2161)",
+          "use(spare_key_2161, exit_3501)"
+        ],
+        "B": [
+          "take(spare_key_8753)",
+          "use(spare_key_8753, exit_0517)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 2,
+          "free_help_turns": 2,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 2,
+          "free_help_turns": 2,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 6,
+      "reference_joint_steps": 2
+    },
+    {
+      "room_file": "heldout/parallel_branches_balanced_heldout_0.yaml",
+      "room_sha256": "337483729cd7f68bb88b29bcbcb8348fc13f215a3d55149ef274c37c4fb69c22",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 0,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_4151)",
+          "enter(1545, box_6104)",
+          "inspect(card_6031)",
+          "enter(8074, box_4506)",
+          "take(left_token_2928)",
+          "use(left_token_2928, box_7435)",
+          "wait()",
+          "take(exit_key_6147)",
+          "use(exit_key_6147, exit_7464)"
+        ],
+        "B": [
+          "inspect(card_2428)",
+          "enter(0497, box_8514)",
+          "inspect(card_6983)",
+          "enter(3744, box_3654)",
+          "take(right_token_4601)",
+          "wait()",
+          "use(right_token_4601, box_5148)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_4151)",
+          "B": "inspect(card_2428)"
+        },
+        {
+          "A": "enter(1545, box_6104)",
+          "B": "enter(0497, box_8514)"
+        },
+        {
+          "A": "inspect(card_6031)",
+          "B": "inspect(card_6983)"
+        },
+        {
+          "A": "enter(8074, box_4506)",
+          "B": "enter(3744, box_3654)"
+        },
+        {
+          "A": "take(left_token_2928)",
+          "B": "take(right_token_4601)"
+        },
+        {
+          "A": "use(left_token_2928, box_7435)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_4601, box_5148)"
+        },
+        {
+          "A": "take(exit_key_6147)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_6147, exit_7464)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_4151)",
+          "enter(1545, box_6104)",
+          "inspect(card_6031)",
+          "inspect(card_2428)",
+          "enter(8074, box_4506)",
+          "take(left_token_2928)",
+          "use(left_token_2928, box_7435)",
+          "enter(0497, box_8514)",
+          "inspect(card_6983)",
+          "enter(3744, box_3654)",
+          "take(right_token_4601)",
+          "use(right_token_4601, box_5148)",
+          "take(exit_key_6147)",
+          "use(exit_key_6147, exit_7464)"
+        ],
+        "B": [
+          "inspect(card_4151)",
+          "enter(1545, box_6104)",
+          "inspect(card_6031)",
+          "inspect(card_2428)",
+          "enter(8074, box_4506)",
+          "take(left_token_2928)",
+          "use(left_token_2928, box_7435)",
+          "enter(0497, box_8514)",
+          "inspect(card_6983)",
+          "enter(3744, box_3654)",
+          "take(right_token_4601)",
+          "use(right_token_4601, box_5148)",
+          "take(exit_key_6147)",
+          "use(exit_key_6147, exit_7464)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 18,
+      "reference_joint_steps": 9
+    },
+    {
+      "room_file": "heldout/parallel_branches_balanced_heldout_1.yaml",
+      "room_sha256": "d75cf34eabebaa053c9e9fa8a2ed94e1e2385d0856e2cb153530ff4156341da5",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 1,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_3279)",
+          "enter(7889, box_7118)",
+          "inspect(card_4892)",
+          "enter(3756, box_6295)",
+          "take(left_token_1496)",
+          "use(left_token_1496, box_9581)",
+          "wait()",
+          "take(exit_key_1300)",
+          "use(exit_key_1300, exit_9761)"
+        ],
+        "B": [
+          "inspect(card_3162)",
+          "enter(6048, box_9208)",
+          "inspect(card_3813)",
+          "enter(2900, box_0922)",
+          "take(right_token_0531)",
+          "wait()",
+          "use(right_token_0531, box_6049)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_3279)",
+          "B": "inspect(card_3162)"
+        },
+        {
+          "A": "enter(7889, box_7118)",
+          "B": "enter(6048, box_9208)"
+        },
+        {
+          "A": "inspect(card_4892)",
+          "B": "inspect(card_3813)"
+        },
+        {
+          "A": "enter(3756, box_6295)",
+          "B": "enter(2900, box_0922)"
+        },
+        {
+          "A": "take(left_token_1496)",
+          "B": "take(right_token_0531)"
+        },
+        {
+          "A": "use(left_token_1496, box_9581)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_0531, box_6049)"
+        },
+        {
+          "A": "take(exit_key_1300)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_1300, exit_9761)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_3162)",
+          "inspect(card_3279)",
+          "enter(7889, box_7118)",
+          "inspect(card_4892)",
+          "enter(3756, box_6295)",
+          "take(left_token_1496)",
+          "use(left_token_1496, box_9581)",
+          "enter(6048, box_9208)",
+          "inspect(card_3813)",
+          "enter(2900, box_0922)",
+          "take(right_token_0531)",
+          "use(right_token_0531, box_6049)",
+          "take(exit_key_1300)",
+          "use(exit_key_1300, exit_9761)"
+        ],
+        "B": [
+          "inspect(card_3162)",
+          "inspect(card_3279)",
+          "enter(7889, box_7118)",
+          "inspect(card_4892)",
+          "enter(3756, box_6295)",
+          "take(left_token_1496)",
+          "use(left_token_1496, box_9581)",
+          "enter(6048, box_9208)",
+          "inspect(card_3813)",
+          "enter(2900, box_0922)",
+          "take(right_token_0531)",
+          "use(right_token_0531, box_6049)",
+          "take(exit_key_1300)",
+          "use(exit_key_1300, exit_9761)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 18,
+      "reference_joint_steps": 9
+    },
+    {
+      "room_file": "heldout/parallel_branches_balanced_heldout_2.yaml",
+      "room_sha256": "7b68815e3580044c10c9b30f647cb314f2cff1017bd765a5b51b3cee53a47f1b",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 2,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_7435)",
+          "enter(6924, box_5898)",
+          "inspect(card_5391)",
+          "enter(9282, box_3860)",
+          "take(left_token_7174)",
+          "use(left_token_7174, box_7339)",
+          "wait()",
+          "take(exit_key_6113)",
+          "use(exit_key_6113, exit_8552)"
+        ],
+        "B": [
+          "inspect(card_7291)",
+          "enter(0304, box_9219)",
+          "inspect(card_4192)",
+          "enter(3050, box_1249)",
+          "take(right_token_4813)",
+          "wait()",
+          "use(right_token_4813, box_7970)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_7435)",
+          "B": "inspect(card_7291)"
+        },
+        {
+          "A": "enter(6924, box_5898)",
+          "B": "enter(0304, box_9219)"
+        },
+        {
+          "A": "inspect(card_5391)",
+          "B": "inspect(card_4192)"
+        },
+        {
+          "A": "enter(9282, box_3860)",
+          "B": "enter(3050, box_1249)"
+        },
+        {
+          "A": "take(left_token_7174)",
+          "B": "take(right_token_4813)"
+        },
+        {
+          "A": "use(left_token_7174, box_7339)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_4813, box_7970)"
+        },
+        {
+          "A": "take(exit_key_6113)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_6113, exit_8552)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_7435)",
+          "inspect(card_7291)",
+          "enter(0304, box_9219)",
+          "inspect(card_4192)",
+          "enter(3050, box_1249)",
+          "take(right_token_4813)",
+          "enter(6924, box_5898)",
+          "inspect(card_5391)",
+          "enter(9282, box_3860)",
+          "take(left_token_7174)",
+          "use(left_token_7174, box_7339)",
+          "use(right_token_4813, box_7970)",
+          "take(exit_key_6113)",
+          "use(exit_key_6113, exit_8552)"
+        ],
+        "B": [
+          "inspect(card_7435)",
+          "inspect(card_7291)",
+          "enter(0304, box_9219)",
+          "inspect(card_4192)",
+          "enter(3050, box_1249)",
+          "take(right_token_4813)",
+          "enter(6924, box_5898)",
+          "inspect(card_5391)",
+          "enter(9282, box_3860)",
+          "take(left_token_7174)",
+          "use(left_token_7174, box_7339)",
+          "use(right_token_4813, box_7970)",
+          "take(exit_key_6113)",
+          "use(exit_key_6113, exit_8552)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 18,
+      "reference_joint_steps": 9
+    },
+    {
+      "room_file": "heldout/parallel_branches_balanced_heldout_3.yaml",
+      "room_sha256": "3441e6d356deddc64165eb18a453e1978c8785294caa07c9b1cd665fd31e4fe4",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 3,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_7507)",
+          "enter(1763, box_8101)",
+          "inspect(card_5909)",
+          "enter(0489, box_7287)",
+          "take(left_token_9900)",
+          "use(left_token_9900, box_4457)",
+          "wait()",
+          "take(exit_key_3391)",
+          "use(exit_key_3391, exit_0312)"
+        ],
+        "B": [
+          "inspect(card_2208)",
+          "enter(0393, box_7278)",
+          "inspect(card_9144)",
+          "enter(7292, box_3494)",
+          "take(right_token_7511)",
+          "wait()",
+          "use(right_token_7511, box_5010)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_7507)",
+          "B": "inspect(card_2208)"
+        },
+        {
+          "A": "enter(1763, box_8101)",
+          "B": "enter(0393, box_7278)"
+        },
+        {
+          "A": "inspect(card_5909)",
+          "B": "inspect(card_9144)"
+        },
+        {
+          "A": "enter(0489, box_7287)",
+          "B": "enter(7292, box_3494)"
+        },
+        {
+          "A": "take(left_token_9900)",
+          "B": "take(right_token_7511)"
+        },
+        {
+          "A": "use(left_token_9900, box_4457)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_7511, box_5010)"
+        },
+        {
+          "A": "take(exit_key_3391)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_3391, exit_0312)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_2208)",
+          "enter(0393, box_7278)",
+          "inspect(card_9144)",
+          "enter(7292, box_3494)",
+          "take(right_token_7511)",
+          "inspect(card_7507)",
+          "enter(1763, box_8101)",
+          "inspect(card_5909)",
+          "enter(0489, box_7287)",
+          "take(left_token_9900)",
+          "use(left_token_9900, box_4457)",
+          "use(right_token_7511, box_5010)",
+          "take(exit_key_3391)",
+          "use(exit_key_3391, exit_0312)"
+        ],
+        "B": [
+          "inspect(card_2208)",
+          "enter(0393, box_7278)",
+          "inspect(card_9144)",
+          "enter(7292, box_3494)",
+          "take(right_token_7511)",
+          "inspect(card_7507)",
+          "enter(1763, box_8101)",
+          "inspect(card_5909)",
+          "enter(0489, box_7287)",
+          "take(left_token_9900)",
+          "use(left_token_9900, box_4457)",
+          "use(right_token_7511, box_5010)",
+          "take(exit_key_3391)",
+          "use(exit_key_3391, exit_0312)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 18,
+      "reference_joint_steps": 9
+    },
+    {
+      "room_file": "heldout/parallel_branches_balanced_heldout_4.yaml",
+      "room_sha256": "1592c8c00ab2fa122606cfe17c2ad054646d6e0005a525b0ce8a6eedb6062f48",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 4,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_6593)",
+          "enter(4974, box_5044)",
+          "inspect(card_3309)",
+          "enter(4649, box_7746)",
+          "take(left_token_4530)",
+          "use(left_token_4530, box_2104)",
+          "wait()",
+          "take(exit_key_9970)",
+          "use(exit_key_9970, exit_9963)"
+        ],
+        "B": [
+          "inspect(card_2082)",
+          "enter(6160, box_5956)",
+          "inspect(card_0430)",
+          "enter(7328, box_2260)",
+          "take(right_token_1823)",
+          "wait()",
+          "use(right_token_1823, box_8990)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_6593)",
+          "B": "inspect(card_2082)"
+        },
+        {
+          "A": "enter(4974, box_5044)",
+          "B": "enter(6160, box_5956)"
+        },
+        {
+          "A": "inspect(card_3309)",
+          "B": "inspect(card_0430)"
+        },
+        {
+          "A": "enter(4649, box_7746)",
+          "B": "enter(7328, box_2260)"
+        },
+        {
+          "A": "take(left_token_4530)",
+          "B": "take(right_token_1823)"
+        },
+        {
+          "A": "use(left_token_4530, box_2104)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_1823, box_8990)"
+        },
+        {
+          "A": "take(exit_key_9970)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_9970, exit_9963)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_2082)",
+          "inspect(card_6593)",
+          "enter(4974, box_5044)",
+          "inspect(card_3309)",
+          "enter(4649, box_7746)",
+          "take(left_token_4530)",
+          "use(left_token_4530, box_2104)",
+          "enter(6160, box_5956)",
+          "inspect(card_0430)",
+          "enter(7328, box_2260)",
+          "take(right_token_1823)",
+          "use(right_token_1823, box_8990)",
+          "take(exit_key_9970)",
+          "use(exit_key_9970, exit_9963)"
+        ],
+        "B": [
+          "inspect(card_2082)",
+          "inspect(card_6593)",
+          "enter(4974, box_5044)",
+          "inspect(card_3309)",
+          "enter(4649, box_7746)",
+          "take(left_token_4530)",
+          "use(left_token_4530, box_2104)",
+          "enter(6160, box_5956)",
+          "inspect(card_0430)",
+          "enter(7328, box_2260)",
+          "take(right_token_1823)",
+          "use(right_token_1823, box_8990)",
+          "take(exit_key_9970)",
+          "use(exit_key_9970, exit_9963)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 18,
+      "reference_joint_steps": 9
+    },
+    {
+      "room_file": "heldout/parallel_branches_balanced_heldout_5.yaml",
+      "room_sha256": "f8f5bf4d1b9cca6859acabc6339f99134c1599bedd98e6ff606d11aea06339e3",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 5,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_2910)",
+          "enter(0180, box_4374)",
+          "inspect(card_7864)",
+          "enter(1315, box_6621)",
+          "take(left_token_7924)",
+          "use(left_token_7924, box_9393)",
+          "wait()",
+          "take(exit_key_6490)",
+          "use(exit_key_6490, exit_7258)"
+        ],
+        "B": [
+          "inspect(card_9548)",
+          "enter(2408, box_7495)",
+          "inspect(card_6996)",
+          "enter(1559, box_5926)",
+          "take(right_token_9684)",
+          "wait()",
+          "use(right_token_9684, box_7272)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_2910)",
+          "B": "inspect(card_9548)"
+        },
+        {
+          "A": "enter(0180, box_4374)",
+          "B": "enter(2408, box_7495)"
+        },
+        {
+          "A": "inspect(card_7864)",
+          "B": "inspect(card_6996)"
+        },
+        {
+          "A": "enter(1315, box_6621)",
+          "B": "enter(1559, box_5926)"
+        },
+        {
+          "A": "take(left_token_7924)",
+          "B": "take(right_token_9684)"
+        },
+        {
+          "A": "use(left_token_7924, box_9393)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_9684, box_7272)"
+        },
+        {
+          "A": "take(exit_key_6490)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_6490, exit_7258)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_2910)",
+          "enter(0180, box_4374)",
+          "inspect(card_9548)",
+          "enter(2408, box_7495)",
+          "inspect(card_6996)",
+          "enter(1559, box_5926)",
+          "take(right_token_9684)",
+          "inspect(card_7864)",
+          "enter(1315, box_6621)",
+          "take(left_token_7924)",
+          "use(left_token_7924, box_9393)",
+          "use(right_token_9684, box_7272)",
+          "take(exit_key_6490)",
+          "use(exit_key_6490, exit_7258)"
+        ],
+        "B": [
+          "inspect(card_2910)",
+          "enter(0180, box_4374)",
+          "inspect(card_9548)",
+          "enter(2408, box_7495)",
+          "inspect(card_6996)",
+          "enter(1559, box_5926)",
+          "take(right_token_9684)",
+          "inspect(card_7864)",
+          "enter(1315, box_6621)",
+          "take(left_token_7924)",
+          "use(left_token_7924, box_9393)",
+          "use(right_token_9684, box_7272)",
+          "take(exit_key_6490)",
+          "use(exit_key_6490, exit_7258)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 18,
+      "reference_joint_steps": 9
+    },
+    {
+      "room_file": "heldout/parallel_branches_balanced_heldout_6.yaml",
+      "room_sha256": "899977fd6e1eb36fa474c797da610c7f0357b62b9f971d8908064faa7cc51ece",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 6,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_3411)",
+          "enter(7090, box_8848)",
+          "inspect(card_1751)",
+          "enter(4535, box_5334)",
+          "take(left_token_1115)",
+          "use(left_token_1115, box_4052)",
+          "wait()",
+          "take(exit_key_6302)",
+          "use(exit_key_6302, exit_7841)"
+        ],
+        "B": [
+          "inspect(card_7592)",
+          "enter(0125, box_7972)",
+          "inspect(card_2414)",
+          "enter(0222, box_7099)",
+          "take(right_token_2849)",
+          "wait()",
+          "use(right_token_2849, box_5347)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_3411)",
+          "B": "inspect(card_7592)"
+        },
+        {
+          "A": "enter(7090, box_8848)",
+          "B": "enter(0125, box_7972)"
+        },
+        {
+          "A": "inspect(card_1751)",
+          "B": "inspect(card_2414)"
+        },
+        {
+          "A": "enter(4535, box_5334)",
+          "B": "enter(0222, box_7099)"
+        },
+        {
+          "A": "take(left_token_1115)",
+          "B": "take(right_token_2849)"
+        },
+        {
+          "A": "use(left_token_1115, box_4052)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_2849, box_5347)"
+        },
+        {
+          "A": "take(exit_key_6302)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_6302, exit_7841)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_3411)",
+          "enter(7090, box_8848)",
+          "inspect(card_7592)",
+          "enter(0125, box_7972)",
+          "inspect(card_2414)",
+          "enter(0222, box_7099)",
+          "take(right_token_2849)",
+          "inspect(card_1751)",
+          "enter(4535, box_5334)",
+          "take(left_token_1115)",
+          "use(left_token_1115, box_4052)",
+          "use(right_token_2849, box_5347)",
+          "take(exit_key_6302)",
+          "use(exit_key_6302, exit_7841)"
+        ],
+        "B": [
+          "inspect(card_3411)",
+          "enter(7090, box_8848)",
+          "inspect(card_7592)",
+          "enter(0125, box_7972)",
+          "inspect(card_2414)",
+          "enter(0222, box_7099)",
+          "take(right_token_2849)",
+          "inspect(card_1751)",
+          "enter(4535, box_5334)",
+          "take(left_token_1115)",
+          "use(left_token_1115, box_4052)",
+          "use(right_token_2849, box_5347)",
+          "take(exit_key_6302)",
+          "use(exit_key_6302, exit_7841)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 18,
+      "reference_joint_steps": 9
+    },
+    {
+      "room_file": "heldout/parallel_branches_balanced_heldout_7.yaml",
+      "room_sha256": "f31f9fbb44a26d5a0824de2cba0e791d9a029d3d20f0be558542de1f04441f89",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 7,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_4661)",
+          "enter(1045, box_1913)",
+          "inspect(card_5999)",
+          "enter(3352, box_5487)",
+          "take(left_token_0697)",
+          "use(left_token_0697, box_9120)",
+          "wait()",
+          "take(exit_key_0331)",
+          "use(exit_key_0331, exit_5509)"
+        ],
+        "B": [
+          "inspect(card_7538)",
+          "enter(4018, box_1398)",
+          "inspect(card_9356)",
+          "enter(7088, box_8112)",
+          "take(right_token_8475)",
+          "wait()",
+          "use(right_token_8475, box_2815)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_4661)",
+          "B": "inspect(card_7538)"
+        },
+        {
+          "A": "enter(1045, box_1913)",
+          "B": "enter(4018, box_1398)"
+        },
+        {
+          "A": "inspect(card_5999)",
+          "B": "inspect(card_9356)"
+        },
+        {
+          "A": "enter(3352, box_5487)",
+          "B": "enter(7088, box_8112)"
+        },
+        {
+          "A": "take(left_token_0697)",
+          "B": "take(right_token_8475)"
+        },
+        {
+          "A": "use(left_token_0697, box_9120)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_8475, box_2815)"
+        },
+        {
+          "A": "take(exit_key_0331)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_0331, exit_5509)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_7538)",
+          "enter(4018, box_1398)",
+          "inspect(card_9356)",
+          "enter(7088, box_8112)",
+          "take(right_token_8475)",
+          "inspect(card_4661)",
+          "enter(1045, box_1913)",
+          "inspect(card_5999)",
+          "enter(3352, box_5487)",
+          "take(left_token_0697)",
+          "use(left_token_0697, box_9120)",
+          "use(right_token_8475, box_2815)",
+          "take(exit_key_0331)",
+          "use(exit_key_0331, exit_5509)"
+        ],
+        "B": [
+          "inspect(card_7538)",
+          "enter(4018, box_1398)",
+          "inspect(card_9356)",
+          "enter(7088, box_8112)",
+          "take(right_token_8475)",
+          "inspect(card_4661)",
+          "enter(1045, box_1913)",
+          "inspect(card_5999)",
+          "enter(3352, box_5487)",
+          "take(left_token_0697)",
+          "use(left_token_0697, box_9120)",
+          "use(right_token_8475, box_2815)",
+          "take(exit_key_0331)",
+          "use(exit_key_0331, exit_5509)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 18,
+      "reference_joint_steps": 9
+    },
+    {
+      "room_file": "heldout/parallel_branches_balanced_heldout_8.yaml",
+      "room_sha256": "ecb1d9b5d7b759285d51b3f7aecf2ec000b799813b4860e82e7e880b469c8bb1",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 8,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_2048)",
+          "enter(2245, box_0177)",
+          "inspect(card_7648)",
+          "enter(3153, box_9401)",
+          "take(left_token_9668)",
+          "use(left_token_9668, box_9835)",
+          "wait()",
+          "take(exit_key_1690)",
+          "use(exit_key_1690, exit_9463)"
+        ],
+        "B": [
+          "inspect(card_8161)",
+          "enter(3875, box_5002)",
+          "inspect(card_5109)",
+          "enter(9201, box_8767)",
+          "take(right_token_9545)",
+          "wait()",
+          "use(right_token_9545, box_7238)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_2048)",
+          "B": "inspect(card_8161)"
+        },
+        {
+          "A": "enter(2245, box_0177)",
+          "B": "enter(3875, box_5002)"
+        },
+        {
+          "A": "inspect(card_7648)",
+          "B": "inspect(card_5109)"
+        },
+        {
+          "A": "enter(3153, box_9401)",
+          "B": "enter(9201, box_8767)"
+        },
+        {
+          "A": "take(left_token_9668)",
+          "B": "take(right_token_9545)"
+        },
+        {
+          "A": "use(left_token_9668, box_9835)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_9545, box_7238)"
+        },
+        {
+          "A": "take(exit_key_1690)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_1690, exit_9463)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_2048)",
+          "enter(2245, box_0177)",
+          "inspect(card_7648)",
+          "enter(3153, box_9401)",
+          "take(left_token_9668)",
+          "use(left_token_9668, box_9835)",
+          "inspect(card_8161)",
+          "enter(3875, box_5002)",
+          "inspect(card_5109)",
+          "enter(9201, box_8767)",
+          "take(right_token_9545)",
+          "use(right_token_9545, box_7238)",
+          "take(exit_key_1690)",
+          "use(exit_key_1690, exit_9463)"
+        ],
+        "B": [
+          "inspect(card_2048)",
+          "enter(2245, box_0177)",
+          "inspect(card_7648)",
+          "enter(3153, box_9401)",
+          "take(left_token_9668)",
+          "use(left_token_9668, box_9835)",
+          "inspect(card_8161)",
+          "enter(3875, box_5002)",
+          "inspect(card_5109)",
+          "enter(9201, box_8767)",
+          "take(right_token_9545)",
+          "use(right_token_9545, box_7238)",
+          "take(exit_key_1690)",
+          "use(exit_key_1690, exit_9463)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 18,
+      "reference_joint_steps": 9
+    },
+    {
+      "room_file": "heldout/parallel_branches_balanced_heldout_9.yaml",
+      "room_sha256": "f7e440b0bf6e9be289cd29b066fc08b8e540777675cb67b001ae6fc8dbb80cdf",
+      "generator_version": 1,
+      "family": "parallel_branches",
+      "seed": 9,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [
+          "inspect(card_3181)",
+          "enter(8710, box_1732)",
+          "inspect(card_8128)",
+          "enter(7319, box_8144)",
+          "take(left_token_5098)",
+          "use(left_token_5098, box_8969)",
+          "wait()",
+          "take(exit_key_6143)",
+          "use(exit_key_6143, exit_9151)"
+        ],
+        "B": [
+          "inspect(card_6847)",
+          "enter(1654, box_2871)",
+          "inspect(card_4612)",
+          "enter(4778, box_0087)",
+          "take(right_token_6072)",
+          "wait()",
+          "use(right_token_6072, box_7817)",
+          "wait()",
+          "wait()"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_3181)",
+          "B": "inspect(card_6847)"
+        },
+        {
+          "A": "enter(8710, box_1732)",
+          "B": "enter(1654, box_2871)"
+        },
+        {
+          "A": "inspect(card_8128)",
+          "B": "inspect(card_4612)"
+        },
+        {
+          "A": "enter(7319, box_8144)",
+          "B": "enter(4778, box_0087)"
+        },
+        {
+          "A": "take(left_token_5098)",
+          "B": "take(right_token_6072)"
+        },
+        {
+          "A": "use(left_token_5098, box_8969)",
+          "B": "wait()"
+        },
+        {
+          "A": "wait()",
+          "B": "use(right_token_6072, box_7817)"
+        },
+        {
+          "A": "take(exit_key_6143)",
+          "B": "wait()"
+        },
+        {
+          "A": "use(exit_key_6143, exit_9151)",
+          "B": "wait()"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_3181)",
+          "enter(8710, box_1732)",
+          "inspect(card_8128)",
+          "enter(7319, box_8144)",
+          "take(left_token_5098)",
+          "inspect(card_6847)",
+          "enter(1654, box_2871)",
+          "inspect(card_4612)",
+          "enter(4778, box_0087)",
+          "take(right_token_6072)",
+          "use(left_token_5098, box_8969)",
+          "use(right_token_6072, box_7817)",
+          "take(exit_key_6143)",
+          "use(exit_key_6143, exit_9151)"
+        ],
+        "B": [
+          "inspect(card_3181)",
+          "enter(8710, box_1732)",
+          "inspect(card_8128)",
+          "enter(7319, box_8144)",
+          "take(left_token_5098)",
+          "inspect(card_6847)",
+          "enter(1654, box_2871)",
+          "inspect(card_4612)",
+          "enter(4778, box_0087)",
+          "take(right_token_6072)",
+          "use(left_token_5098, box_8969)",
+          "use(right_token_6072, box_7817)",
+          "take(exit_key_6143)",
+          "use(exit_key_6143, exit_9151)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 14,
+          "free_help_turns": 14,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 18,
+      "reference_joint_steps": 9
+    },
+    {
+      "room_file": "heldout/private_handoffs_balanced_heldout_0.yaml",
+      "room_sha256": "6545f3e32d271380584bf98592a4b7e6c1745ca5cc0b2a3a0c1b985108654ce1",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 0,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "code",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "code_7168",
+          "target": "exit_3293",
+          "acquire": [
+            "inspect(card_9199)",
+            "enter(2935, box_6878)",
+            "inspect(card_9252)"
+          ],
+          "help_actions": [
+            "inspect(card_9199)",
+            "enter(2935, box_6878)",
+            "inspect(card_9252)",
+            "say(Code for exit_3293 is 7791)"
+          ]
+        },
+        {
+          "kind": "code",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "code_6017",
+          "target": "exit_7631",
+          "acquire": [
+            "inspect(card_4198)",
+            "enter(2131, box_3372)",
+            "inspect(card_9559)"
+          ],
+          "help_actions": [
+            "inspect(card_4198)",
+            "enter(2131, box_3372)",
+            "inspect(card_9559)",
+            "say(Code for exit_7631 is 7309)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_4198)",
+          "enter(2131, box_3372)",
+          "inspect(card_9559)",
+          "say(Code for exit_7631 is 7309)"
+        ],
+        "B": [
+          "inspect(card_9199)",
+          "enter(2935, box_6878)",
+          "inspect(card_9252)",
+          "say(Code for exit_3293 is 7791)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_4198)",
+          "B": "inspect(card_9199)"
+        },
+        {
+          "A": "enter(2131, box_3372)",
+          "B": "enter(2935, box_6878)"
+        },
+        {
+          "A": "inspect(card_9559)",
+          "B": "inspect(card_9252)"
+        },
+        {
+          "A": "say(Code for exit_7631 is 7309)",
+          "B": "say(Code for exit_3293 is 7791)"
+        },
+        {
+          "A": "enter(7791, exit_3293)",
+          "B": "enter(7309, exit_7631)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_4886)",
+          "enter(0604, box_6929)",
+          "inspect(card_5130)",
+          "enter(0038, box_8473)",
+          "inspect(card_9672)",
+          "enter(3118, box_8131)",
+          "inspect(card_7555)",
+          "enter(7791, exit_3293)"
+        ],
+        "B": [
+          "inspect(card_0773)",
+          "enter(1850, box_6848)",
+          "inspect(card_6077)",
+          "enter(9653, box_0391)",
+          "inspect(card_1605)",
+          "enter(0629, box_6077)",
+          "inspect(card_9959)",
+          "enter(7309, exit_7631)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        },
+        "B": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        }
+      },
+      "recommended_turn_budget": 12,
+      "reference_joint_steps": 5
+    },
+    {
+      "room_file": "heldout/private_handoffs_balanced_heldout_1.yaml",
+      "room_sha256": "1ea999d8f47cbdb58aa63b72760b2453a8a700ba18ba0c04556d9127b0065704",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 1,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "code",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "code_2343",
+          "target": "exit_7075",
+          "acquire": [
+            "inspect(card_8133)",
+            "enter(2817, box_1437)",
+            "inspect(card_6946)"
+          ],
+          "help_actions": [
+            "inspect(card_8133)",
+            "enter(2817, box_1437)",
+            "inspect(card_6946)",
+            "say(Code for exit_7075 is 0362)"
+          ]
+        },
+        {
+          "kind": "code",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "code_5655",
+          "target": "exit_3312",
+          "acquire": [
+            "inspect(card_2939)",
+            "enter(6521, box_4420)",
+            "inspect(card_9925)"
+          ],
+          "help_actions": [
+            "inspect(card_2939)",
+            "enter(6521, box_4420)",
+            "inspect(card_9925)",
+            "say(Code for exit_3312 is 8582)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_2939)",
+          "enter(6521, box_4420)",
+          "inspect(card_9925)",
+          "say(Code for exit_3312 is 8582)"
+        ],
+        "B": [
+          "inspect(card_8133)",
+          "enter(2817, box_1437)",
+          "inspect(card_6946)",
+          "say(Code for exit_7075 is 0362)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_2939)",
+          "B": "inspect(card_8133)"
+        },
+        {
+          "A": "enter(6521, box_4420)",
+          "B": "enter(2817, box_1437)"
+        },
+        {
+          "A": "inspect(card_9925)",
+          "B": "inspect(card_6946)"
+        },
+        {
+          "A": "say(Code for exit_3312 is 8582)",
+          "B": "say(Code for exit_7075 is 0362)"
+        },
+        {
+          "A": "enter(0362, exit_7075)",
+          "B": "enter(8582, exit_3312)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_8381)",
+          "enter(1859, box_1017)",
+          "inspect(card_9865)",
+          "enter(8422, box_3014)",
+          "inspect(card_3722)",
+          "enter(5222, box_9875)",
+          "inspect(card_0523)",
+          "enter(0362, exit_7075)"
+        ],
+        "B": [
+          "inspect(card_5295)",
+          "enter(0632, box_2074)",
+          "inspect(card_7110)",
+          "enter(2647, box_2418)",
+          "inspect(card_3413)",
+          "enter(3941, box_1188)",
+          "inspect(card_9567)",
+          "enter(8582, exit_3312)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        },
+        "B": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        }
+      },
+      "recommended_turn_budget": 12,
+      "reference_joint_steps": 5
+    },
+    {
+      "room_file": "heldout/private_handoffs_balanced_heldout_2.yaml",
+      "room_sha256": "0142b9acc1c7a39a64a79d5f5e74b1686d226e7c12dd7dc09594da492faa3e1d",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 2,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "code",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "code_9973",
+          "target": "exit_1940",
+          "acquire": [
+            "inspect(card_3428)",
+            "enter(4156, box_0275)",
+            "inspect(card_8428)"
+          ],
+          "help_actions": [
+            "inspect(card_3428)",
+            "enter(4156, box_0275)",
+            "inspect(card_8428)",
+            "say(Code for exit_1940 is 9774)"
+          ]
+        },
+        {
+          "kind": "code",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "code_2615",
+          "target": "exit_0161",
+          "acquire": [
+            "inspect(card_8908)",
+            "enter(3993, box_1410)",
+            "inspect(card_6971)"
+          ],
+          "help_actions": [
+            "inspect(card_8908)",
+            "enter(3993, box_1410)",
+            "inspect(card_6971)",
+            "say(Code for exit_0161 is 2505)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_8908)",
+          "enter(3993, box_1410)",
+          "inspect(card_6971)",
+          "say(Code for exit_0161 is 2505)"
+        ],
+        "B": [
+          "inspect(card_3428)",
+          "enter(4156, box_0275)",
+          "inspect(card_8428)",
+          "say(Code for exit_1940 is 9774)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_8908)",
+          "B": "inspect(card_3428)"
+        },
+        {
+          "A": "enter(3993, box_1410)",
+          "B": "enter(4156, box_0275)"
+        },
+        {
+          "A": "inspect(card_6971)",
+          "B": "inspect(card_8428)"
+        },
+        {
+          "A": "say(Code for exit_0161 is 2505)",
+          "B": "say(Code for exit_1940 is 9774)"
+        },
+        {
+          "A": "enter(9774, exit_1940)",
+          "B": "enter(2505, exit_0161)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_4316)",
+          "enter(0915, box_0184)",
+          "inspect(card_5560)",
+          "enter(8758, box_8194)",
+          "inspect(card_2924)",
+          "enter(0834, box_5173)",
+          "inspect(card_4869)",
+          "enter(9774, exit_1940)"
+        ],
+        "B": [
+          "inspect(card_5354)",
+          "enter(3021, box_5639)",
+          "inspect(card_0298)",
+          "enter(0858, box_9747)",
+          "inspect(card_3268)",
+          "enter(7231, box_9950)",
+          "inspect(card_2323)",
+          "enter(2505, exit_0161)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        },
+        "B": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        }
+      },
+      "recommended_turn_budget": 12,
+      "reference_joint_steps": 5
+    },
+    {
+      "room_file": "heldout/private_handoffs_asymmetric_heldout_3.yaml",
+      "room_sha256": "4a92ef03f48279f6e95c6754d9e8738be11dcb0f6beb43768b3fd2c270973492",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 3,
+      "split": "heldout",
+      "profile": "asymmetric",
+      "handoffs": [
+        {
+          "kind": "code",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "code_0755",
+          "target": "exit_0456",
+          "acquire": [
+            "inspect(card_8377)",
+            "enter(2893, box_1248)",
+            "inspect(card_9915)"
+          ],
+          "help_actions": [
+            "inspect(card_8377)",
+            "enter(2893, box_1248)",
+            "inspect(card_9915)",
+            "say(Code for exit_0456 is 1352)"
+          ]
+        },
+        {
+          "kind": "code",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "code_8744",
+          "target": "exit_8272",
+          "acquire": [
+            "inspect(card_5568)",
+            "enter(9598, box_9422)",
+            "inspect(card_6527)"
+          ],
+          "help_actions": [
+            "inspect(card_5568)",
+            "enter(9598, box_9422)",
+            "inspect(card_6527)",
+            "say(Code for exit_8272 is 4226)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_5568)",
+          "enter(9598, box_9422)",
+          "inspect(card_6527)",
+          "say(Code for exit_8272 is 4226)"
+        ],
+        "B": [
+          "inspect(card_8377)",
+          "enter(2893, box_1248)",
+          "inspect(card_9915)",
+          "say(Code for exit_0456 is 1352)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_5568)",
+          "B": "inspect(card_8377)"
+        },
+        {
+          "A": "enter(9598, box_9422)",
+          "B": "enter(2893, box_1248)"
+        },
+        {
+          "A": "inspect(card_6527)",
+          "B": "inspect(card_9915)"
+        },
+        {
+          "A": "say(Code for exit_8272 is 4226)",
+          "B": "say(Code for exit_0456 is 1352)"
+        },
+        {
+          "A": "enter(1352, exit_0456)",
+          "B": "enter(4226, exit_8272)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_0982)",
+          "enter(0840, box_0903)",
+          "inspect(card_1000)",
+          "enter(5302, box_2694)",
+          "inspect(card_6430)",
+          "enter(8535, box_1464)",
+          "inspect(card_7505)",
+          "enter(7804, box_1168)",
+          "inspect(card_1091)",
+          "enter(1352, exit_0456)"
+        ],
+        "B": [
+          "inspect(card_4594)",
+          "enter(8080, box_2878)",
+          "inspect(card_4441)",
+          "enter(1585, box_8534)",
+          "inspect(card_4841)",
+          "enter(4226, exit_8272)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 10,
+          "free_help_turns": 1,
+          "help_value": 9
+        },
+        "B": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        }
+      },
+      "recommended_turn_budget": 14,
+      "reference_joint_steps": 5
+    },
+    {
+      "room_file": "heldout/private_handoffs_zero_heldout_4.yaml",
+      "room_sha256": "51239b0e0c1cc1eb3441fa120e518c2a740e64431c76832d365d28b9870512fb",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 4,
+      "split": "heldout",
+      "profile": "zero",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [],
+        "B": []
+      },
+      "reference": [
+        {
+          "A": "inspect(card_7458)",
+          "B": "inspect(card_0689)"
+        },
+        {
+          "A": "enter(8783, exit_8103)",
+          "B": "enter(2795, exit_4147)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_7458)",
+          "enter(8783, exit_8103)"
+        ],
+        "B": [
+          "inspect(card_0689)",
+          "enter(2795, exit_4147)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 2,
+          "free_help_turns": 2,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 2,
+          "free_help_turns": 2,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 6,
+      "reference_joint_steps": 2
+    },
+    {
+      "room_file": "heldout/private_handoffs_balanced_heldout_5.yaml",
+      "room_sha256": "92e26dc9fdb67bd6acc305d2ca1950649362c253a70849fd5cd5e4948e25763a",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 5,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "code",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "code_7994",
+          "target": "exit_3882",
+          "acquire": [
+            "inspect(card_9216)",
+            "enter(4649, box_3282)",
+            "inspect(card_5545)"
+          ],
+          "help_actions": [
+            "inspect(card_9216)",
+            "enter(4649, box_3282)",
+            "inspect(card_5545)",
+            "say(Code for exit_3882 is 3909)"
+          ]
+        },
+        {
+          "kind": "code",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "code_4659",
+          "target": "exit_3089",
+          "acquire": [
+            "inspect(card_1446)",
+            "enter(4821, box_1801)",
+            "inspect(card_8683)"
+          ],
+          "help_actions": [
+            "inspect(card_1446)",
+            "enter(4821, box_1801)",
+            "inspect(card_8683)",
+            "say(Code for exit_3089 is 1738)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_1446)",
+          "enter(4821, box_1801)",
+          "inspect(card_8683)",
+          "say(Code for exit_3089 is 1738)"
+        ],
+        "B": [
+          "inspect(card_9216)",
+          "enter(4649, box_3282)",
+          "inspect(card_5545)",
+          "say(Code for exit_3882 is 3909)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_1446)",
+          "B": "inspect(card_9216)"
+        },
+        {
+          "A": "enter(4821, box_1801)",
+          "B": "enter(4649, box_3282)"
+        },
+        {
+          "A": "inspect(card_8683)",
+          "B": "inspect(card_5545)"
+        },
+        {
+          "A": "say(Code for exit_3089 is 1738)",
+          "B": "say(Code for exit_3882 is 3909)"
+        },
+        {
+          "A": "enter(3909, exit_3882)",
+          "B": "enter(1738, exit_3089)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_2779)",
+          "enter(4095, box_3789)",
+          "inspect(card_4414)",
+          "enter(6854, box_0760)",
+          "inspect(card_7674)",
+          "enter(6417, box_5228)",
+          "inspect(card_6201)",
+          "enter(3909, exit_3882)"
+        ],
+        "B": [
+          "inspect(card_2328)",
+          "enter(2464, box_2929)",
+          "inspect(card_1164)",
+          "enter(9253, box_5715)",
+          "inspect(card_1220)",
+          "enter(7857, box_0509)",
+          "inspect(card_8254)",
+          "enter(1738, exit_3089)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        },
+        "B": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        }
+      },
+      "recommended_turn_budget": 12,
+      "reference_joint_steps": 5
+    },
+    {
+      "room_file": "heldout/private_handoffs_balanced_heldout_6.yaml",
+      "room_sha256": "fa0d5a896a0b952cc450a8094085c4e5f123482732dca15f390f2e778c0d0ff4",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 6,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "code",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "code_8151",
+          "target": "exit_2635",
+          "acquire": [
+            "inspect(card_6149)",
+            "enter(8067, box_7251)",
+            "inspect(card_3948)"
+          ],
+          "help_actions": [
+            "inspect(card_6149)",
+            "enter(8067, box_7251)",
+            "inspect(card_3948)",
+            "say(Code for exit_2635 is 4164)"
+          ]
+        },
+        {
+          "kind": "code",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "code_5246",
+          "target": "exit_4571",
+          "acquire": [
+            "inspect(card_9982)",
+            "enter(2068, box_7783)",
+            "inspect(card_3246)"
+          ],
+          "help_actions": [
+            "inspect(card_9982)",
+            "enter(2068, box_7783)",
+            "inspect(card_3246)",
+            "say(Code for exit_4571 is 7113)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_9982)",
+          "enter(2068, box_7783)",
+          "inspect(card_3246)",
+          "say(Code for exit_4571 is 7113)"
+        ],
+        "B": [
+          "inspect(card_6149)",
+          "enter(8067, box_7251)",
+          "inspect(card_3948)",
+          "say(Code for exit_2635 is 4164)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_9982)",
+          "B": "inspect(card_6149)"
+        },
+        {
+          "A": "enter(2068, box_7783)",
+          "B": "enter(8067, box_7251)"
+        },
+        {
+          "A": "inspect(card_3246)",
+          "B": "inspect(card_3948)"
+        },
+        {
+          "A": "say(Code for exit_4571 is 7113)",
+          "B": "say(Code for exit_2635 is 4164)"
+        },
+        {
+          "A": "enter(4164, exit_2635)",
+          "B": "enter(7113, exit_4571)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_3876)",
+          "enter(6874, box_0178)",
+          "inspect(card_4528)",
+          "enter(7083, box_4382)",
+          "inspect(card_6595)",
+          "enter(6714, box_7429)",
+          "inspect(card_2364)",
+          "enter(4164, exit_2635)"
+        ],
+        "B": [
+          "inspect(card_4523)",
+          "enter(0937, box_0203)",
+          "inspect(card_5755)",
+          "enter(0081, box_2460)",
+          "inspect(card_8869)",
+          "enter(5826, box_2335)",
+          "inspect(card_5315)",
+          "enter(7113, exit_4571)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        },
+        "B": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        }
+      },
+      "recommended_turn_budget": 12,
+      "reference_joint_steps": 5
+    },
+    {
+      "room_file": "heldout/private_handoffs_balanced_heldout_7.yaml",
+      "room_sha256": "8d27e5528e8881d54e58b9e00462a2c2b42b7ad6d9f03e667f18abbe78409afe",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 7,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "code",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "code_7807",
+          "target": "exit_2926",
+          "acquire": [
+            "inspect(card_4895)",
+            "enter(1243, box_5005)",
+            "inspect(card_1199)"
+          ],
+          "help_actions": [
+            "inspect(card_4895)",
+            "enter(1243, box_5005)",
+            "inspect(card_1199)",
+            "say(Code for exit_2926 is 7814)"
+          ]
+        },
+        {
+          "kind": "code",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "code_2093",
+          "target": "exit_8075",
+          "acquire": [
+            "inspect(card_1819)",
+            "enter(0678, box_3779)",
+            "inspect(card_7421)"
+          ],
+          "help_actions": [
+            "inspect(card_1819)",
+            "enter(0678, box_3779)",
+            "inspect(card_7421)",
+            "say(Code for exit_8075 is 7241)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_1819)",
+          "enter(0678, box_3779)",
+          "inspect(card_7421)",
+          "say(Code for exit_8075 is 7241)"
+        ],
+        "B": [
+          "inspect(card_4895)",
+          "enter(1243, box_5005)",
+          "inspect(card_1199)",
+          "say(Code for exit_2926 is 7814)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_1819)",
+          "B": "inspect(card_4895)"
+        },
+        {
+          "A": "enter(0678, box_3779)",
+          "B": "enter(1243, box_5005)"
+        },
+        {
+          "A": "inspect(card_7421)",
+          "B": "inspect(card_1199)"
+        },
+        {
+          "A": "say(Code for exit_8075 is 7241)",
+          "B": "say(Code for exit_2926 is 7814)"
+        },
+        {
+          "A": "enter(7814, exit_2926)",
+          "B": "enter(7241, exit_8075)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_9671)",
+          "enter(1879, box_9796)",
+          "inspect(card_1929)",
+          "enter(2633, box_7507)",
+          "inspect(card_3761)",
+          "enter(6019, box_5809)",
+          "inspect(card_9091)",
+          "enter(7814, exit_2926)"
+        ],
+        "B": [
+          "inspect(card_7076)",
+          "enter(5402, box_8529)",
+          "inspect(card_7903)",
+          "enter(4771, box_0625)",
+          "inspect(card_1369)",
+          "enter(5074, box_7863)",
+          "inspect(card_0862)",
+          "enter(7241, exit_8075)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        },
+        "B": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        }
+      },
+      "recommended_turn_budget": 12,
+      "reference_joint_steps": 5
+    },
+    {
+      "room_file": "heldout/private_handoffs_asymmetric_heldout_8.yaml",
+      "room_sha256": "11899b959e43b2317937f508d593e3fbc9d218562f8acd2399ee1ca2a27d47a7",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 8,
+      "split": "heldout",
+      "profile": "asymmetric",
+      "handoffs": [
+        {
+          "kind": "code",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "code_9717",
+          "target": "exit_3977",
+          "acquire": [
+            "inspect(card_1847)",
+            "enter(6265, box_9552)",
+            "inspect(card_6733)"
+          ],
+          "help_actions": [
+            "inspect(card_1847)",
+            "enter(6265, box_9552)",
+            "inspect(card_6733)",
+            "say(Code for exit_3977 is 4680)"
+          ]
+        },
+        {
+          "kind": "code",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "code_6606",
+          "target": "exit_5168",
+          "acquire": [
+            "inspect(card_9414)",
+            "enter(5686, box_8362)",
+            "inspect(card_1954)"
+          ],
+          "help_actions": [
+            "inspect(card_9414)",
+            "enter(5686, box_8362)",
+            "inspect(card_1954)",
+            "say(Code for exit_5168 is 5233)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_9414)",
+          "enter(5686, box_8362)",
+          "inspect(card_1954)",
+          "say(Code for exit_5168 is 5233)"
+        ],
+        "B": [
+          "inspect(card_1847)",
+          "enter(6265, box_9552)",
+          "inspect(card_6733)",
+          "say(Code for exit_3977 is 4680)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_9414)",
+          "B": "inspect(card_1847)"
+        },
+        {
+          "A": "enter(5686, box_8362)",
+          "B": "enter(6265, box_9552)"
+        },
+        {
+          "A": "inspect(card_1954)",
+          "B": "inspect(card_6733)"
+        },
+        {
+          "A": "say(Code for exit_5168 is 5233)",
+          "B": "say(Code for exit_3977 is 4680)"
+        },
+        {
+          "A": "enter(4680, exit_3977)",
+          "B": "enter(5233, exit_5168)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_0784)",
+          "enter(4468, box_5839)",
+          "inspect(card_6677)",
+          "enter(5195, box_8512)",
+          "inspect(card_9125)",
+          "enter(4283, box_2666)",
+          "inspect(card_7781)",
+          "enter(2220, box_6440)",
+          "inspect(card_3187)",
+          "enter(4680, exit_3977)"
+        ],
+        "B": [
+          "inspect(card_0638)",
+          "enter(7965, box_1954)",
+          "inspect(card_9805)",
+          "enter(7960, box_0750)",
+          "inspect(card_2728)",
+          "enter(5233, exit_5168)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 10,
+          "free_help_turns": 1,
+          "help_value": 9
+        },
+        "B": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        }
+      },
+      "recommended_turn_budget": 14,
+      "reference_joint_steps": 5
+    },
+    {
+      "room_file": "heldout/private_handoffs_zero_heldout_9.yaml",
+      "room_sha256": "08b3875493d39d7eb5ecc7eca639aa75221c13673017940b28b4f355e238eca5",
+      "generator_version": 1,
+      "family": "private_handoffs",
+      "seed": 9,
+      "split": "heldout",
+      "profile": "zero",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [],
+        "B": []
+      },
+      "reference": [
+        {
+          "A": "inspect(card_3990)",
+          "B": "inspect(card_8564)"
+        },
+        {
+          "A": "enter(3119, exit_8273)",
+          "B": "enter(5774, exit_1779)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_3990)",
+          "enter(3119, exit_8273)"
+        ],
+        "B": [
+          "inspect(card_8564)",
+          "enter(5774, exit_1779)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 2,
+          "free_help_turns": 2,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 2,
+          "free_help_turns": 2,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 6,
+      "reference_joint_steps": 2
+    },
+    {
+      "room_file": "heldout/costly_help_balanced_heldout_0.yaml",
+      "room_sha256": "3dd312d5c8e30d51397052635e7b56fe71e406bf26935fafa4bfb9788c3e5cbb",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 0,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "item",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "partner_key_3499",
+          "target": "exit_9006",
+          "acquire": [
+            "inspect(card_6039)",
+            "enter(8773, box_2924)",
+            "take(partner_key_3499)"
+          ],
+          "help_actions": [
+            "inspect(card_6039)",
+            "enter(8773, box_2924)",
+            "take(partner_key_3499)",
+            "give(partner_key_3499)"
+          ]
+        },
+        {
+          "kind": "item",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "partner_key_9750",
+          "target": "exit_9972",
+          "acquire": [
+            "inspect(card_2740)",
+            "enter(3402, box_4608)",
+            "take(partner_key_9750)"
+          ],
+          "help_actions": [
+            "inspect(card_2740)",
+            "enter(3402, box_4608)",
+            "take(partner_key_9750)",
+            "give(partner_key_9750)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_2740)",
+          "enter(3402, box_4608)",
+          "take(partner_key_9750)",
+          "give(partner_key_9750)"
+        ],
+        "B": [
+          "inspect(card_6039)",
+          "enter(8773, box_2924)",
+          "take(partner_key_3499)",
+          "give(partner_key_3499)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_2740)",
+          "B": "inspect(card_6039)"
+        },
+        {
+          "A": "enter(3402, box_4608)",
+          "B": "enter(8773, box_2924)"
+        },
+        {
+          "A": "take(partner_key_9750)",
+          "B": "take(partner_key_3499)"
+        },
+        {
+          "A": "give(partner_key_9750)",
+          "B": "give(partner_key_3499)"
+        },
+        {
+          "A": "use(partner_key_3499, exit_9006)",
+          "B": "use(partner_key_9750, exit_9972)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_9926)",
+          "enter(8724, box_2084)",
+          "inspect(card_7097)",
+          "enter(8877, box_1349)",
+          "inspect(card_4447)",
+          "enter(2226, box_6252)",
+          "take(spare_key_3576)",
+          "use(spare_key_3576, exit_9006)"
+        ],
+        "B": [
+          "inspect(card_8912)",
+          "enter(3086, box_0492)",
+          "inspect(card_5254)",
+          "enter(8772, box_3035)",
+          "inspect(card_7006)",
+          "enter(6594, box_3462)",
+          "take(spare_key_5307)",
+          "use(spare_key_5307, exit_9972)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        },
+        "B": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        }
+      },
+      "recommended_turn_budget": 12,
+      "reference_joint_steps": 5
+    },
+    {
+      "room_file": "heldout/costly_help_balanced_heldout_1.yaml",
+      "room_sha256": "3becb2b18d161ad0406bb75b9770be8a73f5846bd63e712ebc219d2a856daa0d",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 1,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "item",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "partner_key_0214",
+          "target": "exit_2796",
+          "acquire": [
+            "inspect(card_8746)",
+            "enter(3810, box_2518)",
+            "take(partner_key_0214)"
+          ],
+          "help_actions": [
+            "inspect(card_8746)",
+            "enter(3810, box_2518)",
+            "take(partner_key_0214)",
+            "give(partner_key_0214)"
+          ]
+        },
+        {
+          "kind": "item",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "partner_key_4640",
+          "target": "exit_0076",
+          "acquire": [
+            "inspect(card_7979)",
+            "enter(5129, box_6412)",
+            "take(partner_key_4640)"
+          ],
+          "help_actions": [
+            "inspect(card_7979)",
+            "enter(5129, box_6412)",
+            "take(partner_key_4640)",
+            "give(partner_key_4640)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_7979)",
+          "enter(5129, box_6412)",
+          "take(partner_key_4640)",
+          "give(partner_key_4640)"
+        ],
+        "B": [
+          "inspect(card_8746)",
+          "enter(3810, box_2518)",
+          "take(partner_key_0214)",
+          "give(partner_key_0214)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_7979)",
+          "B": "inspect(card_8746)"
+        },
+        {
+          "A": "enter(5129, box_6412)",
+          "B": "enter(3810, box_2518)"
+        },
+        {
+          "A": "take(partner_key_4640)",
+          "B": "take(partner_key_0214)"
+        },
+        {
+          "A": "give(partner_key_4640)",
+          "B": "give(partner_key_0214)"
+        },
+        {
+          "A": "use(partner_key_0214, exit_2796)",
+          "B": "use(partner_key_4640, exit_0076)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_8993)",
+          "enter(3987, box_3466)",
+          "inspect(card_5090)",
+          "enter(8031, box_9336)",
+          "inspect(card_6001)",
+          "enter(4471, box_5127)",
+          "take(spare_key_2508)",
+          "use(spare_key_2508, exit_2796)"
+        ],
+        "B": [
+          "inspect(card_6719)",
+          "enter(1447, box_2731)",
+          "inspect(card_8637)",
+          "enter(8871, box_4786)",
+          "inspect(card_3592)",
+          "enter(2155, box_7344)",
+          "take(spare_key_1657)",
+          "use(spare_key_1657, exit_0076)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        },
+        "B": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        }
+      },
+      "recommended_turn_budget": 12,
+      "reference_joint_steps": 5
+    },
+    {
+      "room_file": "heldout/costly_help_balanced_heldout_2.yaml",
+      "room_sha256": "102dcb5cee32aeafa6116a9555ee2350e87d41f269906c06d9133f71ef174f7d",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 2,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "item",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "partner_key_7581",
+          "target": "exit_6643",
+          "acquire": [
+            "inspect(card_3740)",
+            "enter(0828, box_8594)",
+            "take(partner_key_7581)"
+          ],
+          "help_actions": [
+            "inspect(card_3740)",
+            "enter(0828, box_8594)",
+            "take(partner_key_7581)",
+            "give(partner_key_7581)"
+          ]
+        },
+        {
+          "kind": "item",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "partner_key_1867",
+          "target": "exit_4300",
+          "acquire": [
+            "inspect(card_4412)",
+            "enter(6888, box_0739)",
+            "take(partner_key_1867)"
+          ],
+          "help_actions": [
+            "inspect(card_4412)",
+            "enter(6888, box_0739)",
+            "take(partner_key_1867)",
+            "give(partner_key_1867)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_4412)",
+          "enter(6888, box_0739)",
+          "take(partner_key_1867)",
+          "give(partner_key_1867)"
+        ],
+        "B": [
+          "inspect(card_3740)",
+          "enter(0828, box_8594)",
+          "take(partner_key_7581)",
+          "give(partner_key_7581)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_4412)",
+          "B": "inspect(card_3740)"
+        },
+        {
+          "A": "enter(6888, box_0739)",
+          "B": "enter(0828, box_8594)"
+        },
+        {
+          "A": "take(partner_key_1867)",
+          "B": "take(partner_key_7581)"
+        },
+        {
+          "A": "give(partner_key_1867)",
+          "B": "give(partner_key_7581)"
+        },
+        {
+          "A": "use(partner_key_7581, exit_6643)",
+          "B": "use(partner_key_1867, exit_4300)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_1394)",
+          "enter(5029, box_9087)",
+          "inspect(card_5905)",
+          "enter(5742, box_2041)",
+          "inspect(card_9865)",
+          "enter(7562, box_6316)",
+          "take(spare_key_7698)",
+          "use(spare_key_7698, exit_6643)"
+        ],
+        "B": [
+          "inspect(card_0263)",
+          "enter(8738, box_2054)",
+          "inspect(card_1533)",
+          "enter(7538, box_3581)",
+          "inspect(card_8506)",
+          "enter(8780, box_9140)",
+          "take(spare_key_8120)",
+          "use(spare_key_8120, exit_4300)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        },
+        "B": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        }
+      },
+      "recommended_turn_budget": 12,
+      "reference_joint_steps": 5
+    },
+    {
+      "room_file": "heldout/costly_help_asymmetric_heldout_3.yaml",
+      "room_sha256": "2f7cbac71db03bfe0ab8dea0ac7ffe4e66635f44821aab747727615e79d9858e",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 3,
+      "split": "heldout",
+      "profile": "asymmetric",
+      "handoffs": [
+        {
+          "kind": "item",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "partner_key_7697",
+          "target": "exit_9264",
+          "acquire": [
+            "inspect(card_6287)",
+            "enter(8844, box_3858)",
+            "take(partner_key_7697)"
+          ],
+          "help_actions": [
+            "inspect(card_6287)",
+            "enter(8844, box_3858)",
+            "take(partner_key_7697)",
+            "give(partner_key_7697)"
+          ]
+        },
+        {
+          "kind": "item",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "partner_key_2093",
+          "target": "exit_9403",
+          "acquire": [
+            "inspect(card_9210)",
+            "enter(5273, box_4879)",
+            "take(partner_key_2093)"
+          ],
+          "help_actions": [
+            "inspect(card_9210)",
+            "enter(5273, box_4879)",
+            "take(partner_key_2093)",
+            "give(partner_key_2093)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_9210)",
+          "enter(5273, box_4879)",
+          "take(partner_key_2093)",
+          "give(partner_key_2093)"
+        ],
+        "B": [
+          "inspect(card_6287)",
+          "enter(8844, box_3858)",
+          "take(partner_key_7697)",
+          "give(partner_key_7697)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_9210)",
+          "B": "inspect(card_6287)"
+        },
+        {
+          "A": "enter(5273, box_4879)",
+          "B": "enter(8844, box_3858)"
+        },
+        {
+          "A": "take(partner_key_2093)",
+          "B": "take(partner_key_7697)"
+        },
+        {
+          "A": "give(partner_key_2093)",
+          "B": "give(partner_key_7697)"
+        },
+        {
+          "A": "use(partner_key_7697, exit_9264)",
+          "B": "use(partner_key_2093, exit_9403)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_1748)",
+          "enter(2368, box_5968)",
+          "inspect(card_4867)",
+          "enter(1562, box_1205)",
+          "inspect(card_6198)",
+          "enter(7292, box_6658)",
+          "inspect(card_4788)",
+          "enter(9741, box_7073)",
+          "take(spare_key_1161)",
+          "use(spare_key_1161, exit_9264)"
+        ],
+        "B": [
+          "inspect(card_6609)",
+          "enter(9123, box_1593)",
+          "inspect(card_9589)",
+          "enter(6727, box_1097)",
+          "take(spare_key_8469)",
+          "use(spare_key_8469, exit_9403)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 10,
+          "free_help_turns": 1,
+          "help_value": 9
+        },
+        "B": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        }
+      },
+      "recommended_turn_budget": 14,
+      "reference_joint_steps": 5
+    },
+    {
+      "room_file": "heldout/costly_help_zero_heldout_4.yaml",
+      "room_sha256": "45febc5978bcdd12532d4db41fe6d2c9c3655513b93056f20d68d4a4b9d0220c",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 4,
+      "split": "heldout",
+      "profile": "zero",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [],
+        "B": []
+      },
+      "reference": [
+        {
+          "A": "take(spare_key_1825)",
+          "B": "take(spare_key_4714)"
+        },
+        {
+          "A": "use(spare_key_1825, exit_1869)",
+          "B": "use(spare_key_4714, exit_2025)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "take(spare_key_1825)",
+          "use(spare_key_1825, exit_1869)"
+        ],
+        "B": [
+          "take(spare_key_4714)",
+          "use(spare_key_4714, exit_2025)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 2,
+          "free_help_turns": 2,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 2,
+          "free_help_turns": 2,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 6,
+      "reference_joint_steps": 2
+    },
+    {
+      "room_file": "heldout/costly_help_balanced_heldout_5.yaml",
+      "room_sha256": "f8c9599cfae87a462ef43022cfc1288cb92a348c143a55bf89dc737d2457d070",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 5,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "item",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "partner_key_2798",
+          "target": "exit_8239",
+          "acquire": [
+            "inspect(card_7743)",
+            "enter(4678, box_1080)",
+            "take(partner_key_2798)"
+          ],
+          "help_actions": [
+            "inspect(card_7743)",
+            "enter(4678, box_1080)",
+            "take(partner_key_2798)",
+            "give(partner_key_2798)"
+          ]
+        },
+        {
+          "kind": "item",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "partner_key_7584",
+          "target": "exit_7566",
+          "acquire": [
+            "inspect(card_2998)",
+            "enter(0128, box_2378)",
+            "take(partner_key_7584)"
+          ],
+          "help_actions": [
+            "inspect(card_2998)",
+            "enter(0128, box_2378)",
+            "take(partner_key_7584)",
+            "give(partner_key_7584)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_2998)",
+          "enter(0128, box_2378)",
+          "take(partner_key_7584)",
+          "give(partner_key_7584)"
+        ],
+        "B": [
+          "inspect(card_7743)",
+          "enter(4678, box_1080)",
+          "take(partner_key_2798)",
+          "give(partner_key_2798)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_2998)",
+          "B": "inspect(card_7743)"
+        },
+        {
+          "A": "enter(0128, box_2378)",
+          "B": "enter(4678, box_1080)"
+        },
+        {
+          "A": "take(partner_key_7584)",
+          "B": "take(partner_key_2798)"
+        },
+        {
+          "A": "give(partner_key_7584)",
+          "B": "give(partner_key_2798)"
+        },
+        {
+          "A": "use(partner_key_2798, exit_8239)",
+          "B": "use(partner_key_7584, exit_7566)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_8784)",
+          "enter(6436, box_5662)",
+          "inspect(card_9836)",
+          "enter(5043, box_1210)",
+          "inspect(card_9610)",
+          "enter(7966, box_1403)",
+          "take(spare_key_9695)",
+          "use(spare_key_9695, exit_8239)"
+        ],
+        "B": [
+          "inspect(card_8794)",
+          "enter(3576, box_8276)",
+          "inspect(card_5395)",
+          "enter(0933, box_9004)",
+          "inspect(card_6039)",
+          "enter(7106, box_9712)",
+          "take(spare_key_0709)",
+          "use(spare_key_0709, exit_7566)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        },
+        "B": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        }
+      },
+      "recommended_turn_budget": 12,
+      "reference_joint_steps": 5
+    },
+    {
+      "room_file": "heldout/costly_help_balanced_heldout_6.yaml",
+      "room_sha256": "9d3dfc737b078efa9718c576d2b4a470cacd52b27068ff0dd273ea1d91af0dbb",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 6,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "item",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "partner_key_8705",
+          "target": "exit_8399",
+          "acquire": [
+            "inspect(card_2245)",
+            "enter(3811, box_3541)",
+            "take(partner_key_8705)"
+          ],
+          "help_actions": [
+            "inspect(card_2245)",
+            "enter(3811, box_3541)",
+            "take(partner_key_8705)",
+            "give(partner_key_8705)"
+          ]
+        },
+        {
+          "kind": "item",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "partner_key_4833",
+          "target": "exit_6382",
+          "acquire": [
+            "inspect(card_1999)",
+            "enter(5465, box_8558)",
+            "take(partner_key_4833)"
+          ],
+          "help_actions": [
+            "inspect(card_1999)",
+            "enter(5465, box_8558)",
+            "take(partner_key_4833)",
+            "give(partner_key_4833)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_1999)",
+          "enter(5465, box_8558)",
+          "take(partner_key_4833)",
+          "give(partner_key_4833)"
+        ],
+        "B": [
+          "inspect(card_2245)",
+          "enter(3811, box_3541)",
+          "take(partner_key_8705)",
+          "give(partner_key_8705)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_1999)",
+          "B": "inspect(card_2245)"
+        },
+        {
+          "A": "enter(5465, box_8558)",
+          "B": "enter(3811, box_3541)"
+        },
+        {
+          "A": "take(partner_key_4833)",
+          "B": "take(partner_key_8705)"
+        },
+        {
+          "A": "give(partner_key_4833)",
+          "B": "give(partner_key_8705)"
+        },
+        {
+          "A": "use(partner_key_8705, exit_8399)",
+          "B": "use(partner_key_4833, exit_6382)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_8573)",
+          "enter(5536, box_7868)",
+          "inspect(card_1659)",
+          "enter(7977, box_0675)",
+          "inspect(card_6357)",
+          "enter(3848, box_5117)",
+          "take(spare_key_5443)",
+          "use(spare_key_5443, exit_8399)"
+        ],
+        "B": [
+          "inspect(card_4592)",
+          "enter(4736, box_4467)",
+          "inspect(card_0459)",
+          "enter(2841, box_8538)",
+          "inspect(card_7237)",
+          "enter(0049, box_3413)",
+          "take(spare_key_6407)",
+          "use(spare_key_6407, exit_6382)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        },
+        "B": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        }
+      },
+      "recommended_turn_budget": 12,
+      "reference_joint_steps": 5
+    },
+    {
+      "room_file": "heldout/costly_help_balanced_heldout_7.yaml",
+      "room_sha256": "22ff81e7c916cac77da02fcdfd4299d290a81bc666493cb43834b6d94febedca",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 7,
+      "split": "heldout",
+      "profile": "balanced",
+      "handoffs": [
+        {
+          "kind": "item",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "partner_key_1822",
+          "target": "exit_1899",
+          "acquire": [
+            "inspect(card_3739)",
+            "enter(6262, box_5056)",
+            "take(partner_key_1822)"
+          ],
+          "help_actions": [
+            "inspect(card_3739)",
+            "enter(6262, box_5056)",
+            "take(partner_key_1822)",
+            "give(partner_key_1822)"
+          ]
+        },
+        {
+          "kind": "item",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "partner_key_2821",
+          "target": "exit_6667",
+          "acquire": [
+            "inspect(card_4900)",
+            "enter(9070, box_0838)",
+            "take(partner_key_2821)"
+          ],
+          "help_actions": [
+            "inspect(card_4900)",
+            "enter(9070, box_0838)",
+            "take(partner_key_2821)",
+            "give(partner_key_2821)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_4900)",
+          "enter(9070, box_0838)",
+          "take(partner_key_2821)",
+          "give(partner_key_2821)"
+        ],
+        "B": [
+          "inspect(card_3739)",
+          "enter(6262, box_5056)",
+          "take(partner_key_1822)",
+          "give(partner_key_1822)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_4900)",
+          "B": "inspect(card_3739)"
+        },
+        {
+          "A": "enter(9070, box_0838)",
+          "B": "enter(6262, box_5056)"
+        },
+        {
+          "A": "take(partner_key_2821)",
+          "B": "take(partner_key_1822)"
+        },
+        {
+          "A": "give(partner_key_2821)",
+          "B": "give(partner_key_1822)"
+        },
+        {
+          "A": "use(partner_key_1822, exit_1899)",
+          "B": "use(partner_key_2821, exit_6667)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_7078)",
+          "enter(1420, box_9773)",
+          "inspect(card_3657)",
+          "enter(2783, box_7077)",
+          "inspect(card_5223)",
+          "enter(1451, box_1951)",
+          "take(spare_key_5047)",
+          "use(spare_key_5047, exit_1899)"
+        ],
+        "B": [
+          "inspect(card_4042)",
+          "enter(2689, box_5040)",
+          "inspect(card_1323)",
+          "enter(8022, box_7448)",
+          "inspect(card_1310)",
+          "enter(1108, box_9371)",
+          "take(spare_key_7601)",
+          "use(spare_key_7601, exit_6667)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        },
+        "B": {
+          "solo_turns": 8,
+          "free_help_turns": 1,
+          "help_value": 7
+        }
+      },
+      "recommended_turn_budget": 12,
+      "reference_joint_steps": 5
+    },
+    {
+      "room_file": "heldout/costly_help_asymmetric_heldout_8.yaml",
+      "room_sha256": "d19d8d4a77ec3cd15b59315cfe41264dea80b9ffbd6bb13993a01f46e08316da",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 8,
+      "split": "heldout",
+      "profile": "asymmetric",
+      "handoffs": [
+        {
+          "kind": "item",
+          "holder": "B",
+          "recipient": "A",
+          "resource": "partner_key_0942",
+          "target": "exit_0625",
+          "acquire": [
+            "inspect(card_6430)",
+            "enter(9451, box_5120)",
+            "take(partner_key_0942)"
+          ],
+          "help_actions": [
+            "inspect(card_6430)",
+            "enter(9451, box_5120)",
+            "take(partner_key_0942)",
+            "give(partner_key_0942)"
+          ]
+        },
+        {
+          "kind": "item",
+          "holder": "A",
+          "recipient": "B",
+          "resource": "partner_key_1252",
+          "target": "exit_4422",
+          "acquire": [
+            "inspect(card_9936)",
+            "enter(8161, box_5501)",
+            "take(partner_key_1252)"
+          ],
+          "help_actions": [
+            "inspect(card_9936)",
+            "enter(8161, box_5501)",
+            "take(partner_key_1252)",
+            "give(partner_key_1252)"
+          ]
+        }
+      ],
+      "helper_plans": {
+        "A": [
+          "inspect(card_9936)",
+          "enter(8161, box_5501)",
+          "take(partner_key_1252)",
+          "give(partner_key_1252)"
+        ],
+        "B": [
+          "inspect(card_6430)",
+          "enter(9451, box_5120)",
+          "take(partner_key_0942)",
+          "give(partner_key_0942)"
+        ]
+      },
+      "reference": [
+        {
+          "A": "inspect(card_9936)",
+          "B": "inspect(card_6430)"
+        },
+        {
+          "A": "enter(8161, box_5501)",
+          "B": "enter(9451, box_5120)"
+        },
+        {
+          "A": "take(partner_key_1252)",
+          "B": "take(partner_key_0942)"
+        },
+        {
+          "A": "give(partner_key_1252)",
+          "B": "give(partner_key_0942)"
+        },
+        {
+          "A": "use(partner_key_0942, exit_0625)",
+          "B": "use(partner_key_1252, exit_4422)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "inspect(card_4291)",
+          "enter(6150, box_9219)",
+          "inspect(card_6802)",
+          "enter(9965, box_0410)",
+          "inspect(card_4778)",
+          "enter(7304, box_8571)",
+          "inspect(card_0870)",
+          "enter(4139, box_6504)",
+          "take(spare_key_0055)",
+          "use(spare_key_0055, exit_0625)"
+        ],
+        "B": [
+          "inspect(card_6295)",
+          "enter(8623, box_9387)",
+          "inspect(card_8394)",
+          "enter(7422, box_3081)",
+          "take(spare_key_6330)",
+          "use(spare_key_6330, exit_4422)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 10,
+          "free_help_turns": 1,
+          "help_value": 9
+        },
+        "B": {
+          "solo_turns": 6,
+          "free_help_turns": 1,
+          "help_value": 5
+        }
+      },
+      "recommended_turn_budget": 14,
+      "reference_joint_steps": 5
+    },
+    {
+      "room_file": "heldout/costly_help_zero_heldout_9.yaml",
+      "room_sha256": "78cd3b1e25a642d163062d8d711ddade3140f762897db9bbb461929660951701",
+      "generator_version": 1,
+      "family": "costly_help",
+      "seed": 9,
+      "split": "heldout",
+      "profile": "zero",
+      "handoffs": [],
+      "helper_plans": {
+        "A": [],
+        "B": []
+      },
+      "reference": [
+        {
+          "A": "take(spare_key_2186)",
+          "B": "take(spare_key_1783)"
+        },
+        {
+          "A": "use(spare_key_2186, exit_4011)",
+          "B": "use(spare_key_1783, exit_4949)"
+        }
+      ],
+      "solo_plans": {
+        "A": [
+          "take(spare_key_2186)",
+          "use(spare_key_2186, exit_4011)"
+        ],
+        "B": [
+          "take(spare_key_1783)",
+          "use(spare_key_1783, exit_4949)"
+        ]
+      },
+      "oracle": {
+        "A": {
+          "solo_turns": 2,
+          "free_help_turns": 2,
+          "help_value": 0
+        },
+        "B": {
+          "solo_turns": 2,
+          "free_help_turns": 2,
+          "help_value": 0
+        }
+      },
+      "recommended_turn_budget": 6,
+      "reference_joint_steps": 2
+    }
+  ]
+}

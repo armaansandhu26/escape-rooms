@@ -1,0 +1,103 @@
+id: private_handoffs_asymmetric_development_8
+wings:
+  A: west office
+  B: east office
+codes:
+  code_3777: '9987'
+  code_5913: '8206'
+  code_3116: '2475'
+  code_6714: '1428'
+  code_8832: '7769'
+  code_5034: '5779'
+items: {}
+nodes:
+- id: card_5660
+  wing: A
+  kind: clue
+  desc: Code for box_0542.
+  hidden: true
+  code: code_6714
+- id: card_3858
+  wing: B
+  kind: clue
+  desc: Code for box_5932.
+  code: code_5034
+- id: box_5932
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_5034
+  contents:
+  - card_8873
+- id: card_7710
+  wing: A
+  kind: clue
+  desc: Code for your exit exit_7657.
+  hidden: true
+  code: code_3777
+- id: box_5716
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_5913
+  contents:
+  - card_2879
+- id: exit_7657
+  wing: A
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_3777
+- id: box_1993
+  wing: A
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_3116
+  contents:
+  - card_5660
+- id: card_9902
+  wing: B
+  kind: clue
+  desc: Code for partner's exit exit_7657; send it before leaving if you choose to
+    help.
+  code: code_3777
+- id: card_0169
+  wing: A
+  kind: clue
+  desc: Code for partner's exit exit_9734; send it before leaving if you choose to
+    help.
+  code: code_8832
+- id: card_2879
+  wing: A
+  kind: clue
+  desc: Code for box_1993.
+  hidden: true
+  code: code_3116
+- id: card_8873
+  wing: B
+  kind: clue
+  desc: Code for your exit exit_9734.
+  hidden: true
+  code: code_8832
+- id: box_0542
+  wing: A
+  kind: container
+  desc: Supply lock 3. Its code is on a matching card.
+  requires:
+    code: code_6714
+  contents:
+  - card_7710
+- id: card_6869
+  wing: A
+  kind: clue
+  desc: Code for box_5716.
+  code: code_5913
+- id: exit_9734
+  wing: B
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_8832

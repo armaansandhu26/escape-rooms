@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
+from dataclasses import replace
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
@@ -37,6 +39,8 @@ from motiverooms.azure_openai import (
     mask_endpoint,
 )
 from motiverooms.env import MotiveRoomsEnv
+from motiverooms.experiment import digest, run_episode
+from motiverooms.telemetry import RequestBudget
 from motiverooms.actions import Action, parse_action
 from motiverooms.llm_coord import choose_action_with_checks, decision_order, with_partner_pick
 from motiverooms.llm_policy import LLMAgentPolicy
@@ -44,7 +48,7 @@ from motiverooms.narrative import narrate_turn
 from motiverooms.schema import AgentId
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--room",
@@ -54,22 +58,70 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--turn-budget", type=int, default=14)
     parser.add_argument(
         "--framing",
-        default="collaborative",
-        choices=("collaborative", "mixed", "competitive"),
-        help="Incentive prompt (collaborative, mixed, competitive).",
+        default=None,
+        choices=("collaborative", "mixed", "competitive", "work_alone", "single"),
+        help="Prompt framing; defaults to the reward mode. Does not change mechanics.",
     )
+    parser.add_argument("--mode", choices=("collaborative", "mixed", "competitive"), default="collaborative")
+    parser.add_argument("--shared-escape", choices=("together", "race"), default="together")
+    parser.add_argument("--partner-actions", choices=("private", "public"), default="private")
+    parser.add_argument("--observation-version", choices=("v1", "v2", "v3"), default="v3")
+    parser.add_argument("--coaching", action="store_true", help="Add explicit sharing/withholding strategy instructions.")
+    parser.add_argument("--model-a", help="Deployment for policy 1 (defaults to AZURE_OPENAI_MODEL).")
+    parser.add_argument("--model-b", help="Deployment for policy 2 (defaults to AZURE_OPENAI_MODEL).")
+    parser.add_argument("--framing-a", choices=("collaborative", "mixed", "competitive", "work_alone", "single"))
+    parser.add_argument("--framing-b", choices=("collaborative", "mixed", "competitive", "work_alone", "single"))
+    parser.add_argument("--swap-seats", action="store_true", help="Swap policy 1 and policy 2 between physical seats A/B, including model and framing.")
     parser.add_argument("--max-steps", type=int, default=20)
+    parser.add_argument("--output", type=Path, help="JSONL path (default: a new file under runs/).")
+    parser.add_argument("--max-api-calls", type=int, default=100)
+    parser.add_argument("--max-tokens", type=int, default=250_000)
+    parser.add_argument("--max-cost-usd", type=float)
+    parser.add_argument("--input-price", type=float, help="USD per million input tokens; user-supplied deployment price.")
+    parser.add_argument("--output-price", type=float, help="USD per million output tokens.")
     parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Print config and exit without calling Azure.",
     )
-    parser.add_argument(
+    decisions = parser.add_mutually_exclusive_group()
+    decisions.add_argument("--decision-mode", choices=("simultaneous", "assisted"), default="simultaneous")
+    decisions.add_argument(
         "--parallel-llm",
-        action="store_true",
-        help="Call the LLM for all agents at once (often duplicates actions).",
+        dest="decision_mode",
+        action="store_const",
+        const="simultaneous",
+        help="Alias for --decision-mode simultaneous (the default).",
     )
-    return parser.parse_args()
+    args = parser.parse_args(argv)
+    if args.max_steps <= 0 or args.turn_budget <= 0:
+        parser.error("--max-steps and --turn-budget must be positive")
+    return args
+
+
+def policy_specs(args: argparse.Namespace, default_model: str) -> dict[AgentId, tuple[str, str, str]]:
+    """Map stable policy identities to seats; room asymmetries stay fixed."""
+    framing = args.framing or args.mode
+    specs = [
+        ("policy_1", args.model_a or default_model, args.framing_a or framing),
+        ("policy_2", args.model_b or default_model, args.framing_b or framing),
+    ]
+    if args.swap_seats:
+        specs.reverse()
+    return dict(zip(("A", "B"), specs))
+
+
+def room_metadata(path, room):
+    """Attach evaluator-only diagnostic facts when running a generated YAML directly."""
+    path = Path(path).resolve()
+    manifest = path.parent.parent / "manifest.json"
+    if manifest.is_file():
+        for case in json.loads(manifest.read_text())["cases"]:
+            if (manifest.parent / case["room_file"]).resolve() == path:
+                if digest(room.to_dict()) != case["room_sha256"]:
+                    raise ValueError("Room differs from its frozen diagnostic manifest")
+                return case
+    return dict(seed=None, family="file", source_file=str(path), handoffs=[])
 
 
 def request_actions(
@@ -78,8 +130,10 @@ def request_actions(
     engine: MotiveRoomsEnv,
     *,
     env_step: int,
-    parallel: bool = False,
+    parallel: bool = True,
 ) -> dict[AgentId, str]:
+    if not observations:
+        return {}
     if parallel:
         actions: dict[AgentId, str] = {}
 
@@ -124,6 +178,17 @@ def request_actions(
 def main() -> int:
     args = parse_args()
 
+    preview = AzureOpenAISettings.preview_from_env()
+    specs = policy_specs(args, preview.model)
+    print(
+        f"Protocol: decisions={args.decision_mode} | mode={args.mode} | "
+        f"shared_escape={args.shared_escape} | partner_actions={args.partner_actions} | "
+        f"coaching={args.coaching} | swap_seats={args.swap_seats}",
+    )
+    print(f"  Observations: {args.observation_version}")
+    for agent, (identity, model, framing) in specs.items():
+        print(f"  Seat {agent}: {identity} | model={model} | framing={framing}")
+
     if args.dry_run:
         settings = AzureOpenAISettings.preview_from_env()
         if settings.api_key == "(unset)":
@@ -141,44 +206,44 @@ def main() -> int:
         print(error, file=sys.stderr)
         return 1
 
-    client = AzureResponsesClient(settings)
     env = MotiveRoomsEnv.from_yaml(
         args.room,
         turn_budget=args.turn_budget,
-        framing=args.framing,
+        mode=args.mode,
+        shared_escape=args.shared_escape,
+        partner_actions=args.partner_actions,
+        observation_version=args.observation_version,
     )
     policies = {
-        agent: LLMAgentPolicy(agent=agent, client=client, framing=args.framing)
+        agent: LLMAgentPolicy(
+            agent=agent,
+            client=AzureResponsesClient(replace(settings, model=specs[agent][1])),
+            framing=specs[agent][2],
+            mode=args.mode,
+            shared_room=env.room.is_shared,
+            shared_escape=args.shared_escape,
+            partner_actions=args.partner_actions,
+            coaching=args.coaching,
+            repair_parse=args.decision_mode == "assisted",
+        )
         for agent in env.agent_ids
     }
+    budget = RequestBudget(
+        max_calls=args.max_api_calls, max_tokens=args.max_tokens, max_cost_usd=args.max_cost_usd,
+        input_usd_per_million=args.input_price, output_usd_per_million=args.output_price,
+    )
+    for policy in policies.values():
+        policy.client.budget = budget
 
-    llm_mode = "parallel LLM" if args.parallel_llm else "staggered LLM (second agent sees partner pick)"
+    llm_mode = "simultaneous, no action repair" if args.decision_mode == "simultaneous" else "assisted (partner picks and action repair)"
     print(
-        f"Room: {env.room.id} | framing: {args.framing} | model: {settings.model} | "
+        f"Room: {env.room.id} | "
         f"joint-step rollouts | {llm_mode}"
     )
     print(f"Agents: {', '.join(env.agent_ids)}\n")
 
-    step = 0
-    while not env.round_over and step < args.max_steps:
-        active = env.active_agents()
-        observations = {agent: env.observe(agent) for agent in active}
-        print(f"--- Step {env.env_step + 1} (LLM calls: {len(active)}) ---")
-        try:
-            actions = request_actions(
-                {agent: policies[agent] for agent in active},
-                observations,
-                env,
-                env_step=env.env_step,
-                parallel=args.parallel_llm,
-            )
-        except Exception as error:
-            print(f"LLM error: {error}", file=sys.stderr)
-            return 1
-
-        outcomes = env.step_joint(actions)
-        for agent in active:
-            outcome = outcomes[agent]
+    def report_step(env, actions, outcomes):
+        for agent, outcome in outcomes.items():
             tag, line = narrate_turn(
                 env.room,
                 agent,
@@ -190,17 +255,42 @@ def main() -> int:
             print(f"  Step {env.env_step} | Agent {agent} | {actions[agent]}")
             print(f"    [{tag}] ({status}) {line}")
         print()
-        step += 1
+    if args.output is None:
+        from uuid import uuid4
+        args.output = ROOT / "runs" / f"episode_{uuid4().hex}.jsonl"
+    result = run_episode(
+        env, policies, path=args.output, max_steps=args.max_steps,
+        metadata=dict(
+            room_metadata(args.room, env.room),
+            protocol=vars(args) | {"room": str(args.room), "output": str(args.output)},
+            policies={a: dict(identity=specs[a][0], model=specs[a][1], framing=specs[a][2]) for a in env.agent_ids},
+            model_settings=dict(temperature=settings.temperature, max_output_tokens=settings.max_output_tokens,
+                                timeout_seconds=settings.timeout_seconds, endpoint=mask_endpoint(settings.base_url)),
+            prices=dict(input_usd_per_million=args.input_price, output_usd_per_million=args.output_price),
+        ),
+        chooser=lambda p, o, e: request_actions(p, o, e, env_step=e.env_step,
+                                              parallel=args.decision_mode == "simultaneous"),
+        on_step=report_step,
+    )
+    print(f"Saved rollout: {args.output}")
+    step = env.env_step
+    if result["end"]["reason"] in {"api_error", "policy_error", "budget_exceeded"}:
+        print(f"Stopped: {result['end']['reason']} ({result['end']['error_type']})")
+        return 1
 
     escaped = [a for a in env.agent_ids if env.engine.agents[a].escaped]
-    if env.engine.shared_escape == "race":
+    if not env.round_over:
+        print(f"Truncated after {step} step(s); no terminal rewards. Escaped: {escaped or 'none'}")
+        return 2
+    print(f"Terminal rewards ({args.mode}): {env.rewards()}")
+    if env.room.is_shared and env.engine.shared_escape == "race":
         if len(escaped) == 1:
             print(f"Finished after {step} step(s). Winner: Agent {escaped[0]}")
             return 0
         print(f"Finished after {step} step(s). No winner (escaped: {escaped or 'none'})")
         return 2
     print(f"Finished after {step} step(s). Escaped: {escaped or 'none'}")
-    return 0 if escaped else 2
+    return 0 if len(escaped) == len(env.agent_ids) else 2
 
 
 if __name__ == "__main__":

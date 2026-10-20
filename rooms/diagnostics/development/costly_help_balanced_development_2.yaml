@@ -1,0 +1,101 @@
+id: costly_help_balanced_development_2
+wings:
+  A: west office
+  B: east office
+codes:
+  code_1512: '1498'
+  code_0103: '6123'
+  code_1238: '9447'
+  code_2035: '1823'
+items:
+  spare_key_5754:
+    name: spare key 5754
+  partner_key_1951:
+    name: partner key 1951
+  spare_key_9904:
+    name: spare key 9904
+  partner_key_0928:
+    name: partner key 0928
+nodes:
+- id: card_8709
+  wing: B
+  kind: clue
+  desc: Code for box_5615.
+  code: code_1238
+- id: shelf_6774
+  wing: B
+  kind: spot
+  desc: Partner key partner_key_1951 for A's exit exit_3268.
+  items:
+  - partner_key_1951
+- id: exit_3268
+  wing: A
+  kind: door
+  desc: Your exit accepts spare_key_5754 or partner_key_1951.
+  requires:
+    item:
+    - spare_key_5754
+    - partner_key_1951
+- id: exit_2004
+  wing: B
+  kind: door
+  desc: Your exit accepts spare_key_9904 or partner_key_0928.
+  requires:
+    item:
+    - spare_key_9904
+    - partner_key_0928
+- id: shelf_4264
+  wing: A
+  kind: spot
+  desc: Partner key partner_key_0928 for B's exit exit_2004.
+  items:
+  - partner_key_0928
+- id: card_7516
+  wing: A
+  kind: clue
+  desc: Code for box_2006.
+  hidden: true
+  code: code_0103
+- id: card_3123
+  wing: B
+  kind: clue
+  desc: Code for box_3794.
+  hidden: true
+  code: code_2035
+- id: box_5615
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_1238
+  contents:
+  - card_3123
+- id: box_2006
+  wing: A
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_0103
+  contents:
+  - spare_key_5754
+- id: box_6990
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_1512
+  contents:
+  - card_7516
+- id: box_3794
+  wing: B
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_2035
+  contents:
+  - spare_key_9904
+- id: card_1653
+  wing: A
+  kind: clue
+  desc: Code for box_6990.
+  code: code_1512

@@ -1,0 +1,53 @@
+id: costly_help_zero_development_9
+wings:
+  A: west office
+  B: east office
+codes: {}
+items:
+  spare_key_2161:
+    name: spare key 2161
+  partner_key_4607:
+    name: partner key 4607
+  spare_key_8753:
+    name: spare key 8753
+  partner_key_6317:
+    name: partner key 6317
+nodes:
+- id: shelf_6169
+  wing: A
+  kind: spot
+  desc: Your spare key spare_key_2161.
+  items:
+  - spare_key_2161
+- id: exit_3501
+  wing: A
+  kind: door
+  desc: Your exit accepts spare_key_2161 or partner_key_4607.
+  requires:
+    item:
+    - spare_key_2161
+- id: shelf_1212
+  wing: B
+  kind: spot
+  desc: Partner key partner_key_4607 for A's exit exit_3501.
+  items:
+  - partner_key_4607
+- id: exit_0517
+  wing: B
+  kind: door
+  desc: Your exit accepts spare_key_8753 or partner_key_6317.
+  requires:
+    item:
+    - spare_key_8753
+- id: shelf_4921
+  wing: B
+  kind: spot
+  desc: Your spare key spare_key_8753.
+  items:
+  - spare_key_8753
+- id: shelf_7496
+  wing: A
+  kind: spot
+  desc: Partner key partner_key_6317 for B's exit exit_0517.
+  items:
+  - partner_key_6317

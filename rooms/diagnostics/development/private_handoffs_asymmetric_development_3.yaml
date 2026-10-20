@@ -1,0 +1,103 @@
+id: private_handoffs_asymmetric_development_3
+wings:
+  A: west office
+  B: east office
+codes:
+  code_5632: '7206'
+  code_5078: '1684'
+  code_2643: '1493'
+  code_9404: '3595'
+  code_7657: '8238'
+  code_7635: '4054'
+items: {}
+nodes:
+- id: card_0485
+  wing: A
+  kind: clue
+  desc: Code for partner's exit exit_6316; send it before leaving if you choose to
+    help.
+  code: code_7657
+- id: card_7774
+  wing: B
+  kind: clue
+  desc: Code for box_8898.
+  code: code_7635
+- id: box_3980
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_5078
+  contents:
+  - card_7163
+- id: card_6815
+  wing: A
+  kind: clue
+  desc: Code for box_6208.
+  hidden: true
+  code: code_9404
+- id: card_7554
+  wing: A
+  kind: clue
+  desc: Code for box_3980.
+  code: code_5078
+- id: exit_2907
+  wing: A
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_5632
+- id: box_4415
+  wing: A
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_2643
+  contents:
+  - card_6815
+- id: box_8898
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_7635
+  contents:
+  - card_2234
+- id: card_9391
+  wing: A
+  kind: clue
+  desc: Code for your exit exit_2907.
+  hidden: true
+  code: code_5632
+- id: exit_6316
+  wing: B
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_7657
+- id: card_2234
+  wing: B
+  kind: clue
+  desc: Code for your exit exit_6316.
+  hidden: true
+  code: code_7657
+- id: card_7163
+  wing: A
+  kind: clue
+  desc: Code for box_4415.
+  hidden: true
+  code: code_2643
+- id: box_6208
+  wing: A
+  kind: container
+  desc: Supply lock 3. Its code is on a matching card.
+  requires:
+    code: code_9404
+  contents:
+  - card_9391
+- id: card_1620
+  wing: B
+  kind: clue
+  desc: Code for partner's exit exit_2907; send it before leaving if you choose to
+    help.
+  code: code_5632

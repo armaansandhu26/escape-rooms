@@ -1,0 +1,18 @@
+# Preview with scripts/evaluate.py. Explicit --execute is required for Azure.
+split: development
+families: [parallel_branches, private_handoffs, costly_help]
+seeds: [0, 3, 4] # balanced, asymmetric, zero controls (shared family is balanced)
+conditions: [solo, honest, silent, deceptive, self_play]
+both_seats: true
+repeats: 1
+observation_version: v3
+mode: mixed
+model: null # AZURE_OPENAI_MODEL
+framing: null # match reward mode
+max_steps: 50
+budget:
+  max_calls: 200
+  max_tokens: 500000
+  max_cost_usd: null
+  input_usd_per_million: null # supply your deployment's price for dollar estimates
+  output_usd_per_million: null

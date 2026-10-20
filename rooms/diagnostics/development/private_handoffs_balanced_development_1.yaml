@@ -1,0 +1,103 @@
+id: private_handoffs_balanced_development_1
+wings:
+  A: west office
+  B: east office
+codes:
+  code_1665: '4471'
+  code_6071: '7458'
+  code_4702: '4067'
+  code_5019: '8662'
+  code_3773: 0870
+  code_2670: '2891'
+items: {}
+nodes:
+- id: box_0249
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_6071
+  contents:
+  - card_4666
+- id: box_5372
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_3773
+  contents:
+  - card_6788
+- id: card_6503
+  wing: B
+  kind: clue
+  desc: Code for box_5372.
+  code: code_3773
+- id: box_6789
+  wing: A
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_4702
+  contents:
+  - card_7657
+- id: card_4666
+  wing: A
+  kind: clue
+  desc: Code for box_6789.
+  hidden: true
+  code: code_4702
+- id: card_4315
+  wing: B
+  kind: clue
+  desc: Code for partner's exit exit_5777; send it before leaving if you choose to
+    help.
+  code: code_1665
+- id: card_9097
+  wing: A
+  kind: clue
+  desc: Code for box_0249.
+  code: code_6071
+- id: card_1446
+  wing: A
+  kind: clue
+  desc: Code for partner's exit exit_2439; send it before leaving if you choose to
+    help.
+  code: code_5019
+- id: card_7657
+  wing: A
+  kind: clue
+  desc: Code for your exit exit_5777.
+  hidden: true
+  code: code_1665
+- id: card_6788
+  wing: B
+  kind: clue
+  desc: Code for box_3374.
+  hidden: true
+  code: code_2670
+- id: card_3133
+  wing: B
+  kind: clue
+  desc: Code for your exit exit_2439.
+  hidden: true
+  code: code_5019
+- id: box_3374
+  wing: B
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_2670
+  contents:
+  - card_3133
+- id: exit_5777
+  wing: A
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_1665
+- id: exit_2439
+  wing: B
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_5019

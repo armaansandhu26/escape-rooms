@@ -1,0 +1,163 @@
+id: private_handoffs_balanced_heldout_6
+wings:
+  A: west office
+  B: east office
+codes:
+  code_8151: '4164'
+  code_4303: '6874'
+  code_9972: '7083'
+  code_3878: '6714'
+  code_8957: '8067'
+  code_5246: '7113'
+  code_3409: 0937
+  code_5086: 0081
+  code_3350: '5826'
+  code_0128: '2068'
+items: {}
+nodes:
+- id: box_7251
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_8957
+  contents:
+  - card_3948
+- id: card_8869
+  wing: B
+  kind: clue
+  desc: Code for box_2335.
+  hidden: true
+  code: code_3350
+- id: card_5755
+  wing: B
+  kind: clue
+  desc: Code for box_2460.
+  hidden: true
+  code: code_5086
+- id: card_6595
+  wing: A
+  kind: clue
+  desc: Code for box_7429.
+  hidden: true
+  code: code_3878
+- id: card_4528
+  wing: A
+  kind: clue
+  desc: Code for box_4382.
+  hidden: true
+  code: code_9972
+- id: box_2335
+  wing: B
+  kind: container
+  desc: Supply lock 3. Its code is on a matching card.
+  requires:
+    code: code_3350
+  contents:
+  - card_5315
+- id: box_7429
+  wing: A
+  kind: container
+  desc: Supply lock 3. Its code is on a matching card.
+  requires:
+    code: code_3878
+  contents:
+  - card_2364
+- id: box_2460
+  wing: B
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_5086
+  contents:
+  - card_8869
+- id: card_5315
+  wing: B
+  kind: clue
+  desc: Code for your exit exit_4571.
+  hidden: true
+  code: code_5246
+- id: card_3948
+  wing: B
+  kind: clue
+  desc: Code for partner's exit exit_2635; send it before leaving if you choose to
+    help.
+  hidden: true
+  code: code_8151
+- id: box_7783
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_0128
+  contents:
+  - card_3246
+- id: card_9982
+  wing: A
+  kind: clue
+  desc: Code for box_7783.
+  code: code_0128
+- id: box_0203
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_3409
+  contents:
+  - card_5755
+- id: exit_2635
+  wing: A
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_8151
+- id: card_6149
+  wing: B
+  kind: clue
+  desc: Code for box_7251.
+  code: code_8957
+- id: card_4523
+  wing: B
+  kind: clue
+  desc: Code for box_0203.
+  code: code_3409
+- id: exit_4571
+  wing: B
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_5246
+- id: card_2364
+  wing: A
+  kind: clue
+  desc: Code for your exit exit_2635.
+  hidden: true
+  code: code_8151
+- id: card_3246
+  wing: A
+  kind: clue
+  desc: Code for partner's exit exit_4571; send it before leaving if you choose to
+    help.
+  hidden: true
+  code: code_5246
+- id: card_3876
+  wing: A
+  kind: clue
+  desc: Code for box_0178.
+  code: code_4303
+- id: box_0178
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_4303
+  contents:
+  - card_4528
+- id: box_4382
+  wing: A
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_9972
+  contents:
+  - card_6595

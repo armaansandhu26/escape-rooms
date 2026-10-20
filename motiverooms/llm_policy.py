@@ -12,11 +12,10 @@ from motiverooms.schema import AgentId
 
 MECHANICS_PLAYBOOK = """
 Mechanics (any framing):
-- You and the other agent act in the same environment tick. If you see PARTNER PICK THIS STEP or
-  "That choice will not work", pick a different action. Otherwise use PARTNER LAST STEP.
+- You and the other agent submit actions for the same environment tick.
 - Only one take(...) per item succeeds each tick (ties favor agent A).
 - Read MESSAGES and LAST RESULT before acting.
-- Clue codes from inspect are private until you say(...).
+- Clue readings are private. Messages and shared notes can convey codes.
 - Inner clues use inspect(node_id), not take(...).
 - enter(...) only on nodes marked locked; do not enter on nodes already [open].
 - use(item_id, node_id) and take(item_id) must use underscore ids (brass_key), never spaced names.
@@ -30,13 +29,11 @@ Incentive (collaborative):
 """,
     "competitive": """
 Incentive (competitive):
-- Only the first agent to open the shared exit escapes and wins; the other loses the round.
-- Withhold codes and mislead when useful. Race for take(brass_key) and use(..., exit).
+- Withhold codes and mislead when useful.
 """,
     "mixed": """
 Incentive (mixed):
 - You are scored on your own escape, not the team. Share only when it helps you escape faster.
-- Race for items and the exit when you do not need the other agent.
 """,
 }
 
@@ -50,6 +47,7 @@ give(<item_id>)
 say(<message>)
 write_note(<text>)
 read_notes()
+wait()
 """
 
 
@@ -58,21 +56,40 @@ class LLMAgentPolicy:
     agent: AgentId
     client: AzureResponsesClient
     framing: str = "collaborative"
+    coaching: bool = False
+    repair_parse: bool = False
+    shared_room: bool = False
+    shared_escape: str = "together"
+    partner_actions: str = "private"
+    mode: str = "collaborative"
 
     def system_prompt(self) -> str:
         base = render_system_prompt(self.framing)
         base = base.replace(
             "Escape by opening your door.",
-            _shared_escape_goal(self.framing),
+            _shared_escape_goal(self.shared_escape) if self.shared_room else "Escape by opening your door.",
         )
         framing_playbook = FRAMING_PLAYBOOK.get(
             self.framing,
             "",
+        ) if self.coaching else ""
+        score_rules = {
+            "collaborative": "Your reward is the sum of all agents' payoffs.",
+            "mixed": "Your reward is your own payoff.",
+            "competitive": "Your reward is your payoff minus the other agents' payoffs.",
+        }[self.mode]
+        visibility = (
+            "Partner actions, including their arguments, are visible after each tick."
+            if self.partner_actions == "public"
+            else "Partner actions are private. Shared changes to the room remain visible."
         )
         return (
             f"You are agent {self.agent}.\n\n"
             f"{base}\n\n"
             f"{MECHANICS_PLAYBOOK}\n"
+            f"{visibility}\n"
+            "Round payoff: 10 plus unused turns if you escape; otherwise 0.\n"
+            f"Actual scoring mode: {self.mode}. {score_rules}\n"
             f"{framing_playbook}\n"
             f"{ACTION_GRAMMAR}"
         )
@@ -86,6 +103,9 @@ class LLMAgentPolicy:
         try:
             action = parse_action(raw)
         except ActionParseError as error:
+            if not self.repair_parse:
+                # The engine records the parse failure and charges the turn.
+                return raw, raw
             raw = self.client.complete(
                 instructions=self.system_prompt(),
                 user_input=(
@@ -105,18 +125,11 @@ class LLMAgentPolicy:
         return raw, str(action)
 
 
-def _shared_escape_goal(framing: str) -> str:
-    if framing == "collaborative":
+def _shared_escape_goal(shared_escape: str) -> str:
+    if shared_escape == "race":
         return (
-            "Escape by opening the exit (shared room). Cooperate with your partner."
+            "Only the first agent to open the shared exit escapes; the round then ends."
         )
-    if framing == "competitive":
-        return (
-            "Be the first to open the shared exit — only one agent escapes and wins; "
-            "your score is your points minus theirs."
-        )
-    if framing == "mixed":
-        return (
-            "Escape by opening the shared exit. You are scored on your own escape only."
-        )
-    return "Escape by opening your door."
+    if shared_escape == "together":
+        return "Opening the shared exit makes every agent escape."
+    raise ValueError(f"Unknown shared escape rule: {shared_escape}")

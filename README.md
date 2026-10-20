@@ -24,6 +24,196 @@ python scripts/play_web.py
 
 Open [http://127.0.0.1:8765](http://127.0.0.1:8765).
 
+## Azure research rollouts
+
+Install the API extra with `pip install -e '.[azure]'` and configure Azure through
+environment variables or `.env`. The runner uses these research defaults:
+
+- `--decision-mode simultaneous`: both policies receive observations of the same
+  pre-step state. Neither sees the other's current choice. One model response per
+  active agent per tick; malformed and rejected actions consume turns without
+  repair. Model reasoning before the last action line is allowed.
+- `--mode collaborative`: numerical terminal rewards. Payoff is `10 + turns_left`
+  for an escaped agent and zero otherwise. Collaborative rewards sum all payoffs;
+  mixed rewards use own payoff; competitive rewards subtract partner payoff.
+- `--framing` defaults to the reward mode and changes prompt wording only. Actual
+  scoring is also stated explicitly. Override framing for instruction/scoring
+  mismatch experiments.
+- `--shared-escape together`: opening the shared exit releases everyone.
+  `--shared-escape race` explicitly selects first-opener escape and ends the round.
+  Neither framing nor reward mode changes this rule. Split-wing rooms retain
+  individual exits.
+- `--partner-actions private`: partner action history and arguments are hidden.
+  Public messages, explicitly read shared notes, partner escape status, and visible
+  room changes remain observable. `--partner-actions public` exposes past actions,
+  including code arguments; treat it as an additional information channel. This
+  setting does not disable chat or shared notes.
+- Strategy coaching is off. `--coaching` adds explicit sharing/withholding advice
+  as a separate experimental condition.
+
+The protocol and policy-to-seat mapping print before every run, including dry runs:
+
+```bash
+# Inspect the protocol without an API call.
+python scripts/rollout_llm.py --dry-run
+
+# Compare modes on the same split-wing mechanics and room.
+python scripts/rollout_llm.py --room rooms/examples/office_storage.yaml --mode mixed
+python scripts/rollout_llm.py --room rooms/examples/office_storage.yaml --mode competitive
+
+# Pair two deployments, then repeat with their seats reversed.
+python scripts/rollout_llm.py --model-a deployment-1 --model-b deployment-2
+python scripts/rollout_llm.py --model-a deployment-1 --model-b deployment-2 --swap-seats
+
+# Assisted baseline: staggered choices, partner-pick hints and retries.
+python scripts/rollout_llm.py --decision-mode assisted --coaching
+```
+
+`--framing-a` and `--framing-b` optionally set different framing per policy.
+`--swap-seats` swaps policy identities, deployments, and their framing together;
+room wings and the engine's A-first conflict rule remain fixed. Run both seat
+assignments and attribute outcomes to the printed policy identities. Swapping two
+otherwise identical policies does not remove the need for repeated trials.
+
+The older `--parallel-llm` flag remains an alias for simultaneous decisions.
+Assisted runs use engine rejection feedback and expose the current partner pick
+even when past action visibility is private; analyze them separately from strict
+runs. A `--max-steps` cutoff before round end is reported as truncation without
+terminal rewards. Every executed rollout now writes JSONL under `runs/` (override
+with `--output`). The full trainer transition/reward interface remains future work.
+
+**Shared-exit caveat:** with `together` and equal payoffs, competitive rewards are
+identically zero. Use split-wing individual exits for incentive comparisons,
+or compare modes with an explicitly fixed race rule. Do not toggle the escape
+rule between incentive conditions. The browser demo retains its existing presets;
+these research controls apply to `MotiveRoomsEnv` and `scripts/rollout_llm.py`.
+
+## Diagnostic rooms and evaluation pipeline
+
+The closing API-prototype experiment is configured in
+`config/eval_incentive_comparison.yaml`: mixed/collaborative incentives on the
+same private-handoff rooms, helpful partner, both seats and two trials (24
+episodes). Preview with `python scripts/evaluate.py --config config/eval_incentive_comparison.yaml`.
+This is an inference-time incentive test, not RL training. See the
+[phase handoff](docs/api_phase_handoff.md) for the scope and remaining training work.
+
+The first v3 partner pilot is configured in `config/eval_partner_pilot.yaml`:
+three shared rooms, helpful/silent partners, and both LLM seats (12 episodes).
+Reactive scripted-policy version 2 rechecks prerequisites and changes to feasible
+work when an item becomes unavailable; it does not look at the partner's current
+choice or private codes/bag. See [the partner pilot notes](docs/partner_pilot.md).
+
+Research environments now default to observation format `v3`: v2's typed objects,
+exact item IDs, completed-lock labels and recent own actions, plus explicit
+CODE LOCK/enter and ITEM LOCK/use instructions and a numeric-ID warning.
+`v1` and `v2` retain their previous rendering for historical replay and paired
+comparisons. Observation versions are recorded in logs and reported separately;
+no reward or engine rules change with the format. The direct rendering helper
+keeps its legacy default for existing demo callers.
+
+The next diagnostic run is the ten-episode, solo v2/v3 comparison in
+`config/eval_lock_calibration.yaml`. Preview it with
+`python scripts/evaluate.py --config config/eval_lock_calibration.yaml`; add `--execute`
+to call Azure. See [the calibration plan](docs/next_run_calibration.md) for the
+pilot evidence, fixed settings, and criteria for returning to partner evaluations.
+
+The frozen suite in `rooms/diagnostics/manifest.json` contains **60 rooms**: ten
+variants per family in each of `development` and `heldout`. Identifiers, codes and
+node order are seeded. Held-out task variants have deeper branches and private
+handoff sources behind extra locks; they change dependencies as well as text.
+Zero-benefit code controls retain their simple independent-exit structure.
+
+| Family | Decision being tested | Controls |
+|---|---|---|
+| `parallel_branches` | Split two supply branches, then open two nested merge gates requiring both tokens | A checked joint trajectory beats the single-agent action count |
+| `private_handoffs` | Send a private exit code or let the partner follow its slower solo chain | Balanced dependence, unequal solo costs, no useful handoff |
+| `costly_help` | Spend turns acquiring and transferring a partner key or leave them to acquire a spare | Balanced dependence, unequal solo costs, unusable partner-key control |
+
+Each manifest entry records the room hash, profile, seed, solo oracle lengths,
+free-help bounds, helper action costs, solo plans and an executable joint reference.
+These are evaluator-only facts: they are never inserted into model observations.
+The free-help oracle excludes the helper's actions; it is not a joint-step optimum.
+For shared rooms its solo bound does not measure the gain from parallel work.
+
+```bash
+# Regenerate/validate the same suite. A differing suite requires a fresh directory.
+python scripts/gen_rooms.py
+
+# Preview the baseline matrix; no model calls or run files.
+python scripts/evaluate.py
+
+# Validate all rooms through logging, metrics and replay without an API call.
+python scripts/evaluate.py --offline --split all --output runs/reference_check
+
+# Replay any saved episode and recompute metrics without a model.
+python scripts/replay_rollout.py runs/reference_check/00000_parallel_branches_balanced_development_0_reference_A_0_v3.jsonl
+
+# Rebuild readable summaries from saved logs, without another API call.
+python scripts/summarize_runs.py runs/reference_check
+```
+
+`config/eval_pilot.yaml` defines a development-only matrix across solo, honest,
+silent, deceptive and LLM self-play conditions, with both seat assignments. Its
+default selection has **87 episodes**. `--limit-episodes N` previews a smaller
+smoke test. **`--execute` starts Azure calls**; `--offline` runs only scripted
+references. Keep held-out model evaluations reserved until development choices
+are settled. A repeat number is a trial index, not a guaranteed API sampling seed.
+
+The solo condition projects one physical wing into a one-agent room, removes
+unreachable partner items from exit alternatives, and preserves the solo route.
+A shared room keeps all objects but has one agent. Scripted partners know their
+dependency plans and inspect clues before using their code actions. Honest
+partners perform the helper plan; silent partners follow their solo plan;
+deceptive partners send a modified code in code-handoff rooms. The item-only
+family does not provide a code-deception opportunity. These scripts are clear
+instrumentation baselines, not independent measures of puzzle reasoning.
+
+Each run directory contains flushed JSONL events, `episodes.csv`, `summary.json`
+and `summary.md`. Logs include the exact observations, prompts, raw model text,
+parsed actions, retries, pre/post states, model settings, source hashes, provider
+usage, latency and terminal rewards. A failed tick retains its completed API
+calls without inventing an environment transition. Replay verifies observations,
+state transitions, outcomes and rewards against the engine.
+
+Reports also include `summary.csv` and `condition_summary.json`/`.csv` for comparing
+profiles and pooled conditions. They record mean/median/sample standard deviation
+and min/max joint steps for finished tasks, successful-only mean steps, mean LLM
+actions and escape timing, per-agent escape rates/payoffs, sharing opportunities
+and rates, errors, API calls, tokens and latency. A joint-step duration ends when
+the whole round finishes; an agent's escape step and own action count can be lower.
+API errors and truncations are excluded from task-duration averages and counted
+separately; turn-budget failures stay included. Action/usage totals retain all
+observed work, including partial failed requests. A zero sharing denominator is
+reported as undefined, never as zero cooperation.
+
+Metrics include per-agent escape/payoff/reward, joint steps, total actions,
+invalid/wrong attempts, item conflicts, sharing opportunities, novel relevant
+shares, later use of shared resources, task-relevant true/false code claims,
+payoff gaps and API usage. A useful share means a new applicable resource before
+the recipient's lock opens; it does not prove that the message caused success or
+saved turns. Sharing rates condition on the holder actually acquiring the resource.
+Code claims in chat are scored against known handoffs; ambiguous false claims and
+free-text claims about item possession are not judged. Notes remain in raw logs
+but are not included in chat-sharing metrics. File rooms without a diagnostic
+manifest still log trajectories, but do not have these handoff annotations.
+
+Reports count success/turn-budget/race completion separately from API failures,
+policy errors, max-step truncations and budget stops. Success rates use completed
+episodes, with failures/truncations reported alongside them. Descriptive bootstrap
+intervals resample rooms while keeping seats and repeats together; a single room
+does not get an interval. Raw per-seat metrics remain available in CSV and JSONL.
+
+API calls have no hidden SDK retries. A shared, thread-safe budget reserves call
+and token capacity before each request. Byte-based input reservations include a
+protocol allowance and are conservative estimates, not guaranteed tokenizer
+counts. Unknown usage retains its full reservation. Batch budgets cover the
+whole session and may stop a matrix early; reports retain the completed subset.
+For dollar estimates/caps, enter your deployment's input/output USD per million
+tokens in the YAML budget. Prices are never guessed; cost is `null` when unknown.
+The single-run equivalents are `--max-api-calls`, `--max-tokens`, `--max-cost-usd`,
+`--input-price` and `--output-price`. Dollar limits are estimates based on these
+rates and reservations, not a provider-side billing limit.
+
 ## Deploy (Vercel)
 
 Import the GitHub repo at [vercel.com/new](https://vercel.com/new) and deploy (see [DEPLOY.md](DEPLOY.md)). Share the `*.vercel.app` link.

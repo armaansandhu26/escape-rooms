@@ -1,0 +1,69 @@
+id: parallel_branches_balanced_development_8
+wings:
+  A: workshop
+  B: workshop
+codes:
+  code_6179: '3615'
+  code_6560: '9457'
+items:
+  left_token_9469:
+    name: left token 9469
+  right_token_4753:
+    name: right token 4753
+  exit_key_8118:
+    name: exit key 8118
+nodes:
+- id: box_2263
+  wing: shared
+  kind: container
+  desc: Inner merge gate; needs right_token_4753. Contains the exit key for exit_3689.
+  hidden: true
+  requires:
+    item:
+    - right_token_4753
+  contents:
+  - exit_key_8118
+- id: box_1345
+  wing: shared
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_6560
+  contents:
+  - right_token_4753
+- id: exit_3689
+  wing: shared
+  kind: door
+  desc: The shared exit needs the exit key.
+  requires:
+    item:
+    - exit_key_8118
+- id: box_9314
+  wing: shared
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_6179
+  contents:
+  - left_token_9469
+- id: card_2098
+  wing: shared
+  kind: clue
+  desc: Code for box_9314.
+  code: code_6179
+- id: box_7583
+  wing: shared
+  kind: container
+  desc: Outer merge gate; needs left_token_9469. Reveals the inner merge gate.
+  requires:
+    item:
+    - left_token_9469
+  contents:
+  - box_2263
+- id: card_6355
+  wing: shared
+  kind: clue
+  desc: Code for box_1345.
+  code: code_6560
+layout: shared
+space: workshop

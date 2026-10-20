@@ -1,0 +1,101 @@
+id: costly_help_balanced_development_5
+wings:
+  A: west office
+  B: east office
+codes:
+  code_4436: '3937'
+  code_2579: '3689'
+  code_3307: 0948
+  code_5808: '8461'
+items:
+  spare_key_8842:
+    name: spare key 8842
+  partner_key_6671:
+    name: partner key 6671
+  spare_key_5061:
+    name: spare key 5061
+  partner_key_2307:
+    name: partner key 2307
+nodes:
+- id: box_4228
+  wing: B
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_5808
+  contents:
+  - spare_key_5061
+- id: shelf_4148
+  wing: B
+  kind: spot
+  desc: Partner key partner_key_6671 for A's exit exit_6396.
+  items:
+  - partner_key_6671
+- id: card_5439
+  wing: B
+  kind: clue
+  desc: Code for box_4228.
+  hidden: true
+  code: code_5808
+- id: box_7595
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_4436
+  contents:
+  - card_7589
+- id: card_5588
+  wing: B
+  kind: clue
+  desc: Code for box_9431.
+  code: code_3307
+- id: card_8068
+  wing: A
+  kind: clue
+  desc: Code for box_7595.
+  code: code_4436
+- id: card_7589
+  wing: A
+  kind: clue
+  desc: Code for box_1161.
+  hidden: true
+  code: code_2579
+- id: box_1161
+  wing: A
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_2579
+  contents:
+  - spare_key_8842
+- id: box_9431
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_3307
+  contents:
+  - card_5439
+- id: exit_2258
+  wing: B
+  kind: door
+  desc: Your exit accepts spare_key_5061 or partner_key_2307.
+  requires:
+    item:
+    - spare_key_5061
+    - partner_key_2307
+- id: exit_6396
+  wing: A
+  kind: door
+  desc: Your exit accepts spare_key_8842 or partner_key_6671.
+  requires:
+    item:
+    - spare_key_8842
+    - partner_key_6671
+- id: shelf_3169
+  wing: A
+  kind: spot
+  desc: Partner key partner_key_2307 for B's exit exit_2258.
+  items:
+  - partner_key_2307

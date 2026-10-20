@@ -1,0 +1,103 @@
+id: private_handoffs_balanced_development_2
+wings:
+  A: west office
+  B: east office
+codes:
+  code_0318: '2876'
+  code_5603: '5242'
+  code_2574: '2682'
+  code_7804: '7484'
+  code_6710: '9512'
+  code_5441: '7399'
+items: {}
+nodes:
+- id: card_7696
+  wing: A
+  kind: clue
+  desc: Code for partner's exit exit_4189; send it before leaving if you choose to
+    help.
+  code: code_7804
+- id: box_7850
+  wing: A
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_2574
+  contents:
+  - card_2186
+- id: card_2186
+  wing: A
+  kind: clue
+  desc: Code for your exit exit_3797.
+  hidden: true
+  code: code_0318
+- id: card_6459
+  wing: A
+  kind: clue
+  desc: Code for box_6418.
+  code: code_5603
+- id: box_3785
+  wing: B
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_5441
+  contents:
+  - card_4154
+- id: exit_4189
+  wing: B
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_7804
+- id: card_0289
+  wing: B
+  kind: clue
+  desc: Code for box_8370.
+  code: code_6710
+- id: exit_3797
+  wing: A
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_0318
+- id: box_8370
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_6710
+  contents:
+  - card_5488
+- id: card_1163
+  wing: B
+  kind: clue
+  desc: Code for partner's exit exit_3797; send it before leaving if you choose to
+    help.
+  code: code_0318
+- id: card_4154
+  wing: B
+  kind: clue
+  desc: Code for your exit exit_4189.
+  hidden: true
+  code: code_7804
+- id: card_6725
+  wing: A
+  kind: clue
+  desc: Code for box_7850.
+  hidden: true
+  code: code_2574
+- id: card_5488
+  wing: B
+  kind: clue
+  desc: Code for box_3785.
+  hidden: true
+  code: code_5441
+- id: box_6418
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_5603
+  contents:
+  - card_6725

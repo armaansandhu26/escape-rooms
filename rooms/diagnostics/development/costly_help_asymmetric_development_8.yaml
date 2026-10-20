@@ -1,0 +1,101 @@
+id: costly_help_asymmetric_development_8
+wings:
+  A: west office
+  B: east office
+codes:
+  code_2711: '2996'
+  code_2570: '2682'
+  code_8579: '9708'
+  code_6559: '9121'
+items:
+  spare_key_0115:
+    name: spare key 0115
+  partner_key_6452:
+    name: partner key 6452
+  spare_key_9264:
+    name: spare key 9264
+  partner_key_7506:
+    name: partner key 7506
+nodes:
+- id: shelf_7778
+  wing: B
+  kind: spot
+  desc: Partner key partner_key_6452 for A's exit exit_4822.
+  items:
+  - partner_key_6452
+- id: shelf_8798
+  wing: A
+  kind: spot
+  desc: Partner key partner_key_7506 for B's exit exit_7946.
+  items:
+  - partner_key_7506
+- id: box_3704
+  wing: A
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_2570
+  contents:
+  - card_2648
+- id: card_1933
+  wing: A
+  kind: clue
+  desc: Code for box_7972.
+  code: code_2711
+- id: box_9861
+  wing: A
+  kind: container
+  desc: Supply lock 3. Its code is on a matching card.
+  requires:
+    code: code_8579
+  contents:
+  - spare_key_0115
+- id: exit_4822
+  wing: A
+  kind: door
+  desc: Your exit accepts spare_key_0115 or partner_key_6452.
+  requires:
+    item:
+    - spare_key_0115
+    - partner_key_6452
+- id: card_1357
+  wing: A
+  kind: clue
+  desc: Code for box_3704.
+  hidden: true
+  code: code_2570
+- id: exit_7946
+  wing: B
+  kind: door
+  desc: Your exit accepts spare_key_9264 or partner_key_7506.
+  requires:
+    item:
+    - spare_key_9264
+    - partner_key_7506
+- id: box_7972
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_2711
+  contents:
+  - card_1357
+- id: card_2648
+  wing: A
+  kind: clue
+  desc: Code for box_9861.
+  hidden: true
+  code: code_8579
+- id: box_8308
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_6559
+  contents:
+  - spare_key_9264
+- id: card_9046
+  wing: B
+  kind: clue
+  desc: Code for box_8308.
+  code: code_6559

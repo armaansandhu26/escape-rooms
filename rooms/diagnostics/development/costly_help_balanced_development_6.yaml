@@ -1,0 +1,101 @@
+id: costly_help_balanced_development_6
+wings:
+  A: west office
+  B: east office
+codes:
+  code_4879: '7755'
+  code_9073: '4611'
+  code_8884: '6030'
+  code_2749: '3325'
+items:
+  spare_key_6746:
+    name: spare key 6746
+  partner_key_5385:
+    name: partner key 5385
+  spare_key_8248:
+    name: spare key 8248
+  partner_key_7835:
+    name: partner key 7835
+nodes:
+- id: box_1094
+  wing: A
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_9073
+  contents:
+  - spare_key_6746
+- id: shelf_1161
+  wing: A
+  kind: spot
+  desc: Partner key partner_key_7835 for B's exit exit_5747.
+  items:
+  - partner_key_7835
+- id: card_6875
+  wing: B
+  kind: clue
+  desc: Code for box_7913.
+  code: code_8884
+- id: shelf_5100
+  wing: B
+  kind: spot
+  desc: Partner key partner_key_5385 for A's exit exit_1969.
+  items:
+  - partner_key_5385
+- id: exit_5747
+  wing: B
+  kind: door
+  desc: Your exit accepts spare_key_8248 or partner_key_7835.
+  requires:
+    item:
+    - spare_key_8248
+    - partner_key_7835
+- id: box_1071
+  wing: B
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_2749
+  contents:
+  - spare_key_8248
+- id: card_6918
+  wing: B
+  kind: clue
+  desc: Code for box_1071.
+  hidden: true
+  code: code_2749
+- id: card_8916
+  wing: A
+  kind: clue
+  desc: Code for box_1094.
+  hidden: true
+  code: code_9073
+- id: box_7913
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_8884
+  contents:
+  - card_6918
+- id: box_5865
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_4879
+  contents:
+  - card_8916
+- id: card_5133
+  wing: A
+  kind: clue
+  desc: Code for box_5865.
+  code: code_4879
+- id: exit_1969
+  wing: A
+  kind: door
+  desc: Your exit accepts spare_key_6746 or partner_key_5385.
+  requires:
+    item:
+    - spare_key_6746
+    - partner_key_5385

@@ -1,0 +1,103 @@
+id: private_handoffs_balanced_development_7
+wings:
+  A: west office
+  B: east office
+codes:
+  code_0138: '2248'
+  code_1245: '2396'
+  code_4770: '6018'
+  code_5934: '3995'
+  code_6974: '6334'
+  code_9751: '7295'
+items: {}
+nodes:
+- id: box_7735
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_1245
+  contents:
+  - card_4841
+- id: card_5537
+  wing: B
+  kind: clue
+  desc: Code for partner's exit exit_1210; send it before leaving if you choose to
+    help.
+  code: code_0138
+- id: card_9052
+  wing: B
+  kind: clue
+  desc: Code for box_1183.
+  code: code_6974
+- id: box_1183
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_6974
+  contents:
+  - card_6717
+- id: card_0164
+  wing: A
+  kind: clue
+  desc: Code for your exit exit_1210.
+  hidden: true
+  code: code_0138
+- id: exit_5022
+  wing: B
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_5934
+- id: exit_1210
+  wing: A
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_0138
+- id: box_3084
+  wing: B
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_9751
+  contents:
+  - card_3538
+- id: card_6717
+  wing: B
+  kind: clue
+  desc: Code for box_3084.
+  hidden: true
+  code: code_9751
+- id: card_8040
+  wing: A
+  kind: clue
+  desc: Code for partner's exit exit_5022; send it before leaving if you choose to
+    help.
+  code: code_5934
+- id: box_9623
+  wing: A
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_4770
+  contents:
+  - card_0164
+- id: card_4841
+  wing: A
+  kind: clue
+  desc: Code for box_9623.
+  hidden: true
+  code: code_4770
+- id: card_3538
+  wing: B
+  kind: clue
+  desc: Code for your exit exit_5022.
+  hidden: true
+  code: code_5934
+- id: card_2157
+  wing: A
+  kind: clue
+  desc: Code for box_7735.
+  code: code_1245

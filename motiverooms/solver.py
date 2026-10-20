@@ -94,7 +94,7 @@ def _transitions(
     transitions: list[tuple[Action, SearchState, bool]] = []
     visible_nodes = [
         node
-        for node in room.nodes_in_wing(agent)
+        for node in room.nodes_for_agent(agent)
         if _is_visible(room, node, state.opened_nodes)
     ]
 

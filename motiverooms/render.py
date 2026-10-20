@@ -42,7 +42,7 @@ def render_system_prompt(framing: str) -> str:
     )
 
 
-def render_observation(
+def _render_legacy_observation(
     engine: RoomEngine,
     agent: AgentId,
     *,
@@ -50,7 +50,10 @@ def render_observation(
     total_rounds: int = 1,
     message_limit: int = 6,
     partner_action_steps: int = 3,
+    partner_actions: str = "private",
 ) -> str:
+    if partner_actions not in {"private", "public"}:
+        raise ValueError(f"Unknown partner action visibility: {partner_actions}")
     state = engine.agents[agent]
     partner = next((other for other in engine.agents if other != agent), None)
     if partner is None:
@@ -72,7 +75,11 @@ def render_observation(
         lines.extend(
             [
                 "",
-                "HINT: Codes you read from clues are private until you say(...) them.",
+                (
+                    "Clue readings are private. Partner action arguments are public after each tick."
+                    if partner_actions == "public"
+                    else "Clue readings and partner actions are private; messages and shared notes can convey codes."
+                ),
                 "If a container is [open; contains: ...], use take(<item_id>) on that item.",
             ]
         )
@@ -94,7 +101,7 @@ def render_observation(
     bag_names = [engine.room.items[item_id].name for item_id in sorted(state.bag)]
     lines.extend(["", f"YOUR BAG: {', '.join(bag_names) if bag_names else '(empty)'}"])
 
-    if partner is not None:
+    if partner is not None and partner_actions == "public":
         lines.extend(["", "PARTNER LAST STEP"])
         partner_last = engine.last_joint_actions.get(partner)
         lines.append(f"- {partner_last}" if partner_last else "- (none yet)")
@@ -109,6 +116,7 @@ def render_observation(
             else:
                 lines.append("- (none yet)")
 
+    if partner is not None:
         lines.extend(["", f"MESSAGES (last {message_limit})"])
         recent_messages = engine.messages[-message_limit:]
         if recent_messages:
@@ -126,6 +134,76 @@ def render_observation(
             "Reply with exactly one action on the last line.",
         ]
     )
+    return "\n".join(lines)
+
+
+def render_observation(
+    engine: RoomEngine,
+    agent: AgentId,
+    *,
+    round_number: int = 1,
+    total_rounds: int = 1,
+    message_limit: int = 6,
+    partner_action_steps: int = 3,
+    partner_actions: str = "private",
+    observation_version: str = "v1",
+) -> str:
+    """Versioned presentation of the same observable state; v1 preserves old logs."""
+    if observation_version not in {"v1", "v2", "v3"}:
+        raise ValueError(f"Unknown observation version: {observation_version}")
+    original = _render_legacy_observation(
+        engine, agent, round_number=round_number, total_rounds=total_rounds,
+        message_limit=message_limit, partner_action_steps=partner_action_steps,
+        partner_actions=partner_actions,
+    )
+    if observation_version == "v1":
+        return original
+    visible = {node.id: node for node in engine.visible_nodes(agent)}
+    lines = []
+    if observation_version == "v3":
+        lines += [
+            "LOCK AND ID RULES",
+            "- CODE LOCK: enter(<4_digit_code>, <node_id>) uses a code read from a clue or received in a message.",
+            "- ITEM LOCK: use(<item_id>, <node_id>) uses a physical item already in YOUR BAG; enter(...) cannot open an item lock.",
+            "- Digits inside object/item IDs are identifier text, not evidence of a lock code. Do not infer a code from an ID's numeric suffix.",
+            "",
+        ]
+    for line in original.splitlines():
+        if line.startswith("- ") and ": " in line:
+            node_id = line[2:].split(": ", 1)[0]
+            node = visible.get(node_id)
+            if node is not None:
+                line = line.replace(f"- {node_id}:", f"- {node_id} (type={node.kind}):", 1)
+                if node.kind == "clue":
+                    line += f" Read with inspect({node_id}); this is not a takeable item."
+                elif node.kind in {"container", "door"}:
+                    if node_id in engine.opened_nodes:
+                        line += " STATUS: OPEN. Unlocking is complete; enter/use on this node again will fail."
+                    elif node.requires and node.requires.items:
+                        line += " Accepted item IDs: " + ", ".join(node.requires.items) + "."
+                    if observation_version == "v3" and node_id not in engine.opened_nodes and node.requires:
+                        if node.requires.code is not None:
+                            line += f" CODE LOCK: enter(<4_digit_code>, {node_id}); use a code obtained from a clue/message."
+                        else:
+                            line += f" ITEM LOCK: use(<item_id>, {node_id}); carry an accepted item first. This lock does not accept enter(...)."
+        if line.startswith("YOUR BAG:"):
+            labels = [f"{engine.room.items[i].name} (item_id={i})" for i in sorted(engine.agents[agent].bag)]
+            line = "YOUR BAG: " + (", ".join(labels) if labels else "(empty)")
+            lines.append(line)
+            available = []
+            for node in visible.values():
+                contents = node.items if node.kind == "spot" else (
+                    node.contents if node.kind == "container" and node.id in engine.opened_nodes else ()
+                )
+                available.extend(f"- {i} (item; source={node.id})" for i in contents
+                                 if i in engine.room.items and i not in engine.taken_items)
+            lines += ["", "AVAILABLE ITEMS (takeable objects only)", *(available or ["- (none)"])]
+            continue
+        if line.startswith("LAST RESULT:"):
+            recent = [step[agent] for step in engine.joint_action_history if agent in step][-3:]
+            lines += ["YOUR RECENT ACTIONS (last 3)", *[f"- {a}" for a in recent]] if recent else []
+            lines.append(f"YOUR LAST ACTION: {recent[-1] if recent else '(none yet)'}")
+        lines.append(line)
     return "\n".join(lines)
 
 

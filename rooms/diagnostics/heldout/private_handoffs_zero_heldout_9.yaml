@@ -1,0 +1,31 @@
+id: private_handoffs_zero_heldout_9
+wings:
+  A: west office
+  B: east office
+codes:
+  code_2688: '3119'
+  code_9886: '5774'
+items: {}
+nodes:
+- id: card_8564
+  wing: B
+  kind: clue
+  desc: Code for your exit exit_1779.
+  code: code_9886
+- id: exit_1779
+  wing: B
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_9886
+- id: exit_8273
+  wing: A
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_2688
+- id: card_3990
+  wing: A
+  kind: clue
+  desc: Code for your exit exit_8273.
+  code: code_2688

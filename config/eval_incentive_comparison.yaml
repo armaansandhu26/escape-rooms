@@ -1,0 +1,20 @@
+# Last planned API-prototype comparison; reward transform + matching prompt framing.
+split: development
+families: [private_handoffs]
+seeds: [0, 3, 4]
+conditions: [honest]
+both_seats: true
+repeats: 2
+observation_version: v3
+modes: [mixed, collaborative]
+model: gpt-5.4-mini
+temperature: 0.2
+max_output_tokens: 300
+framing: null # Match each episode's reward mode; no strategy coaching.
+max_steps: 50
+budget:
+  max_calls: 250 # 24 episodes; worst-case policy requests = 224.
+  max_tokens: 600000
+  max_cost_usd: null
+  input_usd_per_million: null
+  output_usd_per_million: null

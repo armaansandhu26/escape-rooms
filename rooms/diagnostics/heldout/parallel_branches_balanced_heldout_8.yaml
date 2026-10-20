@@ -1,0 +1,99 @@
+id: parallel_branches_balanced_heldout_8
+wings:
+  A: workshop
+  B: workshop
+codes:
+  code_1976: '2245'
+  code_8175: '3153'
+  code_8318: '3875'
+  code_6202: '9201'
+items:
+  left_token_9668:
+    name: left token 9668
+  right_token_9545:
+    name: right token 9545
+  exit_key_1690:
+    name: exit key 1690
+nodes:
+- id: card_7648
+  wing: shared
+  kind: clue
+  desc: Code for box_9401.
+  hidden: true
+  code: code_8175
+- id: card_5109
+  wing: shared
+  kind: clue
+  desc: Code for box_8767.
+  hidden: true
+  code: code_6202
+- id: card_2048
+  wing: shared
+  kind: clue
+  desc: Code for box_0177.
+  code: code_1976
+- id: box_7238
+  wing: shared
+  kind: container
+  desc: Inner merge gate; needs right_token_9545. Contains the exit key for exit_9463.
+  hidden: true
+  requires:
+    item:
+    - right_token_9545
+  contents:
+  - exit_key_1690
+- id: box_8767
+  wing: shared
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_6202
+  contents:
+  - right_token_9545
+- id: box_9401
+  wing: shared
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_8175
+  contents:
+  - left_token_9668
+- id: exit_9463
+  wing: shared
+  kind: door
+  desc: The shared exit needs the exit key.
+  requires:
+    item:
+    - exit_key_1690
+- id: box_9835
+  wing: shared
+  kind: container
+  desc: Outer merge gate; needs left_token_9668. Reveals the inner merge gate.
+  requires:
+    item:
+    - left_token_9668
+  contents:
+  - box_7238
+- id: box_0177
+  wing: shared
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_1976
+  contents:
+  - card_7648
+- id: box_5002
+  wing: shared
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_8318
+  contents:
+  - card_5109
+- id: card_8161
+  wing: shared
+  kind: clue
+  desc: Code for box_5002.
+  code: code_8318
+layout: shared
+space: workshop

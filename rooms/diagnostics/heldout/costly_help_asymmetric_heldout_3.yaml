@@ -1,0 +1,147 @@
+id: costly_help_asymmetric_heldout_3
+wings:
+  A: west office
+  B: east office
+codes:
+  code_1277: '2368'
+  code_5983: '1562'
+  code_9157: '7292'
+  code_6924: '9741'
+  code_5816: '8844'
+  code_4683: '9123'
+  code_6162: '6727'
+  code_6896: '5273'
+items:
+  spare_key_1161:
+    name: spare key 1161
+  partner_key_7697:
+    name: partner key 7697
+  spare_key_8469:
+    name: spare key 8469
+  partner_key_2093:
+    name: partner key 2093
+nodes:
+- id: box_1097
+  wing: B
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_6162
+  contents:
+  - spare_key_8469
+- id: card_1748
+  wing: A
+  kind: clue
+  desc: Code for box_5968.
+  code: code_1277
+- id: box_1205
+  wing: A
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_5983
+  contents:
+  - card_6198
+- id: box_3858
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_5816
+  contents:
+  - partner_key_7697
+- id: card_6198
+  wing: A
+  kind: clue
+  desc: Code for box_6658.
+  hidden: true
+  code: code_9157
+- id: box_1593
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_4683
+  contents:
+  - card_9589
+- id: card_4788
+  wing: A
+  kind: clue
+  desc: Code for box_7073.
+  hidden: true
+  code: code_6924
+- id: exit_9264
+  wing: A
+  kind: door
+  desc: Your exit accepts spare_key_1161 or partner_key_7697.
+  requires:
+    item:
+    - spare_key_1161
+    - partner_key_7697
+- id: box_6658
+  wing: A
+  kind: container
+  desc: Supply lock 3. Its code is on a matching card.
+  requires:
+    code: code_9157
+  contents:
+  - card_4788
+- id: box_7073
+  wing: A
+  kind: container
+  desc: Supply lock 4. Its code is on a matching card.
+  requires:
+    code: code_6924
+  contents:
+  - spare_key_1161
+- id: box_4879
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_6896
+  contents:
+  - partner_key_2093
+- id: card_4867
+  wing: A
+  kind: clue
+  desc: Code for box_1205.
+  hidden: true
+  code: code_5983
+- id: card_6287
+  wing: B
+  kind: clue
+  desc: Code for box_3858.
+  code: code_5816
+- id: card_6609
+  wing: B
+  kind: clue
+  desc: Code for box_1593.
+  code: code_4683
+- id: card_9210
+  wing: A
+  kind: clue
+  desc: Code for box_4879.
+  code: code_6896
+- id: exit_9403
+  wing: B
+  kind: door
+  desc: Your exit accepts spare_key_8469 or partner_key_2093.
+  requires:
+    item:
+    - spare_key_8469
+    - partner_key_2093
+- id: card_9589
+  wing: B
+  kind: clue
+  desc: Code for box_1097.
+  hidden: true
+  code: code_6162
+- id: box_5968
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_1277
+  contents:
+  - card_4867

@@ -1,0 +1,103 @@
+id: private_handoffs_balanced_development_5
+wings:
+  A: west office
+  B: east office
+codes:
+  code_1824: '7844'
+  code_8531: '0731'
+  code_1009: '4558'
+  code_7397: '9547'
+  code_0068: '5817'
+  code_5502: '6122'
+items: {}
+nodes:
+- id: card_7421
+  wing: A
+  kind: clue
+  desc: Code for your exit exit_8125.
+  hidden: true
+  code: code_1824
+- id: box_3340
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_0068
+  contents:
+  - card_3031
+- id: card_8782
+  wing: B
+  kind: clue
+  desc: Code for your exit exit_4603.
+  hidden: true
+  code: code_7397
+- id: card_6307
+  wing: B
+  kind: clue
+  desc: Code for box_3340.
+  code: code_0068
+- id: box_1526
+  wing: B
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_5502
+  contents:
+  - card_8782
+- id: exit_8125
+  wing: A
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_1824
+- id: card_1761
+  wing: A
+  kind: clue
+  desc: Code for partner's exit exit_4603; send it before leaving if you choose to
+    help.
+  code: code_7397
+- id: box_6617
+  wing: A
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_1009
+  contents:
+  - card_7421
+- id: card_3340
+  wing: A
+  kind: clue
+  desc: Code for box_6617.
+  hidden: true
+  code: code_1009
+- id: exit_4603
+  wing: B
+  kind: door
+  desc: Your exit. Its code is on your final supply card; a partner may have a copy.
+  requires:
+    code: code_7397
+- id: card_2884
+  wing: A
+  kind: clue
+  desc: Code for box_9575.
+  code: code_8531
+- id: card_3031
+  wing: B
+  kind: clue
+  desc: Code for box_1526.
+  hidden: true
+  code: code_5502
+- id: box_9575
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_8531
+  contents:
+  - card_3340
+- id: card_1982
+  wing: B
+  kind: clue
+  desc: Code for partner's exit exit_8125; send it before leaving if you choose to
+    help.
+  code: code_1824

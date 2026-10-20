@@ -1,0 +1,69 @@
+id: costly_help_zero_heldout_4
+wings:
+  A: west office
+  B: east office
+codes:
+  code_8954: '5711'
+  code_1206: '7806'
+items:
+  spare_key_1825:
+    name: spare key 1825
+  partner_key_9939:
+    name: partner key 9939
+  spare_key_4714:
+    name: spare key 4714
+  partner_key_7723:
+    name: partner key 7723
+nodes:
+- id: card_2704
+  wing: A
+  kind: clue
+  desc: Code for box_4213.
+  code: code_1206
+- id: card_8581
+  wing: B
+  kind: clue
+  desc: Code for box_7208.
+  code: code_8954
+- id: shelf_7004
+  wing: B
+  kind: spot
+  desc: Your spare key spare_key_4714.
+  items:
+  - spare_key_4714
+- id: exit_1869
+  wing: A
+  kind: door
+  desc: Your exit accepts spare_key_1825 or partner_key_9939.
+  requires:
+    item:
+    - spare_key_1825
+- id: box_4213
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_1206
+  contents:
+  - partner_key_7723
+- id: exit_2025
+  wing: B
+  kind: door
+  desc: Your exit accepts spare_key_4714 or partner_key_7723.
+  requires:
+    item:
+    - spare_key_4714
+- id: shelf_5835
+  wing: A
+  kind: spot
+  desc: Your spare key spare_key_1825.
+  items:
+  - spare_key_1825
+- id: box_7208
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_8954
+  contents:
+  - partner_key_9939

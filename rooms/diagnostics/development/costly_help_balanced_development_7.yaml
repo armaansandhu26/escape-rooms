@@ -1,0 +1,101 @@
+id: costly_help_balanced_development_7
+wings:
+  A: west office
+  B: east office
+codes:
+  code_2195: '7601'
+  code_5438: '3362'
+  code_8257: '8194'
+  code_6773: '7452'
+items:
+  spare_key_8299:
+    name: spare key 8299
+  partner_key_4346:
+    name: partner key 4346
+  spare_key_4783:
+    name: spare key 4783
+  partner_key_5404:
+    name: partner key 5404
+nodes:
+- id: exit_6914
+  wing: A
+  kind: door
+  desc: Your exit accepts spare_key_8299 or partner_key_4346.
+  requires:
+    item:
+    - spare_key_8299
+    - partner_key_4346
+- id: card_8452
+  wing: B
+  kind: clue
+  desc: Code for box_6089.
+  hidden: true
+  code: code_6773
+- id: exit_9675
+  wing: B
+  kind: door
+  desc: Your exit accepts spare_key_4783 or partner_key_5404.
+  requires:
+    item:
+    - spare_key_4783
+    - partner_key_5404
+- id: card_3645
+  wing: A
+  kind: clue
+  desc: Code for box_4973.
+  code: code_2195
+- id: card_0159
+  wing: A
+  kind: clue
+  desc: Code for box_0470.
+  hidden: true
+  code: code_5438
+- id: box_0470
+  wing: A
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_5438
+  contents:
+  - spare_key_8299
+- id: box_3781
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_8257
+  contents:
+  - card_8452
+- id: card_3324
+  wing: B
+  kind: clue
+  desc: Code for box_3781.
+  code: code_8257
+- id: shelf_7592
+  wing: A
+  kind: spot
+  desc: Partner key partner_key_5404 for B's exit exit_9675.
+  items:
+  - partner_key_5404
+- id: box_6089
+  wing: B
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_6773
+  contents:
+  - spare_key_4783
+- id: box_4973
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_2195
+  contents:
+  - card_0159
+- id: shelf_4859
+  wing: B
+  kind: spot
+  desc: Partner key partner_key_4346 for A's exit exit_6914.
+  items:
+  - partner_key_4346

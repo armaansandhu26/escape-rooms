@@ -1,0 +1,99 @@
+id: parallel_branches_balanced_heldout_5
+wings:
+  A: workshop
+  B: workshop
+codes:
+  code_4042: 0180
+  code_0834: '1315'
+  code_1224: '2408'
+  code_7065: '1559'
+items:
+  left_token_7924:
+    name: left token 7924
+  right_token_9684:
+    name: right token 9684
+  exit_key_6490:
+    name: exit key 6490
+nodes:
+- id: box_5926
+  wing: shared
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_7065
+  contents:
+  - right_token_9684
+- id: card_2910
+  wing: shared
+  kind: clue
+  desc: Code for box_4374.
+  code: code_4042
+- id: card_6996
+  wing: shared
+  kind: clue
+  desc: Code for box_5926.
+  hidden: true
+  code: code_7065
+- id: box_7272
+  wing: shared
+  kind: container
+  desc: Inner merge gate; needs right_token_9684. Contains the exit key for exit_7258.
+  hidden: true
+  requires:
+    item:
+    - right_token_9684
+  contents:
+  - exit_key_6490
+- id: box_7495
+  wing: shared
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_1224
+  contents:
+  - card_6996
+- id: box_4374
+  wing: shared
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_4042
+  contents:
+  - card_7864
+- id: box_6621
+  wing: shared
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_0834
+  contents:
+  - left_token_7924
+- id: card_9548
+  wing: shared
+  kind: clue
+  desc: Code for box_7495.
+  code: code_1224
+- id: exit_7258
+  wing: shared
+  kind: door
+  desc: The shared exit needs the exit key.
+  requires:
+    item:
+    - exit_key_6490
+- id: card_7864
+  wing: shared
+  kind: clue
+  desc: Code for box_6621.
+  hidden: true
+  code: code_0834
+- id: box_9393
+  wing: shared
+  kind: container
+  desc: Outer merge gate; needs left_token_7924. Reveals the inner merge gate.
+  requires:
+    item:
+    - left_token_7924
+  contents:
+  - box_7272
+layout: shared
+space: workshop

@@ -15,13 +15,33 @@ class _StubClient:
 
 
 def test_competitive_prompt_does_not_say_cooperate() -> None:
-    policy = LLMAgentPolicy(agent="A", client=_StubClient(), framing="competitive")
+    policy = LLMAgentPolicy(
+        agent="A", client=_StubClient(), framing="competitive", mode="competitive",
+    )
     prompt = policy.system_prompt()
     assert "points minus theirs" in prompt
-    assert "Withhold codes" in prompt
+    assert "Withhold codes" not in prompt
+    assert "Share codes" not in prompt
     assert "Cooperate with your partner" not in prompt
 
 
-def test_shared_escape_goal_varies_by_framing() -> None:
-    assert "Cooperate" in _shared_escape_goal("collaborative")
-    assert "first" in _shared_escape_goal("competitive").lower()
+def test_shared_escape_goal_varies_by_mechanics() -> None:
+    assert "every agent" in _shared_escape_goal("together")
+    assert "first" in _shared_escape_goal("race").lower()
+
+
+def test_coaching_is_an_explicit_condition() -> None:
+    policy = LLMAgentPolicy(
+        agent="B", client=_StubClient(), framing="competitive", coaching=True,
+        shared_room=True, shared_escape="together",
+    )
+    prompt = policy.system_prompt()
+    assert "Withhold codes" in prompt
+    assert "every agent escape" in prompt
+    assert "first agent" not in prompt
+
+
+def test_split_room_prompt_does_not_claim_shared_exit() -> None:
+    prompt = LLMAgentPolicy(agent="A", client=_StubClient()).system_prompt()
+    assert "opening your door" in prompt
+    assert "shared exit" not in prompt

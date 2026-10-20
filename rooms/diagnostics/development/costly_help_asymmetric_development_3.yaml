@@ -1,0 +1,101 @@
+id: costly_help_asymmetric_development_3
+wings:
+  A: west office
+  B: east office
+codes:
+  code_4876: '0002'
+  code_6025: '6133'
+  code_7739: '8984'
+  code_0534: '5507'
+items:
+  spare_key_3096:
+    name: spare key 3096
+  partner_key_9542:
+    name: partner key 9542
+  spare_key_4280:
+    name: spare key 4280
+  partner_key_7996:
+    name: partner key 7996
+nodes:
+- id: box_7984
+  wing: A
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_4876
+  contents:
+  - card_6371
+- id: box_8128
+  wing: B
+  kind: container
+  desc: Supply lock 1. Its code is on a matching card.
+  requires:
+    code: code_0534
+  contents:
+  - spare_key_4280
+- id: shelf_3688
+  wing: B
+  kind: spot
+  desc: Partner key partner_key_9542 for A's exit exit_3981.
+  items:
+  - partner_key_9542
+- id: card_6371
+  wing: A
+  kind: clue
+  desc: Code for box_2735.
+  hidden: true
+  code: code_6025
+- id: card_2342
+  wing: B
+  kind: clue
+  desc: Code for box_8128.
+  code: code_0534
+- id: card_4829
+  wing: A
+  kind: clue
+  desc: Code for box_7984.
+  code: code_4876
+- id: card_9375
+  wing: A
+  kind: clue
+  desc: Code for box_6950.
+  hidden: true
+  code: code_7739
+- id: box_2735
+  wing: A
+  kind: container
+  desc: Supply lock 2. Its code is on a matching card.
+  requires:
+    code: code_6025
+  contents:
+  - card_9375
+- id: box_6950
+  wing: A
+  kind: container
+  desc: Supply lock 3. Its code is on a matching card.
+  requires:
+    code: code_7739
+  contents:
+  - spare_key_3096
+- id: exit_1044
+  wing: B
+  kind: door
+  desc: Your exit accepts spare_key_4280 or partner_key_7996.
+  requires:
+    item:
+    - spare_key_4280
+    - partner_key_7996
+- id: shelf_9541
+  wing: A
+  kind: spot
+  desc: Partner key partner_key_7996 for B's exit exit_1044.
+  items:
+  - partner_key_7996
+- id: exit_3981
+  wing: A
+  kind: door
+  desc: Your exit accepts spare_key_3096 or partner_key_9542.
+  requires:
+    item:
+    - spare_key_3096
+    - partner_key_9542

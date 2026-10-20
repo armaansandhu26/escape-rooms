@@ -14,7 +14,7 @@ def test_partner_last_step_after_joint_step() -> None:
             "B": "inspect(drawer_note)",
         }
     )
-    obs_a = render_observation(engine, "A")
+    obs_a = render_observation(engine, "A", partner_actions="public")
     assert "PARTNER LAST STEP" in obs_a
     assert "inspect(drawer_note)" in obs_a
     assert "PARTNER RECENT" in obs_a
