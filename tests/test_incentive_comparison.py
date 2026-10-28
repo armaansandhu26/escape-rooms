@@ -10,7 +10,7 @@ def test_incentive_pairs_alternate_order_and_keep_rooms_and_partner_fixed(tmp_pa
     cases = load_suite("rooms/diagnostics/manifest.json")
     config = dict(split="development", families=["private_handoffs"], seeds=[0],
                   conditions=["honest"], both_seats=True, repeats=2, modes=["mixed", "collaborative"],
-                  observation_version="v3")
+                  observation_version="v3", action_interface="text")
     plan = make_plan(config, cases)
     assert len(plan) == 8
     assert [p[1]["mode"] for p in plan[:4]] == ["mixed", "collaborative", "collaborative", "mixed"]

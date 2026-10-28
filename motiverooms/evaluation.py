@@ -17,9 +17,31 @@ CONDITIONS = {
     "honest": ("LLM + helpful script", "One LLM plus a deterministic script that prioritizes helper work and sends true codes when relevant. In shared rooms its helper plan divides the physical work. Reactive scripts recheck prerequisites and switch to feasible work when blocked."),
     "silent": ("LLM + solo-route script", "One LLM plus a script following its own shortest solo plan. The script does not proactively share codes or transfer items; it still changes the shared room and can compete for items."),
     "deceptive": ("LLM + false-code script", "One LLM plus a helper script that changes the code in outgoing code messages. This tests reactions to false information only where code handoffs exist; it does not add deception to item-only rooms."),
-    "self_play": ("Two LLM agents", "Two independently queried LLM agents, using the same configured deployment. This is evaluation, with no RL training or weight updates."),
-    "reference": ("Two reference scripts", "Both seats follow a known joint solution. This checks the environment and logging pipeline, not LLM ability."),
+    "self_play": ("Two LLM agents", "Independent worker policies using the configured deployment. Fixed teams use two seats; orchestrated teams use a model-selected roster. This is evaluation, with no RL training or weight updates."),
+    "reference": ("Reference scripts", "Workers follow a known solution. This checks the environment and logging pipeline, not LLM ability."),
 }
+
+
+SUMMARY_DIMENSIONS = (
+    "family", "profile", "split", "condition", "mode", "observation_version",
+    "communication", "worker_broadcast", "communication_instruction", "action_interface", "num_rooms",
+    "team_mode", "num_subagents", "orchestrator_kind", "orchestration_protocol", "worker_progress_memory",
+    "torch_affordance", "turn_budget", "max_steps",
+    "min_subagents", "max_subagents",
+    "supervision_mode", "check_in_interval",
+)
+CONDITION_DIMENSIONS = tuple(key for key in SUMMARY_DIMENSIONS if key != "profile")
+
+
+def run_label(row):
+    if row.get("team_mode") == "orchestrated":
+        prefix = "Scripted orchestrator" if row.get("orchestrator_kind") == "scripted" else "Orchestrator"
+        version = row.get("orchestration_protocol")
+        suffix = f" [{version}]" if version in {"v2", "v3", "v4", "v5"} else ""
+        if row.get("worker_broadcast") is False:
+            suffix += " [broadcast off]"
+        return f"{prefix} + {row['num_subagents']} subagents{suffix}"
+    return CONDITIONS.get(row["condition"], (row["condition"],))[0]
 
 
 def controller_roles(meta, agents):
@@ -62,6 +84,10 @@ def aggregate_rows(group):
         llm_unsuccessful_action_rate=sum(r["llm_unsuccessful_actions"] for r in group) / actions if actions else None,
         llm_conflicts=sum(r["llm_conflicts"] for r in group),
         llm_messages_sent=sum(r["llm_messages_sent"] for r in group),
+        llm_notes_written=sum(r.get("llm_notes_written", 0) for r in group),
+        llm_notes_read=sum(r.get("llm_notes_read", 0) for r in group),
+        llm_items_transferred=sum(r.get("llm_items_transferred", 0) for r in group),
+        reciprocal_use_episodes=sum(r.get("reciprocal_use", False) for r in complete),
         llm_sharing_opportunities=opportunities,
         llm_useful_shares=sum(r["llm_useful_shares"] for r in group),
         llm_used_shared_resources=sum(r["llm_used_shared_resources"] for r in group),
@@ -69,6 +95,9 @@ def aggregate_rows(group):
         llm_mean_payoff=mean(r["llm_mean_payoff"] for r in complete if r["llm_mean_payoff"] is not None)
             if any(r["llm_mean_payoff"] is not None for r in complete) else None,
         total_api_calls=sum(r["api_calls"] for r in group),
+        orchestrator_calls=sum(r["orchestrator_calls"] for r in group),
+        worker_calls=sum(r["worker_calls"] for r in group),
+        llm_reports_sent=sum(r["llm_reports_sent"] for r in group),
         total_tokens=sum(r["total_tokens"] for r in group),
         total_input_tokens=sum(r["input_tokens"] for r in group),
         total_output_tokens=sum(r["output_tokens"] for r in group),
@@ -93,6 +122,11 @@ def describe_report(records, rows, summary, condition_summary=None):
              f"Reward mode(s): {', '.join(sorted({r['mode'] for r in rows}))}.", "",
              "An episode is one attempt at a room. A step is one simultaneous tick: each active agent submits one action, including invalid actions. "
              "In a shared room with together-escape, one agent opening the exit releases everyone. Team escape alone does not show that both agents contributed.", "",
+             "Torch affordances: " + ", ".join(sorted({r["torch_affordance"] for r in rows})) + ". "
+             "Turn budgets / step cutoffs: " + ", ".join(
+                 f"{turns or 'unrecorded'} / {steps or 'unrecorded'}"
+                 for turns, steps in sorted({(r["turn_budget"], r["max_steps"]) for r in rows})) + ". "
+             "These settings remain separate in machine-readable summaries.", "",
              "## What the conditions mean", "",
              "| Run label | Present in this batch? | Who acts and what it tests |", "|---|---|---|"]
     described = list(dict.fromkeys(["solo", "honest", "silent", "deceptive", "self_play"] + conditions))
@@ -113,12 +147,12 @@ def describe_report(records, rows, summary, condition_summary=None):
               "## Results by setup", "",
               "Observation formats: `v1` is the original state summary; `v2` adds typed objects, exact item IDs, completed-lock labels and recent own actions; "
               "`v3` additionally distinguishes CODE LOCK/enter from ITEM LOCK/use and explains that numeric ID suffixes are not revealed codes. Room rules and action costs are unchanged.", "",
-              "| Room family | Help profile | Dataset split | Setup | Reward mode | Observation | Finished runs | Team/solo escape rate | Errors / truncations |",
-              "|---|---|---|---|---|---|---:|---:|---:|"]
+              "| Room family | Help profile | Dataset split | Setup | Reward mode | Observation | Interface | Rooms | Finished runs | Team/solo escape rate | Errors / truncations |",
+              "|---|---|---|---|---|---|---|---|---:|---:|---:|"]
     for s in summary:
         rate = f"{s['completed_joint_escape_rate']:.0%}" if s['completed_joint_escape_rate'] is not None else "—"
-        label = CONDITIONS.get(s["condition"], (s["condition"],))[0]
-        lines.append(f"| {s['family']} | {s['profile']} | {s['split']} | {label} | {s['mode']} | {s['observation_version']} | {s['completed']} | {rate} | {s['failures_or_truncations']} |")
+        label = run_label(s)
+        lines.append(f"| {s['family']} | {s['profile']} | {s['split']} | {label} | {s['mode']} | {s['observation_version']} | {s['action_interface']} | {s['num_rooms']} | {s['completed']} | {rate} | {s['failures_or_truncations']} |")
     lines += ["", "Finished runs include both successful escapes and failures that exhausted the turn budget. "
               "API errors, policy errors, budget stops and max-step truncations are reported separately and excluded from escape-rate denominators. "
               "Rates average over rooms, keeping seat assignments and repeated trials together.", ""]
@@ -126,24 +160,32 @@ def describe_report(records, rows, summary, condition_summary=None):
               "Rows below pool help profiles within each family/condition. Finished-run averages include turn-budget failures; "
               "successful-only averages are shown separately to avoid hiding failures. LLM actions count that agent's turns, "
               "while joint steps run until the entire episode ends. These differ when one agent escapes before its partner.", "",
-              "| Family | Setup | Reward mode | Observation | Finished | Avg joint steps | Avg steps: successful only | Avg LLM actions | LLM escape rate |",
-              "|---|---|---|---|---:|---:|---:|---:|---:|"]
+              "| Family | Setup | Reward mode | Observation | Interface | Rooms | Finished | Avg joint steps | Avg steps: successful only | Avg LLM actions | LLM escape rate |",
+              "|---|---|---|---|---|---|---:|---:|---:|---:|---:|"]
     number = lambda v: f"{v:.2f}" if v is not None else "—"
     percent = lambda v: f"{v:.1%}" if v is not None else "—"
     for s in condition_summary or []:
-        label = CONDITIONS.get(s["condition"], (s["condition"],))[0]
-        lines.append(f"| {s['family']} | {label} | {s['mode']} | {s['observation_version']} | {s['completed']} | {number(s['mean_completed_joint_steps'])} | {number(s['mean_successful_joint_steps'])} | {number(s['mean_llm_actions'])} | {percent(s['llm_escape_rate'])} |")
+        label = run_label(s)
+        lines.append(f"| {s['family']} | {label} | {s['mode']} | {s['observation_version']} | {s['action_interface']} | {s['num_rooms']} | {s['completed']} | {number(s['mean_completed_joint_steps'])} | {number(s['mean_successful_joint_steps'])} | {number(s['mean_llm_actions'])} | {percent(s['llm_escape_rate'])} |")
     lines += ["", "## Sharing and action quality", "",
-              "| Family | Setup | Reward mode | Observation | LLM unsuccessful actions | LLM messages | Eligible sharing opportunities | Novel relevant shares | Sharing rate | Received shared resources used |",
-              "|---|---|---|---|---:|---:|---:|---:|---:|---:|"]
+              "| Family | Setup | Reward mode | Observation | Interface | Rooms | LLM unsuccessful actions | LLM messages | Eligible sharing opportunities | Novel relevant shares | Sharing rate | Received shared resources used |",
+              "|---|---|---|---|---|---|---:|---:|---:|---:|---:|---:|"]
     for s in condition_summary or []:
-        label = CONDITIONS.get(s["condition"], (s["condition"],))[0]
-        lines.append(f"| {s['family']} | {label} | {s['mode']} | {s['observation_version']} | {percent(s['llm_unsuccessful_action_rate'])} | {s['llm_messages_sent']} | {s['llm_sharing_opportunities']} | {s['llm_useful_shares']} | {percent(s['llm_sharing_rate'])} | {s['llm_used_shared_resources']} |")
+        label = run_label(s)
+        lines.append(f"| {s['family']} | {label} | {s['mode']} | {s['observation_version']} | {s['action_interface']} | {s['num_rooms']} | {percent(s['llm_unsuccessful_action_rate'])} | {s['llm_messages_sent']} | {s['llm_sharing_opportunities']} | {s['llm_useful_shares']} | {percent(s['llm_sharing_rate'])} | {s['llm_used_shared_resources']} |")
+    lines += ["", "## Communication channels", "",
+              "| Family | Setup | Broadcasts | Private reports | Notes written | Note reads | Item transfers |",
+              "|---|---|---:|---:|---:|---:|---:|"]
+    for s in condition_summary or []:
+        lines.append(f"| {s['family']} | {run_label(s)} | {s['llm_messages_sent']} | {s['llm_reports_sent']} | {s['llm_notes_written']} | {s['llm_notes_read']} | {s['llm_items_transferred']} |")
+    lines += ["", "Channel counts record successful actions, not proof of communication intent. "
+              "Shared notes require explicit read_notes actions; private reports reach only the orchestrator. "
+              "Exact text, transfers and shared state changes remain in the episode log."]
     if len({r["mode"] for r in rows}) > 1:
         matched = defaultdict(set)
         for row in rows:
             if row["reason"] in {"success", "turn_budget", "race_winner"}:
-                matched[(row["room_id"], row["condition"], row["evaluated_seat"], row["repeat"], row["observation_version"])].add(row["mode"])
+                matched[(row["room_id"], row["condition"], row["evaluated_seat"], row["repeat"], row["observation_version"], row["action_interface"], row["team_mode"], row["num_subagents"], row["orchestrator_kind"], row["worker_broadcast"])].add(row["mode"])
         lines += ["", "## Incentive comparison", "",
                   "This experiment changes the numerical reward transform and matching prompt framing together. "
                   "It tests inference-time response to stated incentives; model weights are unchanged. "
@@ -161,14 +203,14 @@ def describe_report(records, rows, summary, condition_summary=None):
               "## Individual episodes and contribution", "",
               "A/B are physical seats. The LLM seat column identifies which agent called the model; the other seat uses the named script. "
               "A solo trial from physical wing B is represented internally as agent A and is labelled with its original wing below.", "",
-              "| Episode / log | Setup | Reward mode | Observation | LLM seat | Outcome | Steps | LLM invalid / actions | LLM wrong attempts | Script invalid / actions | New locks/exits opened: LLM / script |",
-              "|---|---|---|---|---|---|---:|---:|---:|---:|---:|"]
+              "| Episode / log | Setup | Reward mode | Observation | Interface | Rooms | LLM seat | Outcome | Steps | LLM invalid / actions | LLM wrong attempts | Script invalid / actions | New locks/exits opened: LLM / script |",
+              "|---|---|---|---|---|---|---|---|---:|---:|---:|---:|---:|"]
     for index, (record, row) in enumerate(zip(records, rows), 1):
         stats = record["metrics"]["per_agent"]
         roles = controller_roles(record["metadata"], stats)
         llm = [s for a, s in stats.items() if roles[a] == "LLM"]
         script = [s for a, s in stats.items() if roles[a] != "LLM"]
-        label = CONDITIONS.get(row["condition"], (row["condition"],))[0]
+        label = run_label(row)
         seats = ", ".join(a for a in stats if roles[a] == "LLM") or "none"
         if row["condition"] == "solo":
             seats = f"alone (wing {row['evaluated_seat']})"
@@ -178,14 +220,20 @@ def describe_report(records, rows, summary, condition_summary=None):
         opens = lambda items: str(sum(s["new_locks_opened"] for s in items)) if items and all("new_locks_opened" in s for s in items) else "—"
         link = f"[{index}]({Path(row['log']).resolve()})"
         wrong = sum(s["wrong_attempts"] for s in llm) if llm else "—"
-        lines.append(f"| {link} | {label} | {row['mode']} | {row['observation_version']} | {seats} | {outcome} | {row['joint_steps']} | {ratio(llm)} | {wrong} | {ratio(script)} | {opens(llm)} / {opens(script)} |")
+        lines.append(f"| {link} | {label} | {row['mode']} | {row['observation_version']} | {row['action_interface']} | {row['num_rooms']} | {seats} | {outcome} | {row['joint_steps']} | {ratio(llm)} | {wrong} | {ratio(script)} | {opens(llm)} / {opens(script)} |")
     if rows:
         heading = "Observation comparison" if len({row["observation_version"] for row in rows}) > 1 else "Action reliability"
         lines += ["", f"## {heading}", "",
-                  "| Format | Reward mode | Episodes | Escapes / finished | LLM invalid / actions | LLM wrong / actions | LLM unsuccessful / actions | Longest repeated failing action |",
-                  "|---|---|---:|---:|---:|---:|---:|---:|"]
-        for version, mode in sorted({(row["observation_version"], row["mode"]) for row in rows}):
-            selected = [(r, row) for r, row in zip(records, rows) if row["observation_version"] == version and row["mode"] == mode]
+                  "| Format | Reward mode | Interface | Rooms | Team | Episodes | Escapes / finished | LLM invalid / actions | LLM wrong / actions | LLM unsuccessful / actions | Longest repeated failing action |",
+                  "|---|---|---|---|---|---:|---:|---:|---:|---:|---:|"]
+        reliability_fields = ("observation_version", "mode", "action_interface", "num_rooms",
+                              "team_mode", "num_subagents", "orchestrator_kind", "orchestration_protocol", "worker_broadcast", "family", "worker_progress_memory")
+        reliability_groups = defaultdict(list)
+        for record, row in zip(records, rows):
+            reliability_groups[tuple(row[field] for field in reliability_fields)].append((record, row))
+        for key, selected in sorted(reliability_groups.items()):
+            version, mode, interface, count = key[:4]
+            label = run_label(selected[0][1])
             finished = [row for _, row in selected if row["reason"] in {"success", "turn_budget", "race_winner"}]
             stats = [s for r, _ in selected for a, s in r["metrics"]["per_agent"].items()
                      if controller_roles(r["metadata"], r["metrics"]["per_agent"])[a] == "LLM"]
@@ -194,11 +242,11 @@ def describe_report(records, rows, summary, condition_summary=None):
             actions = sum(s["actions"] for s in stats)
             unsuccessful = f"{invalid + wrong}/{actions} ({(invalid + wrong) / actions:.1%})" if actions else "—"
             streak = max((s.get("longest_failed_action_streak", 0) for s in stats), default=0)
-            lines.append(f"| {version} | {mode} | {len(selected)} | {sum(row['joint_escape'] for row in finished)}/{len(finished)} | {invalid}/{actions} | {wrong}/{actions} | {unsuccessful} | {streak} |")
+            lines.append(f"| {version} | {mode} | {interface} | {count} | {label} | {len(selected)} | {sum(row['joint_escape'] for row in finished)}/{len(finished)} | {invalid}/{actions} | {wrong}/{actions} | {unsuccessful} | {streak} |")
         matched = defaultdict(set)
         for row in rows:
             if row["reason"] in {"success", "turn_budget", "race_winner"}:
-                matched[(row["room_id"], row["condition"], row["evaluated_seat"], row["repeat"], row["mode"])].add(row["observation_version"])
+                matched[(row["room_id"], row["condition"], row["evaluated_seat"], row["repeat"], row["mode"], row["action_interface"], row["team_mode"], row["num_subagents"], row["orchestrator_kind"], row["worker_broadcast"])].add(row["observation_version"])
         present_versions = sorted({row["observation_version"] for row in rows})
         for first, second in combinations(present_versions, 2):
             pairs = sum({first, second}.issubset(versions) for versions in matched.values())
@@ -258,6 +306,8 @@ def solo_projection(room, seat):
     data = room.to_dict()
     data["id"] += f"_solo_{seat}"
     data["wings"] = {"A": room.wings[seat]}
+    if room.locations:
+        data["start_locations"] = {"A": room.start_locations[seat]}
     data["nodes"] = [n for n in data["nodes"] if room.is_shared or n["wing"] == seat]
     locations = {i for n in data["nodes"] for i in n.get("items", []) + n.get("contents", [])}
     data["items"] = {i: item for i, item in data["items"].items() if i in locations}
@@ -283,7 +333,26 @@ def summarize(records, output):
                    total_actions=metrics["total_actions"], api_calls=metrics["api_calls"],
                    total_tokens=metrics["total_tokens"], unknown_usage_calls=metrics["unknown_usage_calls"],
                    estimated_cost_usd=metrics["estimated_cost_usd"], log=record["path"])
+        row["team_mode"] = meta.get("team_mode", "fixed")
+        row["orchestration_protocol"] = meta.get("orchestration_protocol", "v1" if row["team_mode"] == "orchestrated" else "none")
+        row["worker_progress_memory"] = meta.get("worker_progress_memory", False)
+        row["num_subagents"] = meta.get("num_subagents", len(metrics["per_agent"]))
+        row["min_subagents"] = meta.get("min_subagents", 1) if row["team_mode"] == "orchestrated" else 0
+        row["max_subagents"] = meta.get("max_subagents", 8) if row["team_mode"] == "orchestrated" else 0
+        row["supervision_mode"] = meta.get("supervision_mode", "per_tick") if row["team_mode"] == "orchestrated" else "none"
+        row["check_in_interval"] = meta.get("check_in_interval", 0)
+        row["orchestrator_kind"] = meta.get("orchestrator_kind", "none")
+        row["orchestrator_calls"] = metrics.get("orchestrator_calls", 0)
+        row["worker_calls"] = metrics.get("worker_calls", metrics["api_calls"])
+        row["num_rooms"] = meta.get("num_rooms", 1)
+        row["torch_affordance"] = meta.get("torch_affordance", "legacy")
+        row["turn_budget"] = meta.get("turn_budget", meta.get("recommended_turn_budget", 0))
+        row["max_steps"] = meta.get("max_steps", row["turn_budget"])
+        row["action_interface"] = meta.get("action_interface", "text")
         row["observation_version"] = meta.get("observation_version", "unspecified")
+        row["communication"] = meta.get("communication", "enabled")
+        row["worker_broadcast"] = meta.get("worker_broadcast", True)
+        row["communication_instruction"] = meta.get("communication_instruction", "original")
         row["framing"] = meta.get("framing", "unspecified")
         row["total_payoff"] = sum(s.get("payoff", 0) for s in metrics["per_agent"].values())
         row["elapsed_seconds"] = metrics.get("elapsed_seconds")
@@ -296,8 +365,9 @@ def summarize(records, output):
         row["llm_escape_actions_sum"] = sum(s["actions"] for s in llm if s["escaped"])
         row["llm_observed_escape_steps"] = sum(s.get("escape_step") is not None for s in llm)
         row["llm_escape_steps_sum"] = sum(s["escape_step"] for s in llm if s.get("escape_step") is not None)
-        for metric in ("actions", "invalid_actions", "wrong_attempts", "conflicts", "messages_sent",
-                       "sharing_opportunities", "useful_shares", "used_shared_resources"):
+        row["reciprocal_use"] = len(llm) >= 2 and all(s.get("used_shared_resources", 0) > 0 for s in llm)
+        for metric in ("actions", "invalid_actions", "wrong_attempts", "conflicts", "messages_sent", "reports_sent", "notes_written",
+                       "notes_read", "items_transferred", "sharing_opportunities", "useful_shares", "used_shared_resources"):
             row[f"llm_{metric}"] = sum(s.get(metric, 0) for s in llm)
         row["llm_unsuccessful_actions"] = row["llm_invalid_actions"] + row["llm_wrong_attempts"]
         row["llm_eligible_shares"] = sum((s.get("sharing_rate") or 0) * s.get("sharing_opportunities", 0) for s in llm)
@@ -306,7 +376,7 @@ def summarize(records, output):
             for key, value in stats.items():
                 row[f"{agent}_{key}"] = value
         rows.append(row)
-        grouped[(row["family"], row["profile"], row["split"], row["condition"], row["mode"], row["observation_version"])].append(row)
+        grouped[tuple(row[key] for key in SUMMARY_DIMENSIONS)].append(row)
     summary = []
     for key, group in sorted(grouped.items()):
         complete = [r for r in group if r["reason"] in {"success", "turn_budget", "race_winner"}]
@@ -320,15 +390,15 @@ def summarize(records, output):
             samples = sorted(mean(rng.choices(values, k=len(values))) for _ in range(1000))
             interval = [samples[24], samples[974]]
         summary.append(dict(
-            zip(("family", "profile", "split", "condition", "mode", "observation_version"), key),
+            zip(SUMMARY_DIMENSIONS, key),
             **aggregate_rows(group), rooms=len(clusters),
             completed_joint_escape_rate=mean(values) if values else None,
             room_bootstrap_95_interval=interval,
         ))
     by_condition = defaultdict(list)
     for row in rows:
-        by_condition[(row["family"], row["split"], row["condition"], row["mode"], row["observation_version"])].append(row)
-    condition_summary = [dict(zip(("family", "split", "condition", "mode", "observation_version"), key),
+        by_condition[tuple(row[key] for key in CONDITION_DIMENSIONS)].append(row)
+    condition_summary = [dict(zip(CONDITION_DIMENSIONS, key),
                               **aggregate_rows(group)) for key, group in sorted(by_condition.items())]
     fields = sorted({k for row in rows for k in row})
     with (output / "episodes.csv").open("w", newline="") as stream:
@@ -344,4 +414,7 @@ def summarize(records, output):
             writer.writeheader()
             writer.writerows({k: json.dumps(v) if isinstance(v, dict) else v for k, v in row.items()} for row in data)
     (output / "summary.md").write_text(describe_report(records, rows, summary, condition_summary))
+    if any(r["metadata"].get("experiment") == "phase2_collaboration" for r in records):
+        from motiverooms.collaboration_report import write_collaboration_report
+        write_collaboration_report(records, rows, summary, output)
     return summary

@@ -6,7 +6,7 @@ from dataclasses import dataclass
 import re
 
 ACTION_RE = re.compile(
-    r"^(inspect|take|enter|use|give|say|write_note|read_notes|wait)\((.*)\)\s*$"
+    r"^(inspect|take|enter|use|give|give_to|say|report|write_note|read_notes|wait|move)\((.*)\)\s*$"
 )
 IDENTIFIER_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_]*$")
 
@@ -16,10 +16,13 @@ ACTION_ARITY = {
     "enter": 2,
     "use": 2,
     "give": 1,
+    "give_to": 2,
     "say": 1,
+    "report": 1,
     "write_note": 1,
     "read_notes": 0,
     "wait": 0,
+    "move": 1,
 }
 
 
@@ -53,7 +56,7 @@ def parse_action(output: str) -> Action:
         raise ActionParseError("Last line must contain exactly one valid action")
 
     verb, raw_arguments = match.groups()
-    if verb in {"say", "write_note"}:
+    if verb in {"say", "write_note", "report"}:
         arguments = (raw_arguments.strip(),)
     elif not raw_arguments.strip():
         arguments = ()
@@ -64,7 +67,7 @@ def parse_action(output: str) -> Action:
     if len(arguments) != expected or any(not argument for argument in arguments):
         raise ActionParseError(f"{verb} expects {expected} argument(s)")
 
-    if verb not in {"say", "write_note", "read_notes", "wait"}:
+    if verb not in {"say", "write_note", "report", "read_notes", "wait"}:
         identifier_arguments = arguments[1:] if verb == "enter" else arguments
         try:
             coerced = tuple(_coerce_identifier(arg) for arg in identifier_arguments)

@@ -1,0 +1,22 @@
+# Phase 2: two independent AI agents, matched communication-on/off trials.
+experiment: phase2_collaboration
+split: development
+families: [private_handoffs]
+seeds: [0, 3, 4] # balanced benefit, unequal benefit, no-benefit control
+conditions: [self_play]
+both_seats: false # Both seats already use identical AI policies; do not duplicate them.
+repeats: 2
+observation_version: v3
+mode: collaborative
+communication_modes: [enabled, disabled] # Reverse order on the second trial.
+model: gpt-5.4-mini
+temperature: 0.2
+max_output_tokens: 300
+framing: null
+max_steps: 50
+budget:
+  max_calls: 250 # 12 episodes, up to 224 calls if all active turns are used.
+  max_tokens: 600000
+  max_cost_usd: null
+  input_usd_per_million: null
+  output_usd_per_million: null

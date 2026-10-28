@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 from motiverooms.actions import Action, ActionParseError, parse_action
 from motiverooms.engine import ActionOutcome
-from motiverooms.schema import AgentId, Node, Room
+from motiverooms.schema import AgentId, Node, Passage, Room
 
 if TYPE_CHECKING:
     from motiverooms.engine import RoomEngine
@@ -44,10 +44,13 @@ def narrate_turn(
         "enter": _narrate_enter,
         "use": _narrate_use,
         "give": _narrate_give,
+        "give_to": _narrate_give_to,
         "say": _narrate_say,
+        "report": _narrate_report,
         "write_note": _narrate_write_note,
         "read_notes": _narrate_read_notes,
         "wait": _narrate_wait,
+        "move": _narrate_move,
     }[action.verb]
 
     tag, line = handler(room, agent, action, outcome, engine)
@@ -56,11 +59,11 @@ def narrate_turn(
     return tag, line
 
 
-def _node(room: Room, node_id: str) -> Node | None:
+def _node(room: Room, node_id: str) -> Node | Passage | None:
     try:
         return room.node(node_id)
     except KeyError:
-        return None
+        return next((passage for passage in room.passages if passage.id == node_id), None)
 
 
 def _chat_mentions(engine: RoomEngine | None, fragment: str) -> bool:
@@ -88,6 +91,8 @@ def _narrate_inspect(
     node = _node(room, node_id)
     if node is None:
         return "explore", f"looks for {label}"
+    if node.kind == "passage":
+        return "explore", f"examines the {label} → {outcome.result}"
 
     if node_id == "sticky_note":
         if engine and "wall_poster" in engine.inspected_nodes:
@@ -213,6 +218,8 @@ def _narrate_enter(
     if "escape" in outcome.result.lower():
         return "unlock", f"enters {code} on the {label} → door opens, everyone can leave"
     if "open" in outcome.result.lower():
+        if any(passage.id == node_id for passage in room.passages):
+            return "unlock", f"enters {code} on the {label} → passage opens"
         if node_id == "desk_drawer" and engine and _chat_mentions(engine, code):
             return (
                 "unlock",
@@ -274,9 +281,10 @@ def _narrate_say(
     outcome: ActionOutcome,
     engine: RoomEngine | None,
 ) -> tuple[TurnTag, str]:
-    del room, agent, outcome, engine
+    del agent, outcome, engine
     text = action.args[0]
-    return "share", f'says aloud: "{text}" → both agents hear it'
+    audience = "the team hears it" if len(room.wings) > 2 else "both agents hear it"
+    return "share", f'says aloud: "{text}" → {audience}'
 
 
 def _narrate_write_note(
@@ -313,3 +321,21 @@ def _narrate_wait(
 ) -> tuple[TurnTag, str]:
     del room, agent, action, outcome, engine
     return "idle", "stays in place and watches the room"
+
+
+def _narrate_move(room, agent, action, outcome, engine):
+    del agent, engine
+    target = action.args[0]
+    label = room.locations.get(target, target)
+    return "explore", f"moves to {label}" if outcome.valid else f"tries to move to {label}"
+
+
+def _narrate_give_to(room, agent, action, outcome, engine):
+    del agent, outcome, engine
+    item, recipient = action.args
+    return "share", f"hands {room.items[item].name if item in room.items else item} to {recipient}"
+
+
+def _narrate_report(room, agent, action, outcome, engine):
+    del room, agent, outcome, engine
+    return "share", f"reports to orchestrator: {action.args[0]}"

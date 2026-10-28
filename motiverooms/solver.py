@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import deque
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import math
 
 from motiverooms.actions import Action
@@ -15,6 +15,7 @@ class SearchState:
     opened_nodes: frozenset[str] = frozenset()
     known_codes: frozenset[str] = frozenset()
     bag: frozenset[str] = frozenset()
+    location: str | None = None
 
 
 @dataclass(frozen=True)
@@ -65,10 +66,12 @@ def shortest_path(
     instant help without including the partner's communication turns.
     """
 
-    initial = SearchState()
+    if any(node.kind == "clue" and node.text is not None for node in room.nodes):
+        raise ValueError("The numeric-code oracle cannot interpret text clues; use the episode's constructive reference route")
+    initial = SearchState(location=room.start_locations.get(agent))
     if cooperative:
         codes, items = _handoff_resources(room, agent)
-        initial = SearchState(known_codes=codes, bag=items)
+        initial = replace(initial, known_codes=codes, bag=items)
 
     queue: deque[tuple[SearchState, tuple[Action, ...]]] = deque([(initial, ())])
     visited = {initial}
@@ -96,31 +99,40 @@ def _transitions(
         node
         for node in room.nodes_for_agent(agent)
         if _is_visible(room, node, state.opened_nodes)
+        and (not room.locations or node.location == state.location)
     ]
+    passages = [passage for passage in room.passages if state.location in passage.locations]
+    for passage in passages:
+        if passage.requires is None or passage.id in state.opened_nodes:
+            target = passage.other_location(state.location)
+            transitions.append((Action("move", (target,)), replace(state, location=target), False))
 
     for node in visible_nodes:
+        if node.kind == "search" and node.id not in state.opened_nodes:
+            transitions.append((Action("inspect", (node.id,)),
+                                replace(state, opened_nodes=state.opened_nodes | {node.id}), False))
         if node.kind == "clue" and node.code not in state.known_codes:
             assert node.code is not None
-            next_state = SearchState(
-                opened_nodes=state.opened_nodes,
+            next_state = replace(
+                state,
                 known_codes=state.known_codes | {node.code},
-                bag=state.bag,
             )
             transitions.append((Action("inspect", (node.id,)), next_state, False))
 
         for item_id in _available_items(room, node, state):
-            next_state = SearchState(
-                opened_nodes=state.opened_nodes,
-                known_codes=state.known_codes,
+            next_state = replace(
+                state,
                 bag=state.bag | {item_id},
             )
             transitions.append((Action("take", (item_id,)), next_state, False))
 
-        if node.kind not in {"container", "door"}:
+    for node in [*visible_nodes, *passages]:
+        if node.kind not in {"container", "door", "passage"}:
             continue
         if node.id in state.opened_nodes:
             continue
-        assert node.requires is not None
+        if node.requires is None:
+            continue
 
         action: Action | None = None
         if (
@@ -138,10 +150,9 @@ def _transitions(
                 action = Action("use", (usable_item, node.id))
 
         if action is not None:
-            next_state = SearchState(
+            next_state = replace(
+                state,
                 opened_nodes=state.opened_nodes | {node.id},
-                known_codes=state.known_codes,
-                bag=state.bag,
             )
             transitions.append((action, next_state, node.kind == "door"))
 
@@ -154,7 +165,7 @@ def _is_visible(room: Room, node: Node, opened_nodes: frozenset[str]) -> bool:
     return any(
         parent.id in opened_nodes and node.id in parent.contents
         for parent in room.nodes
-        if parent.kind == "container"
+        if parent.kind in {"container", "search"}
     )
 
 
@@ -163,7 +174,7 @@ def _available_items(
 ) -> tuple[str, ...]:
     if node.kind == "spot":
         candidates = node.items
-    elif node.kind == "container" and node.id in state.opened_nodes:
+    elif node.kind in {"container", "search"} and node.id in state.opened_nodes:
         candidates = node.contents
     else:
         candidates = ()

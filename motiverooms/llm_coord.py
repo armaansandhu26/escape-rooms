@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from motiverooms.actions import Action, parse_action
+from motiverooms.actions import Action, ActionParseError, parse_action
 from motiverooms.engine import RoomEngine
 from motiverooms.llm_policy import LLMAgentPolicy
 from motiverooms.schema import AgentId
@@ -32,7 +32,7 @@ def with_rejection_feedback(observation: str, reason: str) -> str:
     return (
         f"{observation}\n\n"
         f"That choice will not work: {reason}\n"
-        "Pick a different action on the last line."
+        "Choose a different action using your configured action interface."
     )
 
 
@@ -53,12 +53,17 @@ def choose_action_with_checks(
         if on_llm_wait is not None:
             on_llm_wait(agent, attempt + 1)
         _, action_line = policy.choose_action(obs)
-        reason = engine.action_rejection_reason(
-            agent,
-            parse_action(action_line),
-            committed=committed,
-        )
+        try:
+            reason = engine.action_rejection_reason(
+                agent, parse_action(action_line), committed=committed,
+            )
+        except ActionParseError as error:
+            reason = str(error)
         if reason is None:
             return action_line
+        if attempt + 1 < max_attempts:
+            callback = getattr(policy, "reject_action", None)
+            if callback:
+                callback(reason)
         obs = with_rejection_feedback(obs, reason)
     return action_line

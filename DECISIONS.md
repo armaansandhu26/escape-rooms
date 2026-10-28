@@ -126,3 +126,200 @@ than one reasonable implementation.
   Do not keep changing prompts merely to obtain a positive sharing result.
   Actual RL, held-out model evaluation and any required multi-round features
   remain work for the training phase, not completed claims of this prototype.
+
+## Phase 2: two AI agents and explicit communication controls
+
+- At the user's request, add a fixed-model collaboration pilot before trainer
+  integration. Preserve the completed API-prototype baseline and report.
+- Reuse strict simultaneous self-play, with one independent Azure client per
+  character and the existing private v3 observations. No coaching, parse repair,
+  shared reasoning history, RL training or new held-out evaluations.
+- Communication defaults to enabled for compatibility. Disabled communication
+  rejects chat, note writes/reads and item transfers in both engine step APIs,
+  charging the normal turn cost. Public partner action history is forbidden in
+  that condition. Visible room effects and partner escape status remain visible.
+- Evaluate three development private-handoff rooms, including a no-benefit
+  control, with two trials and alternating on/off order: 12 episodes / six pairs.
+  Identical self-play seats are not redundantly evaluated twice.
+- Summaries group by communication setting and preserve both agents' statistics.
+  Pair checks compare actual logged room/configuration/source/model settings and
+  exclude interrupted or mismatched comparisons. Offline on/off controls use
+  known joint/solo solutions respectively and are explicitly labelled as scripts.
+- Existing sharing attribution covers chat and item transfers. Note writes are
+  counted separately; note-based resource use is not inferred as chat sharing.
+  Channel-specific experiments and note attribution can follow if observed use
+  makes them necessary. Paid execution remains an explicit `--execute` action.
+
+## Communication-explained follow-up
+
+- The original two-AI pilot completed 12 escapes and six matched pairs without
+  acquiring partner-needed codes, sending messages or writing notes. This does
+  not establish whether agents understood the communication affordance.
+- At the user's request, add an opt-in `communication_instruction: explained`
+  condition. Describe message recipient/timing/cost, optional information exchange,
+  possible shortcuts, note costs and no actions after escape. Do not prescribe
+  exact moves, reveal codes, force messages, or promise benefits in zero-help rooms.
+- Keep original instructions as the default and preserve the original pilot
+  config/logs. Use a separate follow-up config with the same 12-attempt matrix,
+  model and rooms. Metadata, aggregation and pair checks distinguish instruction
+  conditions. The added explanation combines mechanics and potential strategy
+  benefit; it is an instruction treatment, not RL learning or proof of which
+  wording caused any change.
+
+## Native tool-call interface
+
+- Make native function calls the default for new API rollouts and evaluations.
+  Retain `action_interface: text` for the older last-line parser and stateless
+  prompts; never silently fall back between protocols.
+- Keep room tool contracts/argument validation separate from provider transport,
+  policy conversation state and joint-step execution. Use strict static schemas
+  without room-specific enums or oracle facts. Leave engine legality, rewards,
+  phase order and turn costs unchanged.
+- Preserve one call per active seat per tick. Collect choices before execution;
+  deliver each seat only its own result after the tick. Invalid/missing/multiple
+  calls spend one turn without executing a subset or retrying in strict mode.
+- Retain native conversation items (including reasoning continuation items) in
+  private per-episode policy history. Budget and log schemas/history, not just the
+  latest observation. This changes memory as well as encoding relative to text
+  mode, so treat it as a new experimental condition and recalibrate.
+- Record interface/schema/call/result metadata; group reports and matched pairs
+  by interface. Historical metadata without this field means text mode. Replay
+  continues validating canonical engine actions without provider requests.
+- Verify with mocked provider calls and the installed SDK's output models; live
+  Azure deployment compatibility remains a separate execution check.
+
+## Configurable connected-room episodes
+
+- At the user's request, use shared physical rooms that both agents can explore,
+  with independent positions. The existing `Room` remains the episode map; add
+  optional locations/start positions and bidirectional passages. Preserve the
+  old serialized form and replay snapshots when navigation is absent.
+- Default research rollouts to a fresh seeded three-room map. Support any positive
+  configured count and explicit seeds; retain `--room` for fixed scenarios. Keep
+  frozen diagnostic generation and existing evaluation configs unchanged.
+- Start with a chain topology so every room lies on the route to the final exit.
+  Randomize actual card/container locations among already reachable rooms,
+  furnishing descriptions, unique lock codes, code-versus-key locks and node
+  order. Construct a feasible reference instead of requiring a large BFS.
+- `move(room_id)` spends one turn and resolves after unlocks. All object actions
+  are local to the current room; item transfers require co-location. Chat/notes
+  retain their existing cross-room delivery rules. Connecting passages do not
+  trigger escape; the existing final-exit together/race rules remain explicit.
+- Keep seeds and reference metadata evaluator-only, record positions for replay,
+  scale default turn/step budgets with reference length, and group reports by map
+  size. Existing handoff annotations do not claim to measure all useful sharing
+  in newly generated shared maps. Keep the old browser catalog unchanged.
+
+## Adaptive orchestrator and ongoing supervision
+
+- At the user's request, start new research rollouts with a control-only LLM
+  orchestrator. It selects a bounded initial roster from public environment size
+  through a native spawn_subagents call. Create exactly the requested number of
+  independent policies. Keep the roster fixed after creation; continue coordinating
+  it before every joint tick, as clarified by the user.
+- Default to a configurable cap of eight, not a room-count-to-worker formula.
+  Shared rooms support arbitrary identifier-based rosters; split wings retain
+  their physical seats. Keep explicit fixed-team mode and historical suite configs
+  for reproducibility. Connected configs default to orchestration.
+- Send only size/rule summaries to the initial planner. Supervision receives
+  public worker activity/turn status and explicit report actions, never raw worker
+  observations, inventories, locations, tool results or reasoning. Reports cost
+  one physical turn. Controller task updates cost provider usage but no worker turn.
+- Broadcast say across the roster, add targeted give_to transfers for larger
+  teams, and preserve co-location requirements. A single worker can report to its
+  orchestrator. Require communication enabled for orchestration so control messages
+  cannot bypass communication-off experiments.
+- Charge planning, supervision and worker calls to one budget. Record setup errors
+  and partial completed requests without inventing environment steps; do not retry
+  or fall back to a heuristic on invalid controller output. Keep control calls out
+  of worker payoff/action accounting and include them in total usage/runtime.
+- Record roster, decisions and reports for replay and group reports by team mode,
+  actual worker count and controller kind. Offline runs use a labelled scripted
+  controller and feasibility references, not model decisions or evidence of learned
+  orchestration quality. Keep engine/provider concerns separate.
+
+## V2 follow-up to the first live orchestration run
+
+- Keep the environment/model/seed/turn rules and original run/config unchanged.
+  Add a separately versioned smoke config for the approved setup improvements.
+- Give the controller actual starting arrangements and supported action mechanics;
+  include public team chat on the next tick. Keep private observations, inventory,
+  location and reasoning hidden. Treat reports as attributed claims, not role
+  instructions or automatically verified facts, and do not discard them simply
+  because the controller cannot inspect the room.
+- Retain three complete recent native exchanges. Preserve deduplicated own
+  successful inspect/unlock results and attributed messages, without generated
+  summaries or oracle access. Retain at most 40 claims/messages per ledger. Keep
+  v1 full-history behavior selectable and group protocol versions separately.
+- Add explicit team/step progress output to the revised config. Do not force
+  reports, correct model code associations, provide a scripted solving strategy,
+  raise spending caps, or automatically launch a paid rerun.
+
+## 2026-10-22: open exploration puzzle and orchestrator messaging
+
+- Implement the user-approved mat/key, drawer/torch, battery, painting, sofa/token,
+  display-case and ordered-fragment concept as a separate `exploration` source.
+  Preserve the locked-chain generator and its configs for comparisons.
+- Reuse inspect for searches. Add generic searchable objects, inspectable scenery,
+  text clues and variable-length numeric codes; keep puzzle interpretation out of
+  engine handlers. Powering the torch is an item-use dependency, not a general
+  crafting system. Text clues remain private until explicitly communicated.
+- Keep passages open from reset. Three rooms form a triangle; larger maps use an
+  open ring. Extra rooms add a fragment each, while one/two-room configurations
+  co-locate the same core puzzle. Seed the Storage/Lounge placement, numbers,
+  assembly order and display order. The exit stays in the starting Office.
+- Set `worker_broadcast: false` only in the new config. Remove and reject say in
+  both native/text interfaces. Retain private reports to the controller, shared
+  notes with explicit reads, item transfers and observable shared state changes.
+  Do not coach workers to invent an alternative messaging strategy.
+- Add note-read and item-transfer counts and a communication-channel report table.
+  Group broadcast conditions and puzzle families separately. Channel counts do
+  not demonstrate intent or causal cooperation; retain exact contents for review.
+- Keep a constructive reference for solvability and replay. The existing numeric
+  BFS oracle explicitly rejects text-clue puzzles rather than claiming a bound.
+  Give the new puzzle reference-length turn allowance plus headroom for exploration
+  and reporting (36 ticks at default seed); use an explicit 240-call/1M-token batch
+  cap. This is a separate condition, not a matched change to the old smoke run.
+- Validate offline and with fake native clients; leave live provider execution to
+  the user-provided command.
+
+## 2026-10-22: persistent progress tracking after the exploration failure
+
+- Add a separate v3 condition in response to the failed 36-tick run, where workers
+  reported a battery holder and a blocked torch but repeatedly searched scenery.
+  Keep the puzzle and the previous config available unchanged for comparison.
+- Have the controller maintain typed item, dependency, search and location entries
+  through deltas in its existing coordinate call. Require citations to received
+  reports/chat; retain original evidence and label interpretations unverified.
+  Validate provenance/shape atomically without inspecting the true room state.
+  Do not pretend that a valid citation proves the interpretation is correct.
+- Add generic process guidance to distinguish blocked mechanisms from exhausted
+  searches, connect item claims to dependencies, and assign concrete objectives.
+  Do not hardcode the battery/torch solution, force reports, auto-repair task
+  choices, or expose worker action results privately to the controller.
+- Add optional worker-private action memory: exact own outcomes including failures,
+  attempt counts over the retained window and the latest assignment. Cap it at 32
+  distinct actions. Reports stay optional and cost a turn; notes/transfers remain
+  available without special encouragement.
+- Preserve seed 42, puzzle mechanics, model, turn allowance, team cap, broadcast
+  restriction and session spending caps. Use one recent controller exchange plus
+  the persistent board, and a 2048-token controller output ceiling for the larger
+  structured response; retain worker history/output limits. Record and group the
+  new condition explicitly. No paid rerun is launched automatically.
+
+## 2026-10-22: isolate advisory memory errors from physical episode execution
+
+- The first live v3 run stopped before tick 3 because the model described an item
+  as available but named the reporting worker as its holder. Cross-field
+  validation correctly rejected the board entry, but incorrectly aborted the
+  entire episode despite valid worker assignments.
+- Keep atomic validation. Reject a bad board delta, preserve existing memory,
+  apply valid assignments, and return the validation message through the normal
+  tool output and decision log. Do not silently rewrite claims, retry a provider
+  call, or grant a free worker action. Invalid tool/assignment envelopes remain
+  fatal policy errors. Clarify physical-carrier vs reporting-worker semantics in
+  the schema and controller prompt.
+- Save the actual failed tool payload as a regression fixture. Verify recovery,
+  subsequent valid updates, full offline escape/replay, and exactly one regular
+  coordination request per tick. Retain the failed live log as originally
+  recorded; leave live reruns to the user.

@@ -11,17 +11,23 @@ import json
 from pathlib import Path
 from threading import Timer
 from typing import Any
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 import webbrowser
 
 from motiverooms.catalog import ROOT, ROOMS, catalog_payload, preset_by_key
 from motiverooms.session import AppSession
+from motiverooms.recordings import recording_catalog, load_recording, project_recording
 
 DEFAULT_ROOM = ROOT / "office_storage.yaml"
 DEFAULT_SOLO_ROOM = ROOT / "office_solo.yaml"
 STATIC_DIRECTORY = Path(__file__).with_name("static")
 STATIC_FILES = {
-    "/": ("index.html", "text/html; charset=utf-8"),
+    "/": ("replay.html", "text/html; charset=utf-8"),
+    "/replay": ("replay.html", "text/html; charset=utf-8"),
+    "/replay.html": ("replay.html", "text/html; charset=utf-8"),
+    "/demo": ("index.html", "text/html; charset=utf-8"),
+    "/replay.js": ("replay.js", "text/javascript; charset=utf-8"),
+    "/replay.css": ("replay.css", "text/css; charset=utf-8"),
     "/app.js": ("app.js", "text/javascript; charset=utf-8"),
     "/styles.css": ("styles.css", "text/css; charset=utf-8"),
 }
@@ -31,6 +37,14 @@ def make_handler(session: AppSession) -> type[BaseHTTPRequestHandler]:
     class GameRequestHandler(BaseHTTPRequestHandler):
         def do_GET(self) -> None:
             path = urlparse(self.path).path
+            if path in {"/api/recordings", "/api/recording"}:
+                try:
+                    payload = recording_catalog() if path == "/api/recordings" else load_recording(
+                        parse_qs(urlparse(self.path).query).get("id", [""])[0])
+                    self._send_json(payload)
+                except (ValueError, OSError) as error:
+                    self._send_json({"error": str(error)}, status=HTTPStatus.BAD_REQUEST)
+                return
             if path == "/api/catalog":
                 self._send_json(catalog_payload())
                 return
@@ -47,6 +61,9 @@ def make_handler(session: AppSession) -> type[BaseHTTPRequestHandler]:
             path = urlparse(self.path).path
             try:
                 body = self._read_json()
+                if path == "/api/recordings/preview":
+                    self._send_json(project_recording(body.get("events"), id="imported"))
+                    return
                 if path == "/api/action":
                     action = body.get("action")
                     if not isinstance(action, str) or not action.strip():
@@ -143,7 +160,8 @@ def make_handler(session: AppSession) -> type[BaseHTTPRequestHandler]:
 
         def _read_json(self) -> dict[str, Any]:
             length = int(self.headers.get("Content-Length", "0"))
-            if length > 10_000:
+            limit = 20_000_000 if urlparse(self.path).path == "/api/recordings/preview" else 10_000
+            if length > limit:
                 raise ValueError("Request body is too large")
             data = json.loads(self.rfile.read(length) or b"{}")
             if not isinstance(data, dict):

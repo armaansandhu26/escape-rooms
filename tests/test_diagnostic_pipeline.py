@@ -180,7 +180,7 @@ def test_summary_keeps_api_failures_out_of_task_denominator(tmp_path):
 def test_all_baseline_conditions_execute_with_mock_azure_and_replay(tmp_path, monkeypatch):
     config = dict(split="development", seeds=[0], both_seats=True, repeats=1,
                   conditions=["solo", "honest", "silent", "deceptive", "self_play"],
-                  mode="mixed", budget=dict(max_calls=10000, max_tokens=10_000_000))
+                  mode="mixed", action_interface="text", budget=dict(max_calls=10000, max_tokens=10_000_000))
     plan = make_plan(config, load_suite("rooms/diagnostics/manifest.json"))
 
     def factory(settings, budget):

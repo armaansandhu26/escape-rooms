@@ -24,6 +24,9 @@ class MotiveRoomsEnv:
     shared_escape: SharedEscapeMode = "together"
     partner_actions: str = "private"
     observation_version: str = "v3"
+    communication: str = "enabled"
+    coordination: bool = False
+    worker_broadcast: bool = True
     engine: RoomEngine = field(init=False)
     env_step: int = field(init=False, default=0)
 
@@ -38,6 +41,12 @@ class MotiveRoomsEnv:
             raise ValueError(f"Unknown shared escape rule: {self.shared_escape}")
         if self.partner_actions not in {"private", "public"}:
             raise ValueError(f"Unknown partner action visibility: {self.partner_actions}")
+        if self.communication not in {"enabled", "disabled"}:
+            raise ValueError(f"Unknown communication mode: {self.communication}")
+        if self.communication == "disabled" and self.partner_actions != "private":
+            raise ValueError("Disabled communication requires private partner actions")
+        if self.coordination and self.communication == "disabled":
+            raise ValueError("Orchestration requires enabled communication; use a fixed team for communication-off controls")
         if self.observation_version not in {"v1", "v2", "v3"}:
             raise ValueError(f"Unknown observation version: {self.observation_version}")
         self.reset()
@@ -47,6 +56,9 @@ class MotiveRoomsEnv:
             self.room,
             turn_budget=self.turn_budget,
             shared_escape=self.shared_escape,
+            communication=self.communication,
+            coordination=self.coordination,
+            worker_broadcast=self.worker_broadcast,
         )
         self.env_step = 0
         return self.observe_all()
@@ -74,7 +86,7 @@ class MotiveRoomsEnv:
         return not self.active_agents()
 
     def observe(self, agent: AgentId) -> str:
-        return render_observation(
+        observation = render_observation(
             self.engine,
             agent,
             round_number=self.round_number,
@@ -82,6 +94,19 @@ class MotiveRoomsEnv:
             partner_actions=self.partner_actions,
             observation_version=self.observation_version,
         )
+        if self.communication == "disabled":
+            observation = observation.replace(
+                "Clue readings and partner actions are private; messages and shared notes can convey codes.",
+                "Clue readings and partner actions are private. Communication and item transfers are disabled.",
+            )
+            observation += "\nCommunication is disabled: say, write_note, read_notes and give are unavailable."
+        if not self.worker_broadcast:
+            observation = observation.replace(
+                "Clue readings and partner actions are private; messages and shared notes can convey codes.",
+                "Clue readings and partner actions are private. Worker broadcast is unavailable.",
+            )
+            observation += "\nWorker broadcast is unavailable. Use report(message) to contact the orchestrator."
+        return observation
 
     def observe_all(self) -> dict[AgentId, str]:
         return {agent: self.observe(agent) for agent in self.active_agents()}

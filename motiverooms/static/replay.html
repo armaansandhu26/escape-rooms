@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MotiveRooms · Episode replay</title>
+  <meta name="description" content="Replay recorded multi-agent escape rooms, manager communication and exact trajectories." />
+  <link rel="stylesheet" href="/replay.css" />
+  <script src="/replay.js" defer></script>
+</head>
+<body>
+  <main>
+    <section class="intro">
+      <div><button id="import-button" class="button secondary" type="button">Load JSONL <span aria-hidden="true">↗</span></button><input id="file-input" type="file" accept=".jsonl,.json" hidden /></div>
+    </section>
+    <div id="error" class="error" role="alert" hidden></div>
+    <section id="empty-state" class="empty-state" hidden><h2>Bring an episode into view.</h2><p>Load a completed episode JSONL to replay its rooms, worker actions and manager conversations.</p><button id="empty-import" class="button primary" type="button">Choose a recording</button></section>
+    <div id="workspace" hidden>
+      <section class="episode-strip" aria-label="Recording overview"><div class="episode-identity"><span id="outcome-badge" class="badge"></span><span id="episode-name"></span></div><div id="episode-stats" class="episode-stats"></div></section>
+      <section class="playback panel" aria-label="Playback controls">
+        <div class="transport"><button id="restart" class="icon-button" aria-label="Restart episode" title="Restart">↺</button><button id="previous" class="icon-button" aria-label="Previous tick" title="Previous tick">←</button><button id="play" class="play-button" type="button"><span id="play-icon" aria-hidden="true">▶</span><span id="play-label">Play episode</span></button><button id="next" class="icon-button" aria-label="Next tick" title="Next tick">→</button></div>
+        <div class="scrubber"><label for="seek">Tick <strong id="tick-value">0 / 0</strong></label><input id="seek" type="range" min="0" max="0" value="0" aria-label="Episode tick" /></div>
+        <label class="speed-label">Speed<select id="speed" aria-label="Playback speed"><option value="2200">0.5×</option><option value="1100" selected>1×</option><option value="550">2×</option><option value="275">4×</option></select></label>
+      </section>
+      <section class="workspace-grid">
+        <section class="map-panel panel" aria-labelledby="map-title">
+          <div class="panel-heading"><h2 id="map-title">Rooms</h2><span class="observer-tag">Observer view</span></div>
+          <div id="room-map" class="room-map"></div>
+          <div class="map-footer"><div id="worker-legend" class="worker-legend"></div><span>Room locations are recorded · furniture layout is schematic</span></div>
+          <div id="object-detail" class="object-detail" hidden></div>
+        </section>
+        <aside class="message-panel panel" aria-labelledby="message-title">
+          <div class="panel-heading"><div><p class="eyebrow">THE CONTROL ROOM</p><h2 id="message-title">Manager &amp; workers</h2></div><span id="worker-count" class="count-pill"></span></div>
+          <div class="message-tabs" role="group" aria-label="Message direction"><button class="message-tab active" data-filter="all" aria-pressed="true">All activity</button><button class="message-tab" data-filter="inbox" aria-pressed="false">To manager</button><button class="message-tab" data-filter="outbox" aria-pressed="false">From manager</button></div>
+          <p class="channel-note">Private channels are visible to you as the observer.</p>
+          <div id="message-log" class="message-log" role="log" aria-label="Recorded manager communication"></div>
+          <div class="message-footer"><span class="manager-symbol">M</span><span id="manager-status">Manager is overseeing the team</span></div>
+        </aside>
+      </section>
+      <details class="puzzle-guide panel" id="puzzle-guide" open>
+        <summary>How this puzzle unlocks <span>→ Easy interpretation</span></summary>
+        <p class="guide-note">Visualization guide · green steps are completed or discovered at the selected tick. Clue values appear as workers find them.</p>
+        <div id="puzzle-flow" class="puzzle-flow"></div>
+      </details>
+      <section class="trajectory-section" aria-labelledby="trajectory-title">
+        <div class="trajectory-heading"><div><p class="eyebrow">EVERY DECISION, IN ORDER</p><h2 id="trajectory-title">The trajectory</h2><p>Each row is one simultaneous tick. Select a row to see that moment above.</p></div><label class="trajectory-filter"><input id="past-only" type="checkbox" />Show played ticks only</label></div>
+        <div id="moment" class="moment" aria-live="polite"></div>
+        <div class="trajectory-wrap"><table class="trajectory-table"><thead id="trajectory-head"></thead><tbody id="trajectory-body"></tbody></table></div>
+      </section>
+    </div>
+    <footer class="page-footer"><span>MotiveRooms / Replay workspace</span><span>Recorded actions. Original outcomes. No simulated decisions.</span></footer>
+  </main>
+</body>
+</html>

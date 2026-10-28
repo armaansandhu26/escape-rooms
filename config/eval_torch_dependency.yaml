@@ -1,0 +1,25 @@
+# Isolate the dependency chain before evaluating navigation and teamwork.
+experiment: torch_dependency_diagnostic_v1
+room_source: torch_dependency
+num_rooms: 1
+seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+split: all
+conditions: [solo]
+both_seats: false
+repeats: 1
+team_mode: fixed
+turn_budget: 12
+max_steps: 12
+observation_version: v3
+action_interface: tools
+worker_history_turns: 3
+worker_progress_memory: true
+communication_modes: [enabled]
+mode: collaborative
+model: gpt-5.4-mini
+temperature: 0.2
+max_output_tokens: 1024
+progress: true
+budget:
+  max_calls: 150
+  max_tokens: 500000

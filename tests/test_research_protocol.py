@@ -32,7 +32,7 @@ def test_default_decisions_are_independent_and_conflicts_cost_turns():
     observations = env.observe_all()
     barrier = Barrier(2)
     clients = {agent: RecordingClient("take(brass_key)", barrier) for agent in env.agent_ids}
-    policies = {agent: LLMAgentPolicy(agent, client) for agent, client in clients.items()}
+    policies = {agent: LLMAgentPolicy(agent, client, action_interface="text") for agent, client in clients.items()}
     actions = request_actions(policies, observations, env, env_step=env.env_step)
     # Both calls must finish before either action reaches the engine.
     assert env.env_step == 1
@@ -48,7 +48,7 @@ def test_default_decisions_are_independent_and_conflicts_cost_turns():
 def test_malformed_model_output_costs_a_turn_without_retry():
     env = MotiveRoomsEnv.from_yaml(SHARED, turn_budget=2)
     client = RecordingClient("I cannot decide.")
-    policy = LLMAgentPolicy("A", client)
+    policy = LLMAgentPolicy("A", client, action_interface="text")
     _, action = policy.choose_action(env.observe("A"))
     outcomes = env.step_joint({"A": action, "B": "wait()"})
     assert len(client.inputs) == 1
@@ -59,7 +59,7 @@ def test_malformed_model_output_costs_a_turn_without_retry():
 def test_assisted_condition_exposes_partner_pick_explicitly():
     env = MotiveRoomsEnv.from_yaml(SHARED)
     clients = {agent: RecordingClient("wait()") for agent in env.agent_ids}
-    policies = {agent: LLMAgentPolicy(agent, client) for agent, client in clients.items()}
+    policies = {agent: LLMAgentPolicy(agent, client, action_interface="text") for agent, client in clients.items()}
     request_actions(policies, env.observe_all(), env, env_step=0, parallel=False)
     assert "PARTNER PICK THIS STEP" not in clients["A"].inputs[0]
     assert "Agent A: wait()" in clients["B"].inputs[0]
@@ -128,7 +128,7 @@ def test_seat_swap_moves_policy_identity_model_and_framing_together():
 def test_cli_strict_failures_finish_or_truncate_without_network(monkeypatch, capsys, max_steps):
     clients = []
 
-    def fake_client(settings):
+    def fake_client(settings, budget=None):
         client = RecordingClient("malformed response")
         clients.append(client)
         return client
@@ -136,7 +136,7 @@ def test_cli_strict_failures_finish_or_truncate_without_network(monkeypatch, cap
     monkeypatch.setenv("AZURE_OPENAI_API_KEY", "test-key")
     monkeypatch.setattr(rollout_llm, "AzureResponsesClient", fake_client)
     monkeypatch.setattr(rollout_llm, "parse_args", lambda: parse_args([
-        "--turn-budget", "2", "--max-steps", str(max_steps),
+        "--turn-budget", "2", "--max-steps", str(max_steps), "--action-interface", "text", "--team-mode", "fixed",
     ]))
     assert rollout_llm.main() == 2
     output = capsys.readouterr().out

@@ -14,18 +14,17 @@ class ScriptedPolicy:
         self.index = 0
         self.tried_messages = set()
         self.handoffs = metadata.get("handoffs", [])
-        self.helper_count = len(metadata["helper_plans"][agent])
+        self.helper_count = len(metadata.get("helper_plans", {}).get(agent, []))
         self.policy_version = 1 if kind in {"reference", "idle"} else 2
         self.sent_actions = set()
         self.requested_items = set()
         self.helper_plan = list(metadata["helper_plans"][agent]) if kind in {"honest", "deceptive"} else []
-        solo = metadata["solo_plans"][agent]
         if kind == "reference":
             self.plan = [step.get(agent, "wait()") for step in metadata["reference"]]
         elif kind in {"honest", "deceptive"}:
-            self.plan = list(metadata["helper_plans"][agent]) + list(solo)
+            self.plan = list(metadata["helper_plans"][agent]) + list(metadata["solo_plans"][agent])
         else:
-            self.plan = list(solo)
+            self.plan = list(metadata["solo_plans"][agent]) if kind != "idle" else []
 
     def choose_action(self, observation):
         del observation

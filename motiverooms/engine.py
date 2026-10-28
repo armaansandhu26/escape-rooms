@@ -9,7 +9,7 @@ from collections.abc import Mapping
 
 from motiverooms.actions import Action, ActionParseError, parse_action
 from motiverooms.joint_step import TAKE_CONFLICT_MESSAGE, VERB_PHASES
-from motiverooms.schema import AgentId, Node, Room
+from motiverooms.schema import AgentId, Node, Passage, Room
 
 SharedEscapeMode = Literal["together", "race"]
 
@@ -21,6 +21,7 @@ class AgentState:
     read_codes: dict[str, str] = field(default_factory=dict)
     escaped: bool = False
     last_result: str = "The round has not started."
+    location: str | None = None
 
 
 @dataclass(frozen=True)
@@ -52,18 +53,30 @@ class RoomEngine:
         *,
         max_message_words: int = 40,
         shared_escape: SharedEscapeMode = "together",
+        communication: str = "enabled",
+        coordination: bool = False,
+        worker_broadcast: bool = True,
     ) -> None:
         if turn_budget <= 0:
             raise ValueError("turn_budget must be positive")
         self.room = room
         self.max_message_words = max_message_words
         self.shared_escape = shared_escape
+        if communication not in {"enabled", "disabled"}:
+            raise ValueError(f"Unknown communication mode: {communication}")
+        self.communication = communication
+        self.coordination = coordination
+        if type(worker_broadcast) is not bool:
+            raise ValueError("worker_broadcast must be a boolean")
+        self.worker_broadcast = worker_broadcast
         self.agents = {
-            agent: AgentState(turns_left=turn_budget) for agent in room.wings
+            agent: AgentState(turns_left=turn_budget, location=room.start_locations.get(agent))
+            for agent in room.wings
         }
         self.opened_nodes: set[str] = set()
         self.taken_items: set[str] = set()
         self.messages: list[Message] = []
+        self.reports: list[Message] = []
         self.notes: list[str] = []
         self.inspected_nodes: set[str] = set()
         self.last_joint_actions: dict[AgentId, str] = {}
@@ -76,15 +89,24 @@ class RoomEngine:
         return any(
             parent.id in self.opened_nodes and node.id in parent.contents
             for parent in self.room.nodes
-            if parent.kind == "container"
+            if parent.kind in {"container", "search"}
         )
 
     def visible_nodes(self, agent: AgentId) -> tuple[Node, ...]:
         return tuple(
             node
             for node in self.room.nodes_for_agent(agent)
-            if self.is_visible(node)
+            if self.is_visible(node) and (
+                not self.room.locations or node.location == self.agents[agent].location
+            )
         )
+
+    def visible_passages(self, agent: AgentId) -> tuple[Passage, ...]:
+        location = self.agents[agent].location
+        return tuple(passage for passage in self.room.passages if location in passage.locations)
+
+    def passage_is_open(self, passage: Passage) -> bool:
+        return passage.requires is None or passage.id in self.opened_nodes
 
     def step(self, agent: AgentId, output: str | Action) -> ActionOutcome:
         state = self._agent_state(agent)
@@ -200,6 +222,14 @@ class RoomEngine:
         committed: Mapping[AgentId, Action] | None = None,
     ) -> str | None:
         """Return why an action would fail now (read-only); ``None`` if it may succeed."""
+        if action.verb == "say" and not self.worker_broadcast:
+            return "Worker broadcast is unavailable. Use report(message) to contact the orchestrator."
+        if self.communication == "disabled" and action.verb in {"say", "write_note", "read_notes", "give", "give_to", "report"}:
+            return "Communication and item transfers are disabled for this episode."
+        if action.verb == "report" and not self.coordination:
+            return "There is no orchestrator for this episode."
+        if action.verb == "move":
+            return self._movement_rejection(agent, action.args[0])
         if action.verb == "take":
             item_id = action.args[0]
             if item_id not in self.room.items:
@@ -236,10 +266,17 @@ class RoomEngine:
             if error is not None:
                 return error
 
+        if action.verb == "give_to":
+            return self._transfer_rejection(agent, action.args[0], action.args[1])
         if action.verb == "give":
+            if len(self.agents) > 2:
+                return "Use give_to(item_id, agent_id) to select a recipient."
             item_id = action.args[0]
             if item_id not in self.agents[agent].bag:
                 return "You are not carrying that item."
+            partner = self._partner_of(agent)
+            if partner is not None and self.agents[agent].location != self.agents[partner].location:
+                return "Item transfers require both agents to be in the same room."
 
         return None
 
@@ -250,6 +287,10 @@ class RoomEngine:
     def _apply_parsed_action(
         self, agent: AgentId, action: Action
     ) -> ActionOutcome:
+        if action.verb == "say" and not self.worker_broadcast:
+            return self._finish(agent, action, False, "Worker broadcast is unavailable. Use report(message) to contact the orchestrator.")
+        if self.communication == "disabled" and action.verb in {"say", "write_note", "read_notes", "give", "give_to", "report"}:
+            return self._finish(agent, action, False, self.action_rejection_reason(agent, action))
         handler = getattr(self, f"_act_{action.verb}")
         valid, result = handler(agent, *action.args)
         return self._finish(agent, action, valid, result)
@@ -272,7 +313,12 @@ class RoomEngine:
 
     def _usable_node(
         self, agent: AgentId, node_id: str
-    ) -> tuple[Node | None, str | None]:
+    ) -> tuple[Node | Passage | None, str | None]:
+        passage = next((p for p in self.room.passages if p.id == node_id), None)
+        if passage is not None:
+            if passage not in self.visible_passages(agent):
+                return None, "That passage is not adjacent to your room."
+            return passage, None
         try:
             node = self.room.node(node_id)
         except KeyError:
@@ -281,6 +327,8 @@ class RoomEngine:
             return None, "That node is not in your wing."
         if not self.is_visible(node):
             return None, "That node is hidden."
+        if self.room.locations and node.location != self.agents[agent].location:
+            return None, "That node is not in your current room."
         return node, None
 
     def _act_inspect(self, agent: AgentId, node_id: str) -> tuple[bool, str]:
@@ -288,14 +336,20 @@ class RoomEngine:
         if error is not None:
             return False, error
         assert node is not None
-        if node.kind == "clue":
-            assert node.code is not None
-            value = self.room.codes[node.code]
+        if isinstance(node, Node) and node.kind == "clue":
+            value = self.room.codes[node.code] if node.code is not None else node.text
+            assert value is not None
             self.agents[agent].read_codes[node.id] = value
             self.inspected_nodes.add(node_id)
             return True, f"{node.desc} It reads {value}."
+        if isinstance(node, Node) and node.kind == "search":
+            self.opened_nodes.add(node.id)
+            self.inspected_nodes.add(node.id)
+            contents = [content for content in node.contents
+                        if content not in self.taken_items]
+            return True, f"You search {node.id}. Revealed: {', '.join(contents) or '(nothing remaining)'}."
         self.inspected_nodes.add(node_id)
-        return True, node.desc
+        return True, node.text or node.desc
 
     def _act_take(self, agent: AgentId, item_id: str) -> tuple[bool, str]:
         if item_id not in self.room.items:
@@ -318,7 +372,7 @@ class RoomEngine:
             if node.kind == "spot" and item_id in node.items:
                 return node
             if (
-                node.kind == "container"
+                node.kind in {"container", "search"}
                 and node.id in self.opened_nodes
                 and item_id in node.contents
             ):
@@ -352,18 +406,20 @@ class RoomEngine:
 
     def _lockable_node(
         self, agent: AgentId, node_id: str
-    ) -> tuple[Node | None, str | None]:
+    ) -> tuple[Node | Passage | None, str | None]:
         node, error = self._usable_node(agent, node_id)
         if error is not None:
             return None, error
         assert node is not None
-        if node.kind not in {"container", "door"}:
+        if node.kind not in {"container", "door", "passage"}:
             return None, "That node has no lock."
+        if isinstance(node, Passage) and node.requires is None:
+            return None, "That passage is already open."
         if node.id in self.opened_nodes:
             return None, "That node is already open."
         return node, None
 
-    def _open(self, agent: AgentId, node: Node) -> tuple[bool, str]:
+    def _open(self, agent: AgentId, node: Node | Passage) -> tuple[bool, str]:
         self.opened_nodes.add(node.id)
         if node.kind == "door":
             if self.room.is_shared and self.shared_escape == "together":
@@ -377,14 +433,59 @@ class RoomEngine:
         return True, f"You open {node.id}."
 
     def _act_give(self, agent: AgentId, item_id: str) -> tuple[bool, str]:
+        if len(self.agents) > 2:
+            return False, "Use give_to(item_id, agent_id) to select a recipient."
         partner = self._partner_of(agent)
         if partner is None:
             return False, "There is no partner in this room."
         if item_id not in self.agents[agent].bag:
             return False, "You are not carrying that item."
+        if self.agents[agent].location != self.agents[partner].location:
+            return False, "Item transfers require both agents to be in the same room."
         self.agents[agent].bag.remove(item_id)
         self.agents[partner].bag.add(item_id)
         return True, f"You give the {self.room.items[item_id].name} to {partner}."
+
+    def _transfer_rejection(self, agent: AgentId, item_id: str, recipient: AgentId) -> str | None:
+        if recipient not in self.agents or recipient == agent:
+            return "Choose a different agent in this team as the recipient."
+        if item_id not in self.agents[agent].bag:
+            return "You are not carrying that item."
+        if self.agents[agent].location != self.agents[recipient].location:
+            return "Item transfers require both agents to be in the same room."
+        return None
+
+    def _act_give_to(self, agent: AgentId, item_id: str, recipient: AgentId) -> tuple[bool, str]:
+        error = self._transfer_rejection(agent, item_id, recipient)
+        if error:
+            return False, error
+        self.agents[agent].bag.remove(item_id)
+        self.agents[recipient].bag.add(item_id)
+        return True, f"You give the {self.room.items[item_id].name} to {recipient}."
+
+    def _act_report(self, agent: AgentId, text: str) -> tuple[bool, str]:
+        if not self.coordination:
+            return False, "There is no orchestrator for this episode."
+        self.reports.append(Message(sender=agent, text=self._truncate_message(text)))
+        return True, "reported to orchestrator"
+
+    def _movement_rejection(self, agent: AgentId, room_id: str) -> str | None:
+        current = self.agents[agent].location
+        if room_id == current:
+            return "You are already in that room."
+        passage = next((p for p in self.visible_passages(agent) if room_id in p.locations), None)
+        if passage is None:
+            return "That room is not adjacent to your current room."
+        if not self.passage_is_open(passage):
+            return f"Passage {passage.id} is locked."
+        return None
+
+    def _act_move(self, agent: AgentId, room_id: str) -> tuple[bool, str]:
+        error = self._movement_rejection(agent, room_id)
+        if error:
+            return False, error
+        self.agents[agent].location = room_id
+        return True, f"You move to {room_id} ({self.room.locations[room_id]})."
 
     def _act_say(self, agent: AgentId, text: str) -> tuple[bool, str]:
         if self._partner_of(agent) is None:

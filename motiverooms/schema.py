@@ -9,15 +9,16 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Literal, Mapping
+from typing import Any, ClassVar, Literal, Mapping
+import re
 
 import yaml
 
-AgentId = Literal["A", "B"]
-NodeKind = Literal["clue", "spot", "container", "door"]
+AgentId = str
+NodeKind = Literal["clue", "spot", "container", "door", "search", "scenery"]
 RoomLayout = Literal["split", "shared"]
 NodeZone = Literal["A", "B", "shared"]
-NODE_KINDS = {"clue", "spot", "container", "door"}
+NODE_KINDS = {"clue", "spot", "container", "door", "search", "scenery"}
 ROOM_LAYOUTS = {"split", "shared"}
 NODE_ZONES = {"A", "B", "shared"}
 
@@ -70,6 +71,8 @@ class Node:
     items: tuple[str, ...] = ()
     requires: Requirement | None = None
     contents: tuple[str, ...] = ()
+    location: str | None = None
+    text: str | None = None
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> "Node":
@@ -79,7 +82,7 @@ class Node:
             raise RoomValidationError(
                 f"Node is missing field(s): {', '.join(sorted(missing))}"
             )
-        allowed = required | {"hidden", "code", "items", "requires", "contents"}
+        allowed = required | {"hidden", "code", "items", "requires", "contents", "location", "text"}
         unknown = set(data) - allowed
         if unknown:
             raise RoomValidationError(
@@ -102,6 +105,8 @@ class Node:
                 else None
             ),
             contents=tuple(data.get("contents", ())),
+            location=data.get("location"),
+            text=data.get("text"),
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -121,7 +126,49 @@ class Node:
             data["requires"] = self.requires.to_dict()
         if self.contents:
             data["contents"] = list(self.contents)
+        if self.location is not None:
+            data["location"] = self.location
+        if self.text is not None:
+            data["text"] = self.text
         return data
+
+
+@dataclass(frozen=True)
+class Passage:
+    """One bidirectional connection; unlocking either side opens the same lock."""
+
+    id: str
+    locations: tuple[str, str]
+    desc: str
+    requires: Requirement | None = None
+    kind: ClassVar[Literal["passage"]] = "passage"
+
+    @classmethod
+    def from_dict(cls, data: Mapping[str, Any]) -> "Passage":
+        if not isinstance(data, Mapping):
+            raise RoomValidationError("Passages must be mappings")
+        if set(data) - {"id", "locations", "desc", "requires"}:
+            raise RoomValidationError("Unknown passage field")
+        if not {"id", "locations", "desc"} <= set(data):
+            raise RoomValidationError("Passages require id, locations and desc")
+        locations = data["locations"]
+        if not isinstance(locations, (list, tuple)) or len(locations) != 2:
+            raise RoomValidationError("Passages must connect exactly two locations")
+        if "requires" in data and not isinstance(data["requires"], Mapping):
+            raise RoomValidationError("Passage requirements must be mappings")
+        return cls(id=data["id"], locations=tuple(locations), desc=data["desc"],
+                   requires=Requirement.from_dict(data["requires"]) if "requires" in data else None)
+
+    def to_dict(self) -> dict[str, Any]:
+        data = dict(id=self.id, locations=list(self.locations), desc=self.desc)
+        if self.requires is not None:
+            data["requires"] = self.requires.to_dict()
+        return data
+
+    def other_location(self, location: str) -> str:
+        if location not in self.locations:
+            raise ValueError(f"Passage {self.id} is not adjacent to {location}")
+        return self.locations[1] if location == self.locations[0] else self.locations[0]
 
 
 @dataclass(frozen=True)
@@ -133,6 +180,9 @@ class Room:
     nodes: tuple[Node, ...]
     layout: RoomLayout = "split"
     space: str | None = None
+    locations: dict[str, str] = field(default_factory=dict)
+    passages: tuple[Passage, ...] = ()
+    start_locations: dict[AgentId, str] = field(default_factory=dict)
     _nodes_by_id: dict[str, Node] = field(init=False, repr=False, compare=False)
 
     def __post_init__(self) -> None:
@@ -142,7 +192,7 @@ class Room:
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> "Room":
         required = {"id", "wings", "codes", "items", "nodes"}
-        optional = {"layout", "space"}
+        optional = {"layout", "space", "locations", "passages", "start_locations"}
         missing = required - set(data)
         if missing:
             raise RoomValidationError(
@@ -177,6 +227,9 @@ class Room:
             nodes=tuple(Node.from_dict(node) for node in data["nodes"]),
             layout=layout,  # type: ignore[arg-type]
             space=space,
+            locations=dict(data.get("locations", {})),
+            passages=tuple(Passage.from_dict(passage) for passage in data.get("passages", [])),
+            start_locations=dict(data.get("start_locations", {})),
         )
 
     def node(self, node_id: str) -> Node:
@@ -201,7 +254,11 @@ class Room:
         errors: list[str] = []
         if not self.id:
             errors.append("Room id must not be empty")
-        if not self.wings or set(self.wings) not in ({"A"}, {"A", "B"}):
+        if self.is_shared:
+            if not self.wings or any(not isinstance(agent, str) or not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]*", agent)
+                                     for agent in self.wings):
+                errors.append("Shared rooms require one or more agents with identifier IDs")
+        elif not self.wings or set(self.wings) not in ({"A"}, {"A", "B"}):
             errors.append("Wings must contain A, and may optionally contain B")
         if any(not name for name in self.wings.values()):
             errors.append("Wing names must not be empty")
@@ -214,8 +271,8 @@ class Room:
                 )
 
         code_values = list(self.codes.values())
-        if any(len(value) != 4 or not value.isdigit() for value in code_values):
-            errors.append("Every code must be a 4-digit string")
+        if any(not value or not value.isascii() or not value.isdigit() for value in code_values):
+            errors.append("Every code must be a nonempty ASCII numeric string")
         if len(code_values) != len(set(code_values)):
             errors.append("Code values must be unique")
 
@@ -246,7 +303,7 @@ class Room:
             parents = content_parents.get(node.id, [])
             if node.hidden and len(parents) != 1:
                 errors.append(
-                    f"Hidden node {node.id!r} must belong to exactly one container"
+                    f"Hidden node {node.id!r} must belong to exactly one container or searchable object"
                 )
             if parents and not node.hidden:
                 errors.append(
@@ -275,6 +332,60 @@ class Room:
 
         if errors:
             raise RoomValidationError("; ".join(errors))
+        self._validate_navigation()
+
+    def _validate_navigation(self) -> None:
+        if not self.locations:
+            if self.passages or self.start_locations or any(n.location is not None for n in self.nodes):
+                raise RoomValidationError("Navigation requires defined locations")
+            return
+        if not self.is_shared:
+            raise RoomValidationError("Connected locations currently require a shared layout")
+        for location, name in self.locations.items():
+            if (not isinstance(location, str) or not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]*", location)
+                    or not isinstance(name, str) or not name):
+                raise RoomValidationError("Locations require identifier IDs and nonempty names")
+        if set(self.start_locations) != set(self.wings) or any(
+            not isinstance(location, str) or location not in self.locations
+            for location in self.start_locations.values()
+        ):
+            raise RoomValidationError("Each agent requires a valid start location")
+        if any(not isinstance(node.location, str) or node.location not in self.locations for node in self.nodes):
+            raise RoomValidationError("Every node requires a defined location")
+        for node in self.nodes:
+            for child in node.contents:
+                if child in self._nodes_by_id and self.node(child).location != node.location:
+                    raise RoomValidationError("Containers and their child nodes must share a location")
+        used_ids = set(self._nodes_by_id) | set(self.items)
+        pairs = set()
+        adjacency = {location: set() for location in self.locations}
+        for passage in self.passages:
+            if not isinstance(passage.id, str) or not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]*", passage.id):
+                raise RoomValidationError("Passage IDs must be identifiers")
+            if passage.id in used_ids or not passage.desc:
+                raise RoomValidationError("Passages require unique IDs and nonempty descriptions")
+            used_ids.add(passage.id)
+            if len(passage.locations) != 2 or any(not isinstance(p, str) or p not in self.locations for p in passage.locations):
+                raise RoomValidationError("Passages require two defined locations")
+            pair = frozenset(passage.locations)
+            if len(pair) != 2 or pair in pairs:
+                raise RoomValidationError("Passages must connect distinct locations without duplicate edges")
+            pairs.add(pair)
+            if passage.requires is not None:
+                errors = self._validate_requirement(f"Passage {passage.id!r}", passage.requires)
+                if errors:
+                    raise RoomValidationError("; ".join(errors))
+            a, b = passage.locations
+            adjacency[a].add(b)
+            adjacency[b].add(a)
+        reached, pending = set(), [next(iter(self.locations))]
+        while pending:
+            location = pending.pop()
+            if location not in reached:
+                reached.add(location)
+                pending.extend(adjacency[location] - reached)
+        if reached != set(self.locations):
+            raise RoomValidationError("All locations must be connected")
 
     def _validate_node(self, node: Node) -> list[str]:
         errors: list[str] = []
@@ -289,8 +400,13 @@ class Room:
         if node.kind not in NODE_KINDS:
             errors.append(f"{label} has unsupported kind {node.kind!r}")
 
+        if node.text is not None and (node.kind not in {"clue", "scenery"}
+                                      or not isinstance(node.text, str) or not node.text.strip()):
+            errors.append(f"{label} text requires a clue/scenery node and nonempty text")
         if node.kind == "clue":
-            if node.code not in self.codes:
+            if (node.code is None) == (node.text is None):
+                errors.append(f"{label} must define exactly one code reference or text")
+            elif node.code is not None and node.code not in self.codes:
                 errors.append(f"{label} must reference a defined code")
         elif node.code is not None:
             errors.append(f"{label} may not define 'code' unless it is a clue")
@@ -312,14 +428,14 @@ class Room:
                 f"{label} may not define 'requires' unless it is a container or door"
             )
 
-        if node.kind == "container":
+        if node.kind in {"container", "search"}:
             valid_contents = set(self._nodes_by_id) | set(self.items)
             for content_id in node.contents:
                 if content_id not in valid_contents:
                     errors.append(f"{label} contains unknown id {content_id!r}")
         elif node.contents:
             errors.append(
-                f"{label} may not define 'contents' unless it is a container"
+                f"{label} may not define 'contents' unless it is a container or searchable object"
             )
         return errors
 
@@ -354,6 +470,9 @@ class Room:
             data["layout"] = self.layout
         if self.space is not None:
             data["space"] = self.space
+        if self.locations:
+            data.update(locations=dict(self.locations), start_locations=dict(self.start_locations),
+                        passages=[passage.to_dict() for passage in self.passages])
         return data
 
 

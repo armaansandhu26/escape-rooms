@@ -5,14 +5,46 @@ from __future__ import annotations
 from pathlib import Path
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from motiverooms.http_api import handle_get, handle_post
+from motiverooms.recordings import load_recording
 
 PUBLIC_DIR = Path(__file__).resolve().parent.parent / "public"
 
 app = FastAPI()
+
+
+@app.get("/")
+def replay_workspace() -> FileResponse:
+    return FileResponse(PUBLIC_DIR / "replay.html")
+
+
+@app.get("/demo")
+def scripted_demo() -> FileResponse:
+    return FileResponse(PUBLIC_DIR / "index.html")
+
+
+@app.get("/api/recordings")
+def get_recordings() -> dict:
+    return handle_get("/api/recordings")
+
+
+@app.get("/api/recording")
+def get_recording(id: str) -> dict:
+    return load_recording(id)
+
+
+@app.post("/api/recordings/preview")
+async def preview_recording(request: Request) -> dict:
+    raw = await request.body()
+    if len(raw) > 20_000_000:
+        raise ValueError("Recording is too large")
+    body = await request.json()
+    if not isinstance(body, dict):
+        raise ValueError("Expected a recording object")
+    return handle_post("/api/recordings/preview", body)
 
 
 @app.exception_handler(ValueError)

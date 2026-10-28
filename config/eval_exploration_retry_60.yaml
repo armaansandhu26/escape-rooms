@@ -1,0 +1,34 @@
+# Budget-only comparison with the earlier v3 seed-42 run; original descriptions.
+experiment: exploration_original_60_turns
+room_source: exploration
+exploration_version: 1
+torch_affordance: legacy
+num_rooms: 3
+seeds: [42]
+split: all
+conditions: [self_play]
+both_seats: false
+repeats: 1
+observation_version: v3
+action_interface: tools
+team_mode: orchestrated
+min_subagents: 1  # Historical roster range; new v4 configs use 2–4 workers.
+max_subagents: 3
+worker_broadcast: false
+orchestrator_max_output_tokens: 2048
+orchestrator_context_version: v3
+orchestrator_observe_team_chat: false
+orchestrator_history_turns: 1
+worker_history_turns: 3
+worker_progress_memory: true
+turn_budget: 60
+max_steps: 60
+progress: true
+mode: collaborative
+communication_modes: [enabled]
+model: gpt-5.4-mini
+temperature: 0.2
+max_output_tokens: 1024
+budget:
+  max_calls: 300
+  max_tokens: 2000000

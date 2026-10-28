@@ -1,0 +1,29 @@
+# Varied objects, item sources, room placements, and clue-to-lock assignments.
+experiment: exploration_varied_v2
+room_source: exploration
+exploration_version: 2
+num_rooms: 3
+seeds: [42, 57, 91]
+split: all
+conditions: [self_play]
+both_seats: false
+repeats: 1
+observation_version: v3
+action_interface: tools
+team_mode: orchestrated
+min_subagents: 1  # Historical roster range; new v4 configs use 2–4 workers.
+max_subagents: 3
+worker_broadcast: false
+orchestrator_context_version: v3
+orchestrator_max_output_tokens: 2048
+orchestrator_history_turns: 1
+worker_history_turns: 3
+worker_progress_memory: true
+progress: true
+mode: collaborative
+communication_modes: [enabled]
+temperature: 0.2
+max_output_tokens: 1024
+budget:
+  max_calls: 1200
+  max_tokens: 4000000

@@ -35,12 +35,19 @@ def digest(value):
 
 def snapshot(env):
     engine = env.engine
-    return json_safe(dict(
-        env_step=env.env_step, agents={a: asdict(s) for a, s in engine.agents.items()},
+    agents = {a: asdict(s) for a, s in engine.agents.items()}
+    if not env.room.locations:
+        for state in agents.values():
+            state.pop("location")  # Preserve historical snapshots for legacy rooms.
+    state = dict(
+        env_step=env.env_step, agents=agents,
         opened_nodes=engine.opened_nodes, taken_items=engine.taken_items,
         messages=[asdict(m) for m in engine.messages], notes=engine.notes,
         inspected_nodes=engine.inspected_nodes,
-    ))
+    )
+    if env.coordination:
+        state["reports"] = [asdict(report) for report in engine.reports]
+    return json_safe(state)
 
 
 def revision():
@@ -96,6 +103,21 @@ class RecordedPolicy:
                       parsed_action=parsed, latency_seconds=perf_counter() - started)
         return raw, action
 
+    def reject_action(self, reason):
+        callback = getattr(self.policy, "reject_action", None)
+        if callback:
+            self._log_tool_results(callback(reason))
+
+    def record_outcome(self, outcome):
+        callback = getattr(self.policy, "record_outcome", None)
+        if callback:
+            self._log_tool_results(callback(outcome))
+
+    def _log_tool_results(self, outputs):
+        for output in outputs:
+            self.log.emit("tool_result", step=self.step, agent=self.agent,
+                          call_id=output["call_id"], output=output["output"])
+
 
 def independent_actions(policies, observations, env):
     with ThreadPoolExecutor(max_workers=len(observations)) as pool:
@@ -114,7 +136,8 @@ def compute_metrics(events):
                          truthful_code_messages=0, used_shared_resources=0,
                          new_locks_opened=0, new_clues_read=0, items_taken=0,
                          longest_failed_action_streak=0, escape_step=None,
-                         messages_sent=0, notes_written=0, wait_actions=0) for a in agents}
+                         messages_sent=0, reports_sent=0, notes_written=0, notes_read=0,
+                         items_transferred=0, wait_actions=0) for a in agents}
     failure_streaks = {a: (None, 0) for a in agents}
     handoffs = start.get("metadata", {}).get("handoffs", [])
     shared, used, eligible = {}, set(), set()
@@ -150,7 +173,10 @@ def compute_metrics(events):
             if not outcome["valid"]:
                 continue
             stats["messages_sent"] += int(action.verb == "say")
+            stats["reports_sent"] += int(action.verb == "report")
             stats["notes_written"] += int(action.verb == "write_note")
+            stats["notes_read"] += int(action.verb == "read_notes")
+            stats["items_transferred"] += int(action.verb in {"give", "give_to"})
             stats["wait_actions"] += int(action.verb == "wait")
             if action.verb in {"enter", "use"}:
                 target = action.args[-1]
@@ -201,7 +227,7 @@ def compute_metrics(events):
         stats["unsuccessful_action_rate"] = stats["unsuccessful_actions"] / stats["actions"] if stats["actions"] else None
         per_agent[agent]["payoff"] = 10.0 + s["turns_left"] if s["escaped"] else 0.0
         per_agent[agent]["reward"] = end.get("rewards", {}).get(agent) if end else None
-        own_calls = [c for c in calls if c["agent"] == agent]
+        own_calls = [c for c in calls if c["agent"] == agent and c.get("role") != "orchestrator"]
         per_agent[agent]["api_calls"] = len(own_calls)
         per_agent[agent]["total_tokens"] = sum(c["usage"]["total_tokens"] for c in own_calls if c.get("usage"))
         per_agent[agent]["unknown_usage_calls"] = sum(c.get("usage") is None for c in own_calls)
@@ -226,6 +252,8 @@ def compute_metrics(events):
         escape_rate=sum(p["escaped"] for p in per_agent.values()) / len(agents),
         joint_escape=all(p["escaped"] for p in per_agent.values()), per_agent=per_agent,
         api_calls=len(calls), unknown_usage_calls=len(calls) - len(known_usage),
+        orchestrator_calls=sum(c.get("role") == "orchestrator" for c in calls),
+        worker_calls=sum(c.get("role") != "orchestrator" for c in calls),
         input_tokens=sum(u["input_tokens"] for u in known_usage),
         output_tokens=sum(u["output_tokens"] for u in known_usage),
         total_tokens=sum(u["total_tokens"] for u in known_usage),
@@ -237,42 +265,84 @@ def compute_metrics(events):
 
 
 def run_episode(env, policies, *, path=None, metadata=None, max_steps=100,
-                chooser=independent_actions, on_step=None):
-    log = EventLog(path)
+                chooser=independent_actions, on_step=None, controller=None, setup_error=None, started_at=None,
+                event_log=None):
+    log = event_log if event_log is not None else EventLog(path)
     wrapped = {a: RecordedPolicy(p, a, log) for a, p in policies.items()}
     offsets = {a: len(getattr(getattr(p, "client", None), "calls", [])) for a, p in policies.items()}
     config = dict(turn_budget=env.turn_budget, mode=env.mode, shared_escape=env.shared_escape,
-                  partner_actions=env.partner_actions, observation_version=env.observation_version)
+                  partner_actions=env.partner_actions, observation_version=env.observation_version,
+                  communication=env.communication)
+    if env.coordination:
+        config["coordination"] = True
+    if not env.worker_broadcast:
+        config["worker_broadcast"] = False
     prompts = {a: p.system_prompt() for a, p in policies.items() if hasattr(p, "system_prompt")}
+    interfaces = {a: getattr(p, "action_interface", "scripted") for a, p in policies.items()}
+    model_interfaces = set(interfaces.values()) - {"scripted"}
+    metadata = dict(metadata or {})
+    metadata.setdefault("action_interface", "+".join(sorted(model_interfaces)) or "scripted")
+    metadata.setdefault("team_mode", "fixed")
+    metadata.setdefault("num_subagents", len(policies))
+    metadata.setdefault("orchestrator_kind", "none")
+    metadata.setdefault("worker_progress_memory", any(getattr(p, "progress_memory", False) for p in policies.values()))
     log.emit("start", schema_version=1, run_id=str(uuid4()), room=env.room.to_dict(),
-             room_sha256=digest(env.room.to_dict()), config=config, metadata=metadata or {},
-             prompts=prompts, code=revision(), python_version=sys.version, initial_state=snapshot(env))
+             room_sha256=digest(env.room.to_dict()), config=config, metadata=metadata,
+             prompts=prompts,
+             action_interfaces=interfaces,
+             tools={a: p.tools() for a, p in policies.items()
+                    if getattr(p, "action_interface", None) == "tools"},
+             code=revision(), python_version=sys.version, initial_state=snapshot(env))
     reason, error_type = None, None
-    started = perf_counter()
+    control_call_offset = control_event_offset = 0
+
+    def flush_calls(step):
+        nonlocal reason, control_call_offset, control_event_offset
+        if controller is not None:
+            calls = getattr(controller.client, "calls", [])
+            for call in calls[control_call_offset:]:
+                log.emit("model_call", step=step, agent="orchestrator", role="orchestrator", **call)
+                if call.get("error") and reason != "budget_exceeded":
+                    reason = "api_error"
+            control_call_offset = len(calls)
+            for event in controller.events[control_event_offset:]:
+                log.emit("orchestrator_decision", **event)
+            control_event_offset = len(controller.events)
+        for agent, policy in policies.items():
+            calls = getattr(getattr(policy, "client", None), "calls", [])
+            for call in calls[offsets[agent]:]:
+                log.emit("model_call", step=step, agent=agent, **call)
+                if call.get("error") and reason != "budget_exceeded":
+                    reason = "api_error"
+            offsets[agent] = len(calls)
+
+    started = perf_counter() if started_at is None else started_at
     try:
-        while not env.round_over and env.env_step < max_steps:
+        if setup_error is not None:
+            error_type = type(setup_error).__name__
+            reason = "budget_exceeded" if isinstance(setup_error, BudgetExceeded) else "policy_error"
+        flush_calls(0)
+        while reason is None and not env.round_over and env.env_step < max_steps:
             before = snapshot(env)
             observations = env.observe_all()
             for p in wrapped.values():
                 p.step = env.env_step + 1
             try:
+                if controller is not None:
+                    controller.coordinate(env, policies)
                 actions = chooser({a: wrapped[a] for a in observations}, observations, env)
             except Exception as error:
                 error_type = type(error).__name__
                 reason = "budget_exceeded" if isinstance(error, BudgetExceeded) else "policy_error"
             finally:
-                for a, policy in policies.items():
-                    calls = getattr(getattr(policy, "client", None), "calls", [])
-                    for call in calls[offsets[a]:]:
-                        log.emit("model_call", step=env.env_step + 1, agent=a, **call)
-                        if call.get("error") and reason != "budget_exceeded":
-                            reason = "api_error"
-                    offsets[a] = len(calls)
+                flush_calls(env.env_step + 1)
             if reason:
                 break
             outcomes = env.step_joint(actions)
             log.emit("joint_step", step=env.env_step, observations=observations, actions=actions,
                      outcomes={a: asdict(o) for a, o in outcomes.items()}, before=before, after=snapshot(env))
+            for agent, outcome in outcomes.items():
+                wrapped[agent].record_outcome(outcome)
             if on_step:
                 on_step(env, actions, outcomes)
         if reason is None:

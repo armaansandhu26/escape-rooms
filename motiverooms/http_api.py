@@ -8,6 +8,7 @@ from typing import Any
 from motiverooms.catalog import ROOMS, catalog_payload, preset_by_key
 from motiverooms.session import AppSession
 from motiverooms.session_token import decode_session, encode_session
+from motiverooms.recordings import recording_catalog, project_recording
 
 
 def default_session() -> AppSession:
@@ -21,6 +22,8 @@ def _with_session(session: AppSession, payload: dict[str, Any]) -> dict[str, Any
 
 
 def handle_get(path: str) -> dict[str, Any]:
+    if path == "/api/recordings":
+        return recording_catalog()
     if path == "/api/catalog":
         return catalog_payload()
     if path == "/api/state":
@@ -30,6 +33,8 @@ def handle_get(path: str) -> dict[str, Any]:
 
 
 def handle_post(path: str, body: dict[str, Any]) -> dict[str, Any]:
+    if path == "/api/recordings/preview":
+        return project_recording(body.get("events"), id="imported")
     token = body.get("session")
     session = decode_session(token) if token else default_session()
 

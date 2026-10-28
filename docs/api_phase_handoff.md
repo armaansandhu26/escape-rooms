@@ -52,7 +52,12 @@ version identifiers rather than rewriting their observations.
 
 ## What comes after this phase
 
-The next phase is training integration, beginning with a CPU/mock rollout of the
+The user subsequently chose a separate fixed-model collaboration phase before
+training integration: two AI-controlled agents with communication on/off on
+matched development rooms. This does not reopen the frozen prototype results.
+See [phase 2](phase2_collaboration.md) for its implementation and pilot protocol.
+
+The subsequent training stage begins with a CPU/mock rollout of the
 trainer adapter and a small end-to-end smoke test when GPU access is available.
 The current wrapper exposes joint outcomes, observations and terminal rewards;
 the trainer-specific transition, termination/truncation and token/log-probability

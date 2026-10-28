@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 from dataclasses import dataclass, field
 from time import perf_counter
@@ -9,6 +10,7 @@ from typing import Any
 from urllib.parse import urlparse
 
 from motiverooms.telemetry import RequestBudget
+from motiverooms.tool_calls import ToolResponse
 
 
 class AzureOpenAIConfigError(ValueError):
@@ -132,18 +134,38 @@ class AzureResponsesClient:
         )
 
     def complete(self, *, instructions: str, user_input: str) -> str:
+        """Legacy text completion, retained for historical experiment protocols."""
+        record = self._request(instructions=instructions, user_input=user_input)
+        return record["output"]
+
+    def complete_tools(self, *, instructions: str, input_items: list[dict],
+                       tools: list[dict]) -> ToolResponse:
+        record = self._request(
+            instructions=instructions, user_input=input_items,
+            tools=tools, tool_choice="required", parallel_tool_calls=False,
+        )
+        return ToolResponse(tuple(record["output_items"]), record["output"], record["status"])
+
+    def _request(self, *, instructions: str, user_input: str | list[dict], **options: Any) -> dict[str, Any]:
+        """One accounted provider request; both interfaces share transport and logging."""
         kwargs: dict[str, Any] = {
             "model": self.settings.model,
             "instructions": instructions,
             "input": user_input,
             "max_output_tokens": self.settings.max_output_tokens,
+            **options,
         }
         if self.settings.temperature is not None:
             kwargs["temperature"] = self.settings.temperature
-        reservation = self.budget.reserve(instructions, user_input, self.settings.max_output_tokens) if self.budget else None
+        # Tool schemas and the full private transcript also consume input tokens.
+        budget_input = user_input if isinstance(user_input, str) else json.dumps(user_input)
+        if options:
+            budget_input += json.dumps(options)
+        reservation = self.budget.reserve(instructions, budget_input, self.settings.max_output_tokens) if self.budget else None
         record = dict(model=self.settings.model, instructions=instructions, input=user_input,
                       max_output_tokens=self.settings.max_output_tokens,
                       temperature=self.settings.temperature, usage=None, output=None, error=None)
+        record.update(options)
         started = perf_counter()
         try:
             response = self._client.responses.create(**kwargs)
@@ -159,14 +181,19 @@ class AzureResponsesClient:
             record["response_id"] = getattr(response, "id", None)
             record["status"] = getattr(response, "status", None)
             record["raw_text"] = getattr(response, "output_text", None)
+            record["output_items"] = [
+                item if isinstance(item, dict) else item.model_dump(mode="json", exclude_none=True)
+                for item in (getattr(response, "output", None) or [])
+            ]
             try:
                 record["output"] = _extract_output_text(response)
             except RuntimeError:
-                # A successful API response with no final text is a model-output
-                # failure. Let the strict policy spend its turn on a parse error.
+                # Native calls commonly have no final text. In text mode this
+                # is a model-output failure, charged as an invalid action.
                 record["output"] = ""
-                record["output_error"] = "empty_text"
-            return record["output"]
+                if not options:
+                    record["output_error"] = "empty_text"
+            return record
         except Exception as error:
             record["error"] = type(error).__name__
             raise
