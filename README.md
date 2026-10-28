@@ -45,6 +45,8 @@ python scripts/play_web.py
 
 Open [localhost:8765](http://127.0.0.1:8765/). The replay loads a completed recording automatically, preferring a successful v5 run; **Load JSONL** imports another completed episode. Play/pause, restart, step and seek keep rooms, worker-colored item highlights, manager messages and the trajectory synchronized. The expandable **How this puzzle unlocks → Easy interpretation** guide sits below the rooms, turns completed steps green and reveals clue values as playback advances. The guide currently supports the original exploration puzzle. Replay makes no model calls. The older scripted demo is at [/demo](http://127.0.0.1:8765/demo).
 
+Vercel uses the committed [bundled replay](motiverooms/data/successful_v5.json) when local runs are absent. This contains the UI's projected episode data; raw JSONL/provider logs remain ignored under `runs/`. Packaging is configured in [vercel.json](vercel.json) and [pyproject.toml](pyproject.toml).
+
 ## Orchestrator
 
 The default **v5 manager** chooses the full worker team upfront (2–4 by default) and assigns objectives. Workers act independently between check-ins. New reports trigger a manager call; five silent ticks per worker also trigger a check-in. Assignments persist, and reported exit information can be relayed to everyone.

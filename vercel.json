@@ -4,7 +4,7 @@
   "installCommand": "pip install -r requirements.txt && pip install .",
   "functions": {
     "api/index.py": {
-      "includeFiles": "{rooms/examples/**,public/**}",
+      "includeFiles": "{rooms/examples/**,public/**,motiverooms/data/**}",
       "excludeFiles": "tests/**"
     }
   }

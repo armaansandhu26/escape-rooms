@@ -24,7 +24,7 @@ azure = [
 include = ["motiverooms*"]
 
 [tool.setuptools.package-data]
-motiverooms = ["static/*"]
+motiverooms = ["static/*", "data/*.json"]
 
 [tool.setuptools.data-files]
 "rooms/templates" = ["rooms/templates/*.yaml"]

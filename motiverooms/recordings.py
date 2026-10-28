@@ -14,6 +14,8 @@ from motiverooms.schema import Room
 
 
 RUNS_DIRECTORY = Path(__file__).resolve().parents[1] / "runs"
+BUNDLED_RECORDING = Path(__file__).resolve().parent / "data" / "successful_v5.json"
+BUNDLED_RECORDING_ID = "bundled/successful_v5.json"
 
 
 def _summary(start: dict, end: dict, metrics: dict, id: str) -> dict:
@@ -58,11 +60,16 @@ def recording_catalog(directory: Path = RUNS_DIRECTORY) -> dict:
             continue
         if len(recordings) >= 30:
             break
+    if not recordings:
+        bundled = json.loads(BUNDLED_RECORDING.read_text(encoding="utf-8"))
+        recordings.append(bundled["summary"])
     preferred = next((r["id"] for r in recordings if r["outcome"] == "success" and r["protocol"] == "v5"), None)
     return dict(recordings=recordings, default_id=preferred or (recordings[0]["id"] if recordings else None))
 
 
 def load_recording(id: str, directory: Path = RUNS_DIRECTORY) -> dict:
+    if id == BUNDLED_RECORDING_ID:
+        return json.loads(BUNDLED_RECORDING.read_text(encoding="utf-8"))
     path = (directory / id).resolve()
     if (not path.is_relative_to(directory.resolve()) or path.suffix != ".jsonl" or not path.is_file()):
         raise ValueError("Recording not found")
